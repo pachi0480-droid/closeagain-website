@@ -1,0 +1,14 @@
+# dependencies
+node_modules
+
+# build output
+.next
+out
+*.tsbuildinfo
+
+# environment
+.env*.local
+
+# local editor and tool state
+.claude/settings.local.json
+.DS_Store

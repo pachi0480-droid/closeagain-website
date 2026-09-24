@@ -66,7 +66,7 @@
   --text-mono-sm--line-height: 1.35;
   --text-mono-sm--letter-spacing: 0.04em;
 
-  --text-display: clamp(2.3rem, 5.9vw, 4.5rem);
+  --text-display: clamp(2.3rem, 5.9vw, 4.75rem);
   --text-display--line-height: 0.98;
   --text-display--letter-spacing: -0.038em;
 

@@ -44,7 +44,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="grain-ink lit-ink relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ink-raise pb-12 md:pb-14"
+      className="grain-ink lit-ink relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ink pb-12 md:pb-14"
     >
       {/* --- the live business, behind everything -------------------- */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
@@ -71,7 +71,7 @@ export function Hero() {
 
       <div ref={scene} className="relative">
         <div className="shell pt-28 md:pt-32 lg:pt-36">
-          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-x-8">
+          <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-x-8">
             {/* --- the claim ---------------------------------------- */}
             <div className="lg:col-span-7">
               <Reveal y={12}>

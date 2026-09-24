@@ -33,12 +33,12 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
   return (
     <div aria-hidden="true" className="relative">
       {/* the rail */}
-      <div className="relative h-px">
-        <div className="rail-sheen absolute inset-0" />
+      <div className="relative h-[2px] rounded-full">
+        <div className="rail-sheen-ink absolute inset-0 rounded-full" />
 
         {/* travelled portion */}
         <div
-          className="absolute inset-y-0 left-0 origin-left transition-[width] duration-[1150ms] [transition-timing-function:var(--ease-in-out-quiet)]"
+          className="absolute inset-y-0 left-0 origin-left rounded-full transition-[width] duration-[1150ms] [transition-timing-function:var(--ease-in-out-quiet)]"
           style={{
             width: `${reached.at}%`,
             backgroundImage: recovered
@@ -108,7 +108,7 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
               }}
             >
               <span
-                className={`tnum font-mono text-mono-xs whitespace-nowrap uppercase transition-colors duration-700 ${
+                className={`tnum font-mono text-mono-sm whitespace-nowrap uppercase transition-colors duration-700 ${
                   active ? stateText[point.state] : 'text-chalk-3'
                 }`}
               >

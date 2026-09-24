@@ -56,7 +56,7 @@ export function SignalField({ className = '' }: { className?: string }) {
           }
         >
           <span className={`h-[3px] w-[3px] rounded-full ${dot[signal.state]}`} />
-          <span className="font-mono text-[0.5625rem] tracking-[0.14em] text-chalk-3 uppercase">
+          <span className="font-mono text-[0.5625rem] tracking-[0.14em] text-chalk-3/55 uppercase">
             {signal.label}
           </span>
         </span>

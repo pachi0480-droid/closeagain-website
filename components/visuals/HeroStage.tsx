@@ -33,14 +33,24 @@ export function HeroStage({ step }: { step: number }) {
         role="img"
         aria-label="Illustrative product view. A 6:42 PM inbound call about an air conditioner goes unanswered, CloseAgain opens a recovery conversation, and the job is booked for a 9 to 11 AM diagnostic the next morning."
       >
-        {/* localized light, pooling toward the active area */}
+        {/* Recovery is a change of lighting across the whole panel, not a
+            tinted strip: the room the opportunity sits in warms up. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 transition-opacity duration-1000"
+          className="pointer-events-none absolute inset-0 transition-opacity duration-[1400ms] [transition-timing-function:var(--ease-out-quiet)]"
           style={{
-            opacity: recovered ? 1 : 0.35,
+            opacity: recovered ? 1 : 0,
             background:
-              'radial-gradient(70% 50% at 50% 108%, color-mix(in oklab, var(--color-recover) 26%, transparent), transparent 72%)',
+              'radial-gradient(90% 70% at 50% 112%, color-mix(in oklab, var(--color-recover) 34%, transparent), transparent 74%)',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-px transition-opacity duration-[1400ms]"
+          style={{
+            opacity: recovered ? 1 : 0,
+            background:
+              'linear-gradient(to right, transparent, var(--color-recover-bright), transparent)',
           }}
         />
 
@@ -166,7 +176,7 @@ export function HeroStage({ step }: { step: number }) {
           <div
             className="flex items-center justify-between gap-5 transition-all duration-[900ms] [transition-timing-function:var(--ease-out-quiet)]"
             style={{
-              opacity: recovered ? 1 : 0.28,
+              opacity: 1,
               transform: recovered ? 'none' : 'translateY(6px)',
             }}
           >
@@ -179,12 +189,27 @@ export function HeroStage({ step }: { step: number }) {
               >
                 {recovered ? 'Opportunity recovered' : 'Awaiting outcome'}
               </p>
-              <p className="relative mt-1.5 text-[1.0625rem] text-chalk">
-                {recovered ? 'Tomorrow · 9:00–11:00 AM' : '—'}
+              <p
+                className={`relative mt-2 text-[1.5rem] leading-none font-semibold tracking-[-0.03em] transition-colors duration-700 ${
+                  recovered ? 'text-chalk' : 'text-chalk-3/50'
+                }`}
+              >
+                {recovered ? 'Tomorrow · 9:00–11:00 AM' : 'Pending'}
               </p>
             </div>
-            <p className="shrink-0 text-right font-mono text-mono-sm text-chalk-3">
-              {recovered ? 'Diagnostic' : ''}
+            <p
+              className="shrink-0 rounded-[6px] border px-2.5 py-1.5 text-right font-mono text-mono-xs uppercase transition-all duration-700"
+              style={{
+                borderColor: recovered
+                  ? 'color-mix(in oklab, var(--color-recover-bright) 45%, transparent)'
+                  : 'var(--color-rule-ink)',
+                color: recovered ? 'var(--color-recover-bright)' : 'var(--color-chalk-3)',
+                backgroundColor: recovered
+                  ? 'color-mix(in oklab, var(--color-recover) 16%, transparent)'
+                  : 'transparent',
+              }}
+            >
+              {recovered ? 'Diagnostic' : 'No outcome'}
             </p>
           </div>
         </footer>

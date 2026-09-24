@@ -9,8 +9,11 @@ import { useScrollVar } from '@/lib/hooks'
  * section then takes apart. A denser fan reads as hatching rather than as
  * individual opportunities — legibility sets the count, and the count sets the
  * copy.
+ *
+ * Read inside the component, not at module scope. An imported binding
+ * referenced while a client module is still initialising throws at runtime
+ * while compiling perfectly — the build passes and the page dies.
  */
-const LINES = flows.length
 
 /**
  * Hero → Leak Map.
@@ -31,7 +34,7 @@ export function Multiply() {
   const lines = useMemo(
     () =>
       flows.map((flow, i) => {
-        const half = (LINES - 1) / 2
+        const half = (flows.length - 1) / 2
         const offset = (i - half) / half // -1 … 1
         return {
           y: offset * 25,
@@ -50,7 +53,7 @@ export function Multiply() {
       aria-hidden="true"
       /* Shorter on a phone: a transition worth two viewports of mouse wheel is
          worth about one of thumb. */
-      className="relative h-[115vh] lg:h-[200vh]"
+      className="relative h-[104vh] lg:h-[132vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
       {/* The surface darkens across this section, so the header has to invert

@@ -31,7 +31,7 @@ export function Converge() {
     <section
       ref={ref}
       data-tone="ink"
-      className="relative h-[105vh] bg-ink lg:h-[170vh]"
+      className="relative h-[102vh] bg-ink lg:h-[124vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">

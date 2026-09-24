@@ -10,7 +10,6 @@ import { loopStages, recordThrough } from '@/data/loop'
 import { trackOnce } from '@/lib/analytics'
 import { useScrollProgress } from '@/lib/hooks'
 
-const COUNT = loopStages.length
 
 /**
  * From missed to booked.
@@ -55,6 +54,7 @@ export function RecoveryLoop() {
 /* -------------------------------------------------------------------------- */
 
 function StickyEngine() {
+  const COUNT = loopStages.length
   const { ref, progress } = useScrollProgress<HTMLDivElement>()
   const active = Math.min(COUNT - 1, Math.max(0, Math.floor(progress * COUNT * 1.001)))
   const stage = loopStages[active]
@@ -68,7 +68,7 @@ function StickyEngine() {
       ref={ref}
       id="loop-scroller"
       className="relative hidden lg:block"
-      style={{ height: `calc(100vh + ${COUNT * 72}vh)` }}
+      style={{ height: `calc(100vh + ${COUNT * 46}vh)` }}
     >
       <div className="sticky top-0 flex h-screen items-center pt-14">
         <div className="shell w-full">

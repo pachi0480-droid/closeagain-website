@@ -26,7 +26,7 @@ export function Resolve() {
     <section
       ref={ref}
       aria-hidden="true"
-      className="relative h-[105vh] lg:h-[165vh]"
+      className="relative h-[102vh] lg:h-[124vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
       {/* the header inverts back to light partway up, not at the section edge */}

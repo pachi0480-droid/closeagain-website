@@ -54,7 +54,7 @@ export function Disperse() {
     <section
       ref={ref}
       aria-hidden="true"
-      className="relative h-[100vh] lg:h-[150vh]"
+      className="relative h-[102vh] lg:h-[120vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
       {/* the header inverts once the surface is dark enough to need it */}

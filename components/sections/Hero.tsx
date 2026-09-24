@@ -12,7 +12,12 @@ import { cta, site } from '@/data/site'
 import { trackOnce } from '@/lib/analytics'
 import { usePrefersReducedMotion, useSequence } from '@/lib/hooks'
 
-const TOTAL = heroBeats.length
+/*
+ * Counts derived from imported data live inside the component, never at module
+ * scope: an imported binding read while a client module is still initialising
+ * throws at runtime while compiling cleanly, so the build passes and the page
+ * dies. This bit the Multiply bridge once already.
+ */
 
 /**
  * The hero is one scene, not a headline beside a screenshot.
@@ -26,14 +31,15 @@ const TOTAL = heroBeats.length
 export function Hero() {
   const reduced = usePrefersReducedMotion()
   const scene = usePointerDepth<HTMLDivElement>()
-  const { ref, step } = useSequence(TOTAL, {
+  const total = heroBeats.length
+  const { ref, step } = useSequence(total, {
     stepMs: 1150,
     holdMs: 5200,
     enabled: !reduced,
     onComplete: () => trackOnce('hero_sequence_completed'),
   })
 
-  const waypoint = heroWaypointForStep[Math.min(step, TOTAL)]
+  const waypoint = heroWaypointForStep[Math.min(step, total)]
 
   return (
     <section

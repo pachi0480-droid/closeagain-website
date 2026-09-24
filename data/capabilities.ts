@@ -10,6 +10,8 @@ export type Capability = {
   stage: string
   /** Inclusive 1-based span across LIFECYCLE for the coverage map. */
   span: [number, number]
+  /** Which region of the recovery surface this capability sits in. */
+  zone: ZoneId
   /** The deep-dive shown on /product. */
   detail: {
     /** The moment that sets it off. */
@@ -23,6 +25,26 @@ export type Capability = {
   }
 }
 
+export type ZoneId =
+  | 'inbound'
+  | 'consideration'
+  | 'booked'
+  | 'dormant'
+  | 'system'
+
+/**
+ * The recovery surface: the regions of a customer's life with the business.
+ * Capabilities are placed in the region where they actually act, and
+ * `system` runs underneath all of them rather than beside them.
+ */
+export const zones: { id: ZoneId; label: string; note: string }[] = [
+  { id: 'inbound', label: 'Inbound', note: 'Demand arriving' },
+  { id: 'consideration', label: 'Consideration', note: 'Quoted, deciding' },
+  { id: 'booked', label: 'Booked', note: 'On the schedule' },
+  { id: 'dormant', label: 'Dormant', note: 'Gone quiet' },
+  { id: 'system', label: 'Across all of it', note: 'Always running' },
+]
+
 /** The path a job takes from demand to work on the board. */
 export const LIFECYCLE = [
   'Lead arrives',
@@ -35,6 +57,7 @@ export const LIFECYCLE = [
 export const capabilities: Capability[] = [
   {
     id: 'missed-call',
+    zone: 'inbound',
     index: '01',
     name: 'Missed Call Recovery',
     stage: 'First contact',
@@ -52,6 +75,7 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'lead-response',
+    zone: 'inbound',
     index: '02',
     name: 'Lead Response',
     stage: 'First contact',
@@ -69,6 +93,7 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'estimate',
+    zone: 'consideration',
     index: '03',
     name: 'Estimate Follow-Up',
     stage: 'Decision',
@@ -86,6 +111,7 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'appointment',
+    zone: 'booked',
     index: '04',
     name: 'Appointment Recovery',
     stage: 'Scheduled work',
@@ -103,6 +129,7 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'reactivation',
+    zone: 'dormant',
     index: '05',
     name: 'Lead Reactivation',
     stage: 'Dormant demand',
@@ -120,6 +147,7 @@ export const capabilities: Capability[] = [
   },
   {
     id: 'intelligence',
+    zone: 'system',
     index: '06',
     name: 'Recovery Intelligence',
     stage: 'Visibility',

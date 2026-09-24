@@ -26,7 +26,12 @@ export function useInViewOnce<T extends HTMLElement = HTMLDivElement>(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return
+        // An element that is already above the viewport when the observer
+        // attaches — a deep link, a restored scroll position, a back
+        // navigation — must reveal immediately. It will never intersect on
+        // its own, and leaving it at opacity 0 hides real content.
+        const scrolledPast = entry.boundingClientRect.bottom <= 0
+        if (!entry.isIntersecting && !scrolledPast) return
         setInView(true)
         enterRef.current?.()
         observer.disconnect()

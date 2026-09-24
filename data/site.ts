@@ -20,11 +20,11 @@ export const site = {
 } as const
 
 export const nav = [
-  { label: 'How it works', href: '#recovery-loop' },
-  { label: 'Product', href: '#product' },
-  { label: 'Calculator', href: '#calculator' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'How it works', href: '/#recovery-loop' },
+  { label: 'Product', href: '/product' },
+  { label: 'Calculator', href: '/calculator' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'FAQ', href: '/#faq' },
 ] as const
 
 export const cta = {
@@ -34,14 +34,28 @@ export const cta = {
   calculator: 'Calculate your revenue leak',
   pricing: 'Request access',
   pilot: 'Join the pilot',
+  /**
+   * In-page CTA target. Every content route renders the early-access section,
+   * so this scrolls rather than navigating.
+   */
   target: '#early-access',
+  /**
+   * Chrome CTA target. The header and footer also render on the legal pages,
+   * which have no form, so those always resolve to the homepage section.
+   */
+  chromeTarget: '/#early-access',
 } as const
 
-export const footerLinks = [
-  { label: 'How it works', href: '#recovery-loop' },
-  { label: 'Product', href: '#product' },
-  { label: 'Calculator', href: '#calculator' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'Request early access', href: '#early-access' },
-] as const
+export const footerLinks = {
+  site: [
+    { label: 'How it works', href: '/#recovery-loop' },
+    { label: 'Product', href: '/product' },
+    { label: 'Calculator', href: '/calculator' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'FAQ', href: '/#faq' },
+  ],
+  legal: [
+    { label: 'Privacy', href: '/privacy' },
+    { label: 'Terms', href: '/terms' },
+  ],
+} as const

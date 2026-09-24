@@ -1,40 +1,21 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { Assumptions } from '@/components/calculator/Assumptions'
+import { useCalculatorState } from '@/components/calculator/useCalculatorState'
 import { NumberRollDisplay } from '@/components/recovery/CalculatorResult'
 import { RecoveryGrid } from '@/components/recovery/RecoveryGrid'
 import { ButtonLink } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
-import { SliderField } from '@/components/ui/SliderField'
 import { SectionMark } from '@/components/ui/Type'
 import { cta } from '@/data/site'
-import { track, trackOnce } from '@/lib/analytics'
-import {
-  bounds,
-  calculate,
-  defaultInputs,
-  type CalculatorInputs,
-} from '@/lib/calculator'
+import { trackOnce } from '@/lib/analytics'
+import { calculate } from '@/lib/calculator'
 import { formatCurrency, formatNumber } from '@/lib/format'
 
 export function Calculator() {
-  const [inputs, setInputs] = useState<CalculatorInputs>(defaultInputs)
-  const [touched, setTouched] = useState(false)
+  const { inputs, set, touched } = useCalculatorState()
   const result = useMemo(() => calculate(inputs), [inputs])
-
-  const set = useCallback(
-    <K extends keyof CalculatorInputs>(key: K) =>
-      (value: number) => {
-        trackOnce('calculator_started')
-        setTouched(true)
-        setInputs((prev) => ({ ...prev, [key]: value }))
-      },
-    [],
-  )
-
-  const commit = useCallback(() => {
-    track('calculator_input_changed')
-  }, [])
 
   return (
     <section
@@ -71,48 +52,7 @@ export function Calculator() {
                 Your assumptions
               </h3>
               <div className="mt-6">
-                <SliderField
-                  label="Inbound opportunities"
-                  hint="Calls, forms, chats and referrals in a typical month."
-                  value={inputs.opportunities}
-                  {...bounds.opportunities}
-                  curve={1.6}
-                  suffix=" /mo"
-                  format={formatNumber}
-                  onChange={set('opportunities')}
-                  onCommit={commit}
-                />
-                <SliderField
-                  label="Share that goes cold"
-                  hint="Unanswered, unbooked, or quietly dropped after first contact."
-                  value={inputs.leakageRate}
-                  {...bounds.leakageRate}
-                  suffix="%"
-                  format={formatNumber}
-                  onChange={set('leakageRate')}
-                  onCommit={commit}
-                />
-                <SliderField
-                  label="Assumed recovery rate"
-                  hint="How much of that you believe is winnable with faster, persistent follow-up."
-                  value={inputs.recoveryRate}
-                  {...bounds.recoveryRate}
-                  suffix="%"
-                  format={formatNumber}
-                  onChange={set('recoveryRate')}
-                  onCommit={commit}
-                />
-                <SliderField
-                  label="Average booked job"
-                  hint="Your average ticket across the work this would bring back."
-                  value={inputs.jobValue}
-                  {...bounds.jobValue}
-                  curve={2.2}
-                  prefix="$"
-                  format={formatNumber}
-                  onChange={set('jobValue')}
-                  onCommit={commit}
-                />
+                <Assumptions inputs={inputs} set={set} />
               </div>
             </Reveal>
           </div>
@@ -168,9 +108,17 @@ export function Calculator() {
                 </p>
               </div>
 
-              <div className="mt-10">
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <ButtonLink href={cta.target} tone="ink" size="lg" withArrow>
                   {cta.primary}
+                </ButtonLink>
+                <ButtonLink
+                  href="/calculator"
+                  tone="ink"
+                  variant="secondary"
+                  size="lg"
+                >
+                  Open the full calculator
                 </ButtonLink>
               </div>
             </Reveal>

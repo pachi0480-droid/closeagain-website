@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ButtonLink } from '@/components/ui/Button'
 import { Wordmark } from '@/components/ui/Mark'
@@ -11,12 +12,17 @@ import { useScrollOffset, useSurfaceTone } from '@/lib/hooks'
 export function Header() {
   const offset = useScrollOffset()
   const tone = useSurfaceTone()
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const condensed = offset > 28
   const toggleRef = useRef<HTMLButtonElement | null>(null)
 
   const close = useCallback(() => setOpen(false), [])
   const onInk = tone === 'ink'
+
+  /** Anchor links live on the homepage, so only real routes can be current. */
+  const isCurrent = (href: string) =>
+    !href.includes('#') && (pathname === href || pathname.startsWith(`${href}/`))
 
   // Escape closes the panel and returns focus to the control that opened it.
   useEffect(() => {
@@ -82,26 +88,42 @@ export function Header() {
 
           <nav aria-label="Primary" className="hidden lg:block">
             <ul className="flex items-center gap-8">
-              {nav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`text-[0.9375rem] transition-colors duration-300 ${
-                      onInk
-                        ? 'text-chalk-2 hover:text-chalk'
-                        : 'text-graphite-2 hover:text-graphite'
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {nav.map((item) => {
+                const current = isCurrent(item.href)
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={current ? 'page' : undefined}
+                      className={`relative text-[0.9375rem] transition-colors duration-300 ${
+                        current
+                          ? onInk
+                            ? 'text-chalk'
+                            : 'text-graphite'
+                          : onInk
+                            ? 'text-chalk-2 hover:text-chalk'
+                            : 'text-graphite-2 hover:text-graphite'
+                      }`}
+                    >
+                      {item.label}
+                      {/* a rule rather than a pill: quieter, and it matches
+                          the recovery-line language used everywhere else */}
+                      <span
+                        aria-hidden="true"
+                        className={`absolute -bottom-1.5 left-0 h-px w-full origin-left transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
+                          onInk ? 'bg-recover-bright' : 'bg-recover'
+                        } ${current ? 'scale-x-100' : 'scale-x-0'}`}
+                      />
+                    </Link>
+                  </li>
+                )
+              })}
             </ul>
           </nav>
 
           <div className="hidden lg:block">
             <ButtonLink
-              href={cta.target}
+              href={cta.chromeTarget}
               tone={onInk ? 'ink' : 'light'}
               size="md"
               withArrow
@@ -175,7 +197,14 @@ export function Header() {
                 <Link
                   href={item.href}
                   onClick={close}
-                  className="flex items-baseline gap-4 py-4 text-[1.375rem] tracking-[-0.02em]"
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  className={`flex items-baseline gap-4 py-4 text-[1.375rem] tracking-[-0.02em] ${
+                    isCurrent(item.href)
+                      ? onInk
+                        ? 'text-recover-bright'
+                        : 'text-recover'
+                      : ''
+                  }`}
                 >
                   <span
                     className={`font-mono text-mono-xs ${
@@ -190,7 +219,7 @@ export function Header() {
             ))}
           </ul>
           <ButtonLink
-            href={cta.target}
+            href={cta.chromeTarget}
             tone={onInk ? 'ink' : 'light'}
             size="lg"
             withArrow

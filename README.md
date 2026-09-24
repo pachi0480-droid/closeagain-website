@@ -16,14 +16,31 @@ No animation library: every transition here is CSS, driven by state or by one
 `IntersectionObserver` primitive. That was a deliberate call — nothing in the
 design needed a runtime animation engine, so the bundle does not carry one.
 
+## Routes
+
+| Route | What it is |
+| --- | --- |
+| `/` | The whole argument, end to end. The narrative lives here. |
+| `/product` | Capability deep-dive: lifecycle coverage map, each capability as an operational record, the recovery feed, integration posture. |
+| `/pricing` | Plans, the full capability matrix, and pricing-specific questions. |
+| `/calculator` | Standalone and shareable. Assumptions are mirrored into the URL. |
+| `/privacy`, `/terms` | Pre-launch drafts, marked as such on the page. |
+| `/404` | Designed, not the framework default. |
+
+The dedicated routes go deeper on parts of the homepage — they do not replace
+it. Header and footer live in `app/layout.tsx`, so every route gets them.
+
 ## Where things live
 
 ```
-app/            route, metadata, OG image, robots, sitemap, design tokens
+app/            routes, metadata, OG image, robots, sitemap, design tokens
 components/
-  layout/       header (adapts to the surface under it) and footer
-  sections/     one file per section of the page, in narrative order
-  recovery/     the product visualisations: hero sequence, loop, feed, calculator parts
+  layout/       header (adapts to the surface under it), footer, page intro, legal shell
+  sections/     homepage sections, in narrative order
+  product/      lifecycle coverage map, capability detail
+  pricing/      plan slab, capability matrix, pricing questions
+  calculator/   workbench, shared state, sensitivity, plan comparison
+  recovery/     hero sequence, loop stages, recovery feed, result display
   ui/           button, field, slider, reveal, status, type primitives
 data/           ALL copy, pricing, FAQ, scenarios and form options
 lib/            calculator model, analytics, form boundary, hooks, formatting
@@ -95,3 +112,15 @@ There is no hidden benchmark and no industry average. The equation and the
 operator's own inputs are both shown on the page under the result. Inputs are
 clamped, and the two widest ranges use a response curve so the slider is
 usable at the low end where real ticket values sit.
+
+`/calculator` adds three things the homepage version does not:
+
+- **URL state.** Assumptions are mirrored into the query string with
+  `history.replaceState` — shareable, no history entries, no bailout from
+  static rendering. Short keys: `?o=540&l=28&r=30&v=1250`.
+- **Sensitivity.** The same arithmetic across a range of recovery rates,
+  because nobody knows theirs in advance and defending one number would be
+  dishonest.
+- **What the model ignores.** Capacity, close rate on recovered leads, ticket
+  variance and seasonality, stated plainly. A calculator that hid these would
+  give a bigger number and a worse decision.

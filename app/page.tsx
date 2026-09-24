@@ -1,5 +1,4 @@
-import { Footer } from '@/components/layout/Footer'
-import { Header } from '@/components/layout/Header'
+import type { Metadata } from 'next'
 import { Calculator } from '@/components/sections/Calculator'
 import { Comparison } from '@/components/sections/Comparison'
 import { CoreStatement } from '@/components/sections/CoreStatement'
@@ -14,34 +13,39 @@ import { RecoveryLoop } from '@/components/sections/RecoveryLoop'
 import { RevenueLeak } from '@/components/sections/RevenueLeak'
 import { Verticals } from '@/components/sections/Verticals'
 
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+}
+
+/**
+ * The homepage carries the whole argument end to end. The dedicated routes
+ * (/product, /pricing, /calculator) go deeper on individual parts of it —
+ * they do not replace the narrative here.
+ */
 export default function HomePage() {
   return (
     <>
-      <Header />
-      <main id="main">
-        {/* recognition */}
-        <Hero />
-        {/* tension */}
-        <RevenueLeak />
-        {/* realization → clarity */}
-        <CoreStatement />
-        <RecoveryLoop />
-        {/* product understanding */}
-        <Product />
-        <ProductPreview />
-        <Intelligence />
-        {/* self-calculation */}
-        <Calculator />
-        {/* confidence */}
-        <Verticals />
-        <Comparison />
-        {/* commercial */}
-        <Pricing />
-        <Faq />
-        {/* conversion */}
-        <EarlyAccess />
-      </main>
-      <Footer />
+      {/* recognition */}
+      <Hero />
+      {/* tension */}
+      <RevenueLeak />
+      {/* realization → clarity */}
+      <CoreStatement />
+      <RecoveryLoop />
+      {/* product understanding */}
+      <Product />
+      <ProductPreview />
+      <Intelligence />
+      {/* self-calculation */}
+      <Calculator />
+      {/* confidence */}
+      <Verticals />
+      <Comparison />
+      {/* commercial */}
+      <Pricing />
+      <Faq />
+      {/* conversion */}
+      <EarlyAccess />
     </>
   )
 }

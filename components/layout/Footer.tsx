@@ -13,7 +13,13 @@ export function Footer() {
       <div className="shell py-14 md:py-16">
         <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
           <div>
-            <Wordmark className="text-[1.25rem] text-chalk" />
+            <Link
+              href="/"
+              aria-label="CloseAgain — home"
+              className="inline-block transition-opacity duration-300 hover:opacity-70"
+            >
+              <Wordmark className="text-[1.25rem] text-chalk" />
+            </Link>
             <p className="mt-3 text-[0.9375rem] text-chalk-2">{site.category}</p>
           </div>
 
@@ -21,7 +27,7 @@ export function Footer() {
             <nav aria-label="Footer">
               <h2 className="font-mono text-mono-xs text-chalk-3 uppercase">Site</h2>
               <ul className="mt-4 flex flex-col gap-2.5">
-                {footerLinks.map((item) => (
+                {footerLinks.site.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
@@ -45,9 +51,31 @@ export function Footer() {
                     {site.email}
                   </a>
                 </li>
-                <li className="text-[0.9375rem] text-chalk-3">
-                  United States
+                <li>
+                  <Link
+                    href="/#early-access"
+                    className="text-[0.9375rem] text-chalk-2 transition-colors duration-300 hover:text-chalk"
+                  >
+                    Request early access
+                  </Link>
                 </li>
+                <li className="text-[0.9375rem] text-chalk-3">United States</li>
+              </ul>
+            </div>
+
+            <div>
+              <h2 className="font-mono text-mono-xs text-chalk-3 uppercase">Legal</h2>
+              <ul className="mt-4 flex flex-col gap-2.5">
+                {footerLinks.legal.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-[0.9375rem] text-chalk-2 transition-colors duration-300 hover:text-chalk"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

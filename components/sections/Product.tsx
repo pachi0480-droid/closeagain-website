@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Reveal } from '@/components/ui/Reveal'
 import { SectionMark } from '@/components/ui/Type'
 import { capabilities } from '@/data/capabilities'
@@ -78,11 +79,33 @@ export function Product() {
         {/* One clear disclosure for the whole product section, rather than
             hedging every capability sentence. */}
         <Reveal delay={80}>
-          <p className="mt-8 max-w-[62ch] text-[0.9375rem] leading-relaxed text-graphite-2">
-            CloseAgain is pre-launch. These are the capabilities being built
-            first, and the depth of each one is being set with pilot operators
-            rather than guessed at.
-          </p>
+          <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+            <p className="max-w-[54ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+              CloseAgain is pre-launch. These are the capabilities being built
+              first, and the depth of each one is being set with pilot operators
+              rather than guessed at.
+            </p>
+            <Link
+              href="/product"
+              className="link-rule group shrink-0 text-[0.9375rem] text-graphite"
+            >
+              See what each part does
+              <svg
+                viewBox="0 0 12 10"
+                fill="none"
+                aria-hidden="true"
+                className="caret h-[0.6rem] w-[0.72rem]"
+              >
+                <path
+                  d="M0.75 5h9.5M7 1.5 10.5 5 7 8.5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
         </Reveal>
       </div>
     </section>

@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Mono, Instrument_Sans, Instrument_Serif } from 'next/font/google'
+import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
 import { site } from '@/data/site'
 import './globals.css'
 
@@ -105,7 +107,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        {children}
+        <Header />
+        <main id="main">{children}</main>
+        <Footer />
         <script
           type="application/ld+json"
           // Static, author-controlled object — no user input reaches this.

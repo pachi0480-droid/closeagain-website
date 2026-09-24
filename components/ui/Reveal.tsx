@@ -13,6 +13,7 @@ export function Reveal({
   delay = 0,
   y = 18,
   className = '',
+  id,
   onEnter,
 }: {
   as?: ElementType
@@ -20,6 +21,8 @@ export function Reveal({
   delay?: number
   y?: number
   className?: string
+  /** Set when the revealed block is also an anchor target. */
+  id?: string
   onEnter?: () => void
 }) {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ onEnter })
@@ -27,6 +30,7 @@ export function Reveal({
   return (
     <Tag
       ref={ref}
+      id={id}
       data-reveal={inView ? 'shown' : ''}
       style={
         {

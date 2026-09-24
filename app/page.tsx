@@ -13,23 +13,31 @@ import { RecoveryLoop } from '@/components/sections/RecoveryLoop'
 import { RevenueLeak } from '@/components/sections/RevenueLeak'
 import { Verticals } from '@/components/sections/Verticals'
 import { Converge } from '@/components/visuals/Converge'
+import { Disperse } from '@/components/visuals/Disperse'
 import { Multiply } from '@/components/visuals/Multiply'
+import { Resolve } from '@/components/visuals/Resolve'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
 }
 
 /**
- * One continuous story in three acts, with the transitions between them
- * designed rather than left to a change of background colour.
+ * One continuous story. Every act change is a transformation of the thing you
+ * were just looking at, not a change of background colour:
  *
- *   recognition → the claim, proved once on a single opportunity
- *   tension     → that one becomes a month, and the month leaks
- *   resolution  → the month collapses to one again, and we follow it through
+ *   Hero          one opportunity, recovered
+ *   Multiply      that one becomes the eighteen of a month  (paper → ink)
+ *   RevenueLeak   eleven of the eighteen stop at a gate
+ *   Converge      the month collapses back to the one that broke
+ *   RecoveryLoop  that one goes through the machinery
+ *   Resolve       its finished record becomes a row on the board  (ink → bone)
+ *   Product       the surface it was recovered by
+ *   ProductPreview the interface that row lives in
+ *   Disperse      the feed multiplies into the model  (limestone → ink)
+ *   Calculator    the model, at your numbers
  *
- * `Multiply` and `Converge` are the hinges: the first carries you from the
- * warm world into the ink one while the count climbs, the second collapses the
- * field back to the single opportunity the engine takes apart.
+ * The bridges read the same data as the sections they join, so none of them
+ * can drift out of agreement with each other.
  */
 export default function HomePage() {
   return (
@@ -46,17 +54,19 @@ export default function HomePage() {
       <Converge />
       <RecoveryLoop />
 
-      {/* product understanding */}
+      {/* act four — the record becomes the product */}
+      <Resolve />
       <Product />
       <ProductPreview />
-      <Intelligence />
 
-      {/* self-calculation */}
+      {/* act five — the feed becomes the model */}
+      <Disperse />
       <Calculator />
 
       {/* confidence */}
       <Verticals />
       <Comparison />
+      <Intelligence />
 
       {/* commercial */}
       <Pricing />

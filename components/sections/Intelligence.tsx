@@ -8,7 +8,7 @@ import { SectionMark } from '@/components/ui/Type'
  */
 export function Intelligence() {
   return (
-    <section className="grain relative bg-bone py-24 md:py-28">
+    <section className="grain relative bg-paper py-24 md:py-28">
       <div className="shell-narrow">
         <Reveal>
           <SectionMark index="06" label="Underneath" />

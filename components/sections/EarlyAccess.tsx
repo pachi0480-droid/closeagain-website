@@ -3,8 +3,11 @@
 import { useId, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Field, SelectInput, TextInput } from '@/components/ui/Field'
+import { RecoveryPulse } from '@/components/visuals/RecoveryPulse'
 import { Reveal } from '@/components/ui/Reveal'
 import { leadVolumes, leakSources, teamSizes, trades } from '@/data/form'
+import { heroWaypoints } from '@/data/scenarios'
+import { useInViewOnce } from '@/lib/hooks'
 import { site } from '@/data/site'
 import { track, trackOnce } from '@/lib/analytics'
 import {
@@ -82,21 +85,18 @@ export function EarlyAccess() {
       className="grain-ink on-ink relative bg-ink pt-24 pb-24 text-chalk md:pt-32 md:pb-28"
     >
       <div className="shell">
-        {/* --- the close ---------------------------------------------- */}
+        {/* --- the close: the hero's line, finally continuous ------- */}
         <Reveal>
-          {/* ch units resolve against this element's own font size, so the
-              measure has to live on the heading, not on a wrapper. */}
-          <h2 className="max-w-[24ch] text-h2 text-chalk">
+          <ClosingRail />
+        </Reveal>
+
+        <Reveal delay={160}>
+          <h2 className="mt-14 max-w-[24ch] text-h2 text-chalk md:mt-16">
             You already paid to create the opportunity.
           </h2>
           <p className="mt-5 max-w-[26ch] text-h2 text-recover-bright">
             Close it before it disappears.
           </p>
-        </Reveal>
-
-        {/* the line from the hero, finally completing */}
-        <Reveal delay={200} className="mt-14 md:mt-16">
-          <ClosingLine />
         </Reveal>
 
         {/* --- the form ------------------------------------------------ */}
@@ -295,19 +295,76 @@ function Undelivered({
   )
 }
 
-/** The hero's broken line, closed. */
-function ClosingLine() {
+/**
+ * The finale.
+ *
+ * The same four waypoints the hero opened on — Inbound, Missed, Engaged,
+ * Booked — with the break between Missed and Engaged bridged for the last
+ * time. The story the site opened with, closed.
+ */
+function ClosingRail() {
+  const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.6 })
+
   return (
-    <div aria-hidden="true" className="relative h-px w-full">
-      <span className="absolute inset-0 bg-rule-ink" />
-      <span
-        className="absolute inset-y-0 left-0 w-full origin-left"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, transparent, var(--color-recover) 45%, var(--color-recover-bright))',
-        }}
-      />
-      <span className="absolute top-1/2 right-0 h-[7px] w-[7px] -translate-y-1/2 rounded-full bg-recover-bright" />
+    <div ref={ref} aria-hidden="true">
+      <div className="relative h-px">
+        <div className="rail-sheen-ink absolute inset-0" />
+        <div
+          className="absolute inset-y-0 left-0 origin-left transition-transform duration-[1600ms] [transition-timing-function:var(--ease-out-quiet)]"
+          style={{
+            width: '100%',
+            transform: `scaleX(${inView ? 1 : 0})`,
+            backgroundImage:
+              'linear-gradient(to right, var(--color-dormant-ink), var(--color-engaged-ink) 45%, var(--color-recover-bright))',
+          }}
+        />
+        {heroWaypoints.map((point, i) => (
+          <span
+            key={point.label}
+            className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ left: `${point.at}%` }}
+          >
+            {i === heroWaypoints.length - 1 ? <RecoveryPulse fire={inView} /> : null}
+            <span
+              className={`relative block h-[7px] w-[7px] rounded-full ring-4 ring-ink transition-colors duration-[1200ms] ${
+                inView
+                  ? i === 3
+                    ? 'bg-recover-bright'
+                    : i === 2
+                      ? 'bg-engaged-ink'
+                      : i === 1
+                        ? 'bg-dormant-ink'
+                        : 'bg-chalk-3'
+                  : 'bg-chalk/15'
+              }`}
+              style={{ transitionDelay: `${i * 260}ms` }}
+            />
+          </span>
+        ))}
+      </div>
+
+      <div className="relative mt-5 h-4">
+        {heroWaypoints.map((point, i) => (
+          <span
+            key={point.label}
+            className="absolute font-mono text-mono-xs whitespace-nowrap text-chalk-3 uppercase transition-opacity duration-[1200ms]"
+            style={{
+              left: `${point.at}%`,
+              transform:
+                i === heroWaypoints.length - 1
+                  ? 'translateX(-100%)'
+                  : i === 0
+                    ? 'none'
+                    : 'translateX(-50%)',
+              opacity: inView ? 1 : 0.25,
+              transitionDelay: `${i * 260}ms`,
+              color: i === 3 && inView ? 'var(--color-recover-bright)' : undefined,
+            }}
+          >
+            {point.label}
+          </span>
+        ))}
+      </div>
     </div>
   )
 }

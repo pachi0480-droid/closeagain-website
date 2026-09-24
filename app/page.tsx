@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import { Calculator } from '@/components/sections/Calculator'
 import { Comparison } from '@/components/sections/Comparison'
-import { CoreStatement } from '@/components/sections/CoreStatement'
 import { EarlyAccess } from '@/components/sections/EarlyAccess'
 import { Faq } from '@/components/sections/Faq'
 import { Hero } from '@/components/sections/Hero'
 import { Intelligence } from '@/components/sections/Intelligence'
+import { MegaStatement } from '@/components/sections/MegaStatement'
 import { Pricing } from '@/components/sections/Pricing'
 import { Product } from '@/components/sections/Product'
 import { ProductPreview } from '@/components/sections/ProductPreview'
@@ -30,7 +30,7 @@ export default function HomePage() {
       {/* tension */}
       <RevenueLeak />
       {/* realization → clarity */}
-      <CoreStatement />
+      <MegaStatement />
       <RecoveryLoop />
       {/* product understanding */}
       <Product />

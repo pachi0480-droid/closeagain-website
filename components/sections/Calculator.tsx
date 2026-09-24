@@ -92,38 +92,44 @@ export function Calculator() {
                 </p>
               </div>
 
-              {/* the same numbers, felt */}
-              <div className="mt-10 border-t border-rule-ink pt-8">
-                <RecoveryGrid
-                  leakageRate={inputs.leakageRate}
-                  recoveryRate={inputs.recoveryRate}
-                />
-                <ul className="mt-6 flex flex-wrap gap-x-7 gap-y-2.5">
-                  <Key colour="chalk" label="Books anyway" />
-                  <Key colour="dormant" label="Still leaking" />
-                  <Key colour="recover" label="Recovered" />
-                </ul>
-                <p className="mt-6 font-mono text-mono-xs text-chalk-3 uppercase">
-                  Illustrative estimate based on your inputs. Actual results vary.
-                </p>
-              </div>
-
               <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <ButtonLink href={cta.target} tone="ink" size="lg" withArrow>
                   {cta.primary}
                 </ButtonLink>
-                <ButtonLink
-                  href="/calculator"
-                  tone="ink"
-                  variant="secondary"
-                  size="lg"
-                >
+                <ButtonLink href="/calculator" tone="ink" variant="secondary" size="lg">
                   Open the full calculator
                 </ButtonLink>
               </div>
             </Reveal>
           </div>
         </div>
+
+        {/* --- the model, at the width of the page ------------------- */}
+        <Reveal delay={80} className="mt-16 border-t border-rule-ink pt-10 md:mt-20">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
+            <h3 className="font-mono text-mono-xs text-chalk-3 uppercase">
+              One month of opportunities
+            </h3>
+            <ul className="flex flex-wrap gap-x-7 gap-y-2.5">
+              <Key colour="chalk" label="Books anyway" />
+              <Key colour="dormant" label="Still leaking" />
+              <Key colour="recover" label="Recovered" />
+            </ul>
+          </div>
+
+          <div className="mt-7">
+            <RecoveryGrid
+              leakageRate={inputs.leakageRate}
+              recoveryRate={inputs.recoveryRate}
+              columns={44}
+              rows={9}
+            />
+          </div>
+
+          <p className="mt-7 font-mono text-mono-xs text-chalk-3 uppercase">
+            Illustrative estimate based on your inputs. Actual results vary.
+          </p>
+        </Reveal>
       </div>
     </section>
   )

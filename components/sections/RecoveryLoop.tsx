@@ -1,66 +1,65 @@
 'use client'
 
 import { useEffect } from 'react'
-import {
-  LoopReadout,
-  LoopStatus,
-  LoopTrack,
-} from '@/components/recovery/LoopStage'
+import { RecoveryEngine } from '@/components/visuals/RecoveryEngine'
 import { Illustrative } from '@/components/ui/Disclaimer'
 import { Reveal } from '@/components/ui/Reveal'
+import { StatusTag } from '@/components/ui/StatusDot'
 import { SectionMark } from '@/components/ui/Type'
-import { loopStages } from '@/data/loop'
+import { loopStages, recordThrough } from '@/data/loop'
 import { trackOnce } from '@/lib/analytics'
 import { useScrollProgress } from '@/lib/hooks'
 
 const COUNT = loopStages.length
 
 /**
- * The site's signature interaction: one opportunity travelling the whole
- * recovery path while the explanation stays put.
+ * From missed to booked.
  *
- * Desktop gets the sticky sequence. Mobile gets the same story as five read
- * blocks — the narrative survives without the scroll mechanic.
+ * We followed one opportunity in the hero and the whole month in the Leak Map.
+ * This is the machinery: the same opportunity moving through five layers, with
+ * the record accumulating as each one attaches what it knows.
  */
 export function RecoveryLoop() {
   return (
     <section
       id="recovery-loop"
       data-tone="ink"
-      className="grain-ink on-ink relative bg-ink text-chalk"
+      className="grain-ink lit-ink on-ink relative bg-ink text-chalk"
     >
-      <div className="shell pt-10 pb-16 md:pt-14 md:pb-20">
+      <div className="shell pt-24 pb-14 md:pt-32 md:pb-16">
         <Reveal>
-          <SectionMark index="03" label="How it works" tone="ink" />
-          <h2 className="mt-7 max-w-[16ch] text-h2 text-chalk">
-            From missed to booked.
-          </h2>
-          <p className="mt-6 max-w-[54ch] text-lede text-chalk-2">
-            One opportunity, start to finish. This is the path CloseAgain is
-            built to run — and the same path applies whether the moment is a
-            missed call, a quiet estimate or a lead from three months ago.
-          </p>
+          <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
+            <div className="lg:col-span-7">
+              <SectionMark index="02" label="How it works" tone="ink" />
+              <h2 className="mt-8 max-w-[16ch] text-h2 text-chalk">
+                From missed to booked.
+              </h2>
+            </div>
+            <div className="mt-6 lg:col-span-4 lg:col-start-9 lg:mt-auto lg:pb-2">
+              <p className="max-w-[40ch] text-lede text-chalk-2">
+                One of the eleven, followed all the way through. The same path
+                applies whether the moment was a missed call, a quiet estimate
+                or a lead from three months ago.
+              </p>
+            </div>
+          </div>
         </Reveal>
       </div>
 
-      <StickySequence />
-      <StackedSequence />
+      <StickyEngine />
+      <StackedEngine />
     </section>
   )
 }
 
 /* -------------------------------------------------------------------------- */
-/* desktop                                                                     */
-/* -------------------------------------------------------------------------- */
 
-function StickySequence() {
+function StickyEngine() {
   const { ref, progress } = useScrollProgress<HTMLDivElement>()
   const active = Math.min(COUNT - 1, Math.max(0, Math.floor(progress * COUNT * 1.001)))
   const stage = loopStages[active]
 
   useEffect(() => {
-    // progress stays at 0 until the sequence is on screen, so this does not
-    // report a stage the reader has not reached.
     if (progress > 0) trackOnce('recovery_loop_stage_viewed', { stage: stage.id })
   }, [stage.id, progress])
 
@@ -69,30 +68,26 @@ function StickySequence() {
       ref={ref}
       id="loop-scroller"
       className="relative hidden lg:block"
-      style={{ height: `calc(100vh + ${COUNT * 68}vh)` }}
+      style={{ height: `calc(100vh + ${COUNT * 72}vh)` }}
     >
-      <div className="sticky top-0 flex h-screen items-center">
+      <div className="sticky top-0 flex h-screen items-center pt-14">
         <div className="shell w-full">
           <div className="grid grid-cols-12 items-center gap-x-12">
-            {/* --- the explanation, largely still ------------------------- */}
-            <div className="col-span-5">
-              <ol className="relative">
+            {/* --- the explanation, largely still ------------------- */}
+            <div className="col-span-4">
+              <ol>
                 {loopStages.map((s, i) => {
                   const isActive = i === active
                   return (
-                    <li key={s.id} className="relative">
+                    <li key={s.id}>
                       <button
                         type="button"
                         aria-current={isActive ? 'step' : undefined}
                         onClick={() => {
-                          // Jump the page to the scroll offset that makes this
-                          // step active, rather than fighting the scroll.
                           const host = document.getElementById('loop-scroller')
                           if (!host) return
                           const travel = host.offsetHeight - window.innerHeight
-                          window.scrollTo({
-                            top: host.offsetTop + (i / COUNT) * travel + 4,
-                          })
+                          window.scrollTo({ top: host.offsetTop + (i / COUNT) * travel + 4 })
                         }}
                         className="group flex w-full items-baseline gap-5 py-2.5 text-left"
                       >
@@ -107,14 +102,13 @@ function StickySequence() {
                           className={`text-h3 transition-colors duration-500 ${
                             isActive
                               ? 'text-chalk'
-                              : 'text-chalk-3/60 group-hover:text-chalk-2'
+                              : 'text-chalk-3/55 group-hover:text-chalk-2'
                           }`}
                         >
                           {s.title}
                         </span>
                       </button>
 
-                      {/* the active step's explanation */}
                       <div
                         className="grid transition-[grid-template-rows,opacity] duration-500 [transition-timing-function:var(--ease-out-quiet)]"
                         style={{
@@ -123,7 +117,7 @@ function StickySequence() {
                         }}
                       >
                         <div className="overflow-hidden">
-                          <p className="max-w-[46ch] pb-4 pl-10 text-[0.9375rem] leading-relaxed text-chalk-2">
+                          <p className="max-w-[42ch] pb-4 pl-10 text-[0.9375rem] leading-relaxed text-chalk-2">
                             {s.summary}
                           </p>
                         </div>
@@ -134,25 +128,9 @@ function StickySequence() {
               </ol>
             </div>
 
-            {/* --- the opportunity, moving -------------------------------- */}
-            <div className="col-span-7 col-start-6">
-              <div className="overflow-hidden rounded-[14px] border border-rule-ink bg-ink-raise/60 px-8 pt-16 pb-8">
-                <LoopTrack stages={loopStages} active={active} className="px-2" />
-
-                <div className="mt-12 border-t border-rule-ink pt-2">
-                  <LoopReadout stages={loopStages} active={active} />
-                </div>
-
-                <div className="mt-8 flex items-center justify-between gap-4 border-t border-rule-ink pt-6">
-                  <LoopStatus stage={stage} />
-                  <span className="tnum font-mono text-mono-xs text-chalk-3 uppercase">
-                    Stage {stage.index} / {String(COUNT).padStart(2, '0')}
-                  </span>
-                </div>
-              </div>
-              <Illustrative tone="ink" className="mt-3.5">
-                Illustrative recovery flow
-              </Illustrative>
+            {/* --- the machinery ------------------------------------ */}
+            <div className="col-span-8 col-start-5">
+              <RecoveryEngine active={active} />
             </div>
           </div>
         </div>
@@ -162,57 +140,73 @@ function StickySequence() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* mobile and tablet                                                           */
-/* -------------------------------------------------------------------------- */
 
-function StackedSequence() {
+function StackedEngine() {
   return (
     <div className="shell pb-20 lg:hidden">
       <ol className="border-t border-rule-ink">
-        {loopStages.map((stage) => (
-          <li key={stage.id} className="border-b border-rule-ink py-9">
-            <Reveal>
-              <div className="flex items-baseline gap-4">
-                <span
-                  className={`tnum font-mono text-mono-xs ${
-                    stage.state === 'recovered'
-                      ? 'text-recover-bright'
-                      : stage.state === 'engaged'
-                        ? 'text-engaged-ink'
-                        : 'text-dormant-ink'
-                  }`}
-                >
-                  {stage.index}
-                </span>
-                <h3 className="text-h3 text-chalk">{stage.title}</h3>
-              </div>
-
-              <p className="mt-4 text-[0.9375rem] leading-relaxed text-chalk-2">
-                {stage.summary}
-              </p>
-
-              <dl className="mt-6 rounded-[12px] border border-rule-ink bg-ink-raise/50 px-4 py-2">
-                {stage.rows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex items-baseline justify-between gap-5 border-b border-rule-ink-soft py-2.5 last:border-b-0"
+        {loopStages.map((stage, i) => {
+          const added = recordThrough(i).length
+          return (
+            <li key={stage.id} className="border-b border-rule-ink py-9">
+              <Reveal>
+                <div className="flex items-baseline gap-4">
+                  <span
+                    className={`tnum font-mono text-mono-xs ${
+                      stage.state === 'recovered'
+                        ? 'text-recover-bright'
+                        : stage.state === 'engaged'
+                          ? 'text-engaged-ink'
+                          : 'text-dormant-ink'
+                    }`}
                   >
-                    <dt className="font-mono text-mono-xs text-chalk-3 uppercase">
-                      {row.label}
-                    </dt>
-                    <dd className="tnum text-right text-[0.875rem] text-chalk">
-                      {row.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+                    {stage.index}
+                  </span>
+                  <h3 className="text-h3 text-chalk">{stage.title}</h3>
+                </div>
 
-              <div className="mt-4">
-                <LoopStatus stage={stage} />
-              </div>
-            </Reveal>
-          </li>
-        ))}
+                <p className="mt-4 text-[0.9375rem] leading-relaxed text-chalk-2">
+                  {stage.summary}
+                </p>
+
+                {/* what this layer attaches to the record */}
+                <dl className="mt-6 rounded-[12px] border border-rule-ink bg-ink-raise/50 px-4 py-2">
+                  {stage.adds.map((row) => (
+                    <div
+                      key={row.label}
+                      className="flex items-baseline justify-between gap-5 border-b border-rule-ink-soft py-2.5 last:border-b-0"
+                    >
+                      <dt className="font-mono text-mono-xs text-chalk-3 uppercase">
+                        {row.label}
+                      </dt>
+                      <dd className="tnum text-right text-[0.875rem] text-chalk">
+                        {row.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="mt-4 flex items-center justify-between gap-4">
+                  <StatusTag
+                    state={stage.state}
+                    label={
+                      stage.state === 'recovered'
+                        ? 'Recovered'
+                        : stage.state === 'engaged'
+                          ? 'In recovery'
+                          : 'Slipping'
+                    }
+                    tone="ink"
+                    pulse={stage.state === 'engaged'}
+                  />
+                  <span className="tnum font-mono text-mono-xs text-chalk-3 uppercase">
+                    {added} facts on the record
+                  </span>
+                </div>
+              </Reveal>
+            </li>
+          )
+        })}
       </ol>
       <Illustrative tone="ink" className="mt-5">
         Illustrative recovery flow

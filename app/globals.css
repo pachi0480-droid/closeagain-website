@@ -178,6 +178,22 @@
   }
 }
 
+/** Wider than the shell: used where an interface needs the extra room. */
+@utility shell-wide {
+  width: 100%;
+  max-width: 88rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+
+  @media (width >= 80rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
 @utility shell-narrow {
   width: 100%;
   max-width: 58rem;
@@ -521,9 +537,16 @@
    scene break out of it.
    -------------------------------------------------------------------------- */
 
+/**
+ * Break out of a centred container to the full width of the page.
+ *
+ * Deliberately not `100vw`: that measures the viewport including the scrollbar
+ * gutter and overflows the content box by its width on every desktop browser
+ * that shows one. Anything already spanning the page needs no bleed at all.
+ */
 @utility bleed {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
+  width: auto;
+  margin-inline: var(--bleed-out);
 }
 
 /** Contained on the left, running off the right edge of the viewport. */

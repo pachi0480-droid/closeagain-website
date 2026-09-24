@@ -116,7 +116,7 @@ export function Hero() {
 
         {/* --- the journey, full width -------------------------------- */}
         <div className="mt-14 md:mt-16">
-          <div className="bleed px-5 md:px-10 lg:px-14">
+          <div className="w-full px-5 md:px-10 lg:px-14">
             <RecoveryRail waypoint={waypoint} />
           </div>
         </div>

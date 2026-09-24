@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { CapabilityDetail } from '@/components/product/CapabilityDetail'
 import { LifecycleMap } from '@/components/product/LifecycleMap'
 import { PageIntro } from '@/components/layout/PageIntro'
-import { RecoveryFeed } from '@/components/recovery/RecoveryFeed'
+import { ProductStage } from '@/components/visuals/ProductStage'
 import { EarlyAccess } from '@/components/sections/EarlyAccess'
 import { Integrations } from '@/components/sections/Integrations'
 import { ButtonLink } from '@/components/ui/Button'
@@ -100,10 +100,11 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <Reveal delay={120} className="mt-14 md:mt-16">
-            <RecoveryFeed />
-          </Reveal>
         </div>
+
+        <Reveal delay={120} className="shell-wide mt-14 md:mt-16">
+          <ProductStage />
+        </Reveal>
       </section>
 
       <Integrations />

@@ -29,6 +29,8 @@ export type RecordField = {
 
 export type Scenario = {
   id: string
+  /** Illustrative name on the opportunity record. Not a real customer. */
+  customer: string
   /** Short label for the tab control. */
   tab: string
   /** What began to slip. */
@@ -49,6 +51,7 @@ export type Scenario = {
 export const scenarios: Scenario[] = [
   {
     id: 'missed-call',
+    customer: 'Jordan M.',
     tab: 'Missed call',
     trigger: 'Inbound call missed',
     signal: 'A call comes in after hours and rings out with no voicemail.',
@@ -120,6 +123,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'estimate',
+    customer: 'Priya R.',
     tab: 'Cold estimate',
     trigger: 'Estimate going cold',
     signal: 'A quote has been out for two days with no reply from the customer.',
@@ -191,6 +195,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'no-show',
+    customer: 'Marcus T.',
     tab: 'No-show',
     trigger: 'Appointment not kept',
     signal: 'The technician is at the door and nobody is home.',
@@ -262,6 +267,7 @@ export const scenarios: Scenario[] = [
   },
   {
     id: 'old-lead',
+    customer: 'Dana W.',
     tab: 'Old lead',
     trigger: 'Dormant opportunity',
     signal: 'A lead asked to be contacted later. Later never came.',
@@ -408,3 +414,29 @@ export const heroWaypoints = [
 
 /** Which waypoint the marker sits on at each step of the beat sheet. */
 export const heroWaypointForStep = [0, 0, 1, 2, 2, 2, 3, 3]
+
+/* -------------------------------------------------------------------------- */
+/* Product stage                                                              */
+/* -------------------------------------------------------------------------- */
+
+/** The queue filters down the left rail of the product stage. */
+export const queueFilters = [
+  { id: 'active', label: 'Active', count: 12, state: 'engaged' as OpportunityState },
+  { id: 'at-risk', label: 'At risk', count: 5, state: 'lost' as OpportunityState },
+  { id: 'follow-up', label: 'Follow-up', count: 9, state: 'engaged' as OpportunityState },
+  { id: 'recovered', label: 'Recovered', count: 7, state: 'recovered' as OpportunityState },
+  { id: 'archived', label: 'Archived', count: 41, state: 'neutral' as OpportunityState },
+]
+
+/**
+ * The rest of the feed behind the selected opportunity. Illustrative rows that
+ * exist so the interface reads as an operational queue rather than a single
+ * card — none of these are real customers or real jobs.
+ */
+export const feedBackdrop = [
+  { customer: 'Alicia N.', service: 'Furnace no heat', time: '5:12 PM', state: 'engaged' as OpportunityState, status: 'Awaiting reply' },
+  { customer: 'Ray C.', service: 'Drain backup', time: '4:48 PM', state: 'recovered' as OpportunityState, status: 'Booked Thu 8–10 AM' },
+  { customer: 'Tomas B.', service: 'Panel upgrade quote', time: '2:31 PM', state: 'lost' as OpportunityState, status: 'Quiet 3 days' },
+  { customer: 'Hannah K.', service: 'AC maintenance', time: '1:04 PM', state: 'engaged' as OpportunityState, status: 'Times offered' },
+  { customer: 'Wes D.', service: 'Water heater', time: '11:22 AM', state: 'recovered' as OpportunityState, status: 'Approved' },
+]

@@ -19,10 +19,10 @@ export function PageIntro({
   aside?: ReactNode
 }) {
   return (
-    <section className="grain relative isolate overflow-hidden bg-bone pt-32 pb-16 md:pt-36 md:pb-20 lg:pt-40">
+    <section className="grain-ink relative isolate overflow-hidden bg-ink-raise pt-32 pb-16 md:pt-36 md:pb-20 lg:pt-40">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div
-          className="field-grid absolute inset-0 opacity-60"
+          className="field-grid-ink absolute inset-0 opacity-60"
           style={{
             maskImage: 'radial-gradient(110% 80% at 30% 0%, #000 0%, transparent 70%)',
             WebkitMaskImage:
@@ -45,12 +45,12 @@ export function PageIntro({
               <Eyebrow>{eyebrow}</Eyebrow>
             </Reveal>
             <Reveal delay={90} y={18}>
-              <h1 className="mt-5 max-w-[18ch] text-display text-graphite">{title}</h1>
+              <h1 className="mt-5 max-w-[18ch] text-display text-chalk">{title}</h1>
             </Reveal>
           </div>
           <div className="mt-8 lg:col-span-4 lg:col-start-9 lg:mt-auto lg:pb-2">
             <Reveal delay={190} y={14}>
-              <p className="max-w-[44ch] text-lede text-graphite-2">{lede}</p>
+              <p className="max-w-[44ch] text-lede text-chalk-2">{lede}</p>
               {aside ? <div className="mt-6">{aside}</div> : null}
             </Reveal>
           </div>

@@ -14,7 +14,7 @@ export function Illustrative({
   return (
     <p
       className={`font-mono text-mono-xs uppercase ${
-        tone === 'ink' ? 'text-chalk-3/80' : 'text-graphite-3'
+        tone === 'ink' ? 'text-chalk-3' : 'text-graphite-3'
       } ${className}`}
     >
       {children}

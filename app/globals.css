@@ -7,46 +7,51 @@
    ========================================================================== */
 
 @theme {
-  /* --- surfaces: warm, paper-like, never pure white ------------------- */
-  --color-paper: #fbf9f5;
-  --color-bone: #f2eee7;
-  --color-limestone: #e7e1d7;
-  --color-limestone-deep: #dad3c6;
+  /* --- the dark is the default now ------------------------------------
+     Ink is the site's ground, not its accent. Cream survives as a single
+     deliberate break. Surfaces separate by elevation and light rather than
+     by hairlines, so each step up is a real tonal step, not a 1px border. */
+  --color-ink: #090b0a;
+  --color-ink-raise: #111614;
+  --color-ink-raise-2: #19201d;
+  --color-ink-raise-3: #232b27;
+  --color-ink-2: #0e1211;
 
-  /* --- surfaces: ink environments, never pure black ------------------- */
-  --color-ink: #0d0f0e;
-  --color-ink-2: #151917;
-  --color-ink-raise: #161a18;
-  --color-ink-raise-2: #1f2421;
-  --color-ink-raise-3: #2a302c;
+  /* --- the cream break -------------------------------------------------- */
+  --color-paper: #f7f4ee;
+  --color-bone: #efeae1;
+  --color-limestone: #e2dbcf;
+  --color-limestone-deep: #d3cabb;
 
-  /* --- type on light -------------------------------------------------- */
-  --color-graphite: #121513;
-  --color-graphite-2: #4b4f4a;
-  --color-graphite-3: #797c74;
+  /* --- type on light (the one break section) ---------------------------- */
+  --color-graphite: #0f1211;
+  --color-graphite-2: #44483f;
+  --color-graphite-3: #74786e;
 
-  /* --- type on ink ---------------------------------------------------- */
-  --color-chalk: #edeae4;
-  --color-chalk-2: #a3a59e;
-  --color-chalk-3: #74776f;
+  /* --- type on ink: more contrast than before --------------------------- */
+  --color-chalk: #f4f2ed;
+  --color-chalk-2: #aeb2aa;
+  --color-chalk-3: #7b7f77;
 
-  /* --- the recovery colour -------------------------------------------- */
-  --color-recover-deep: #1b3e2d;
-  --color-recover: #2f6b4e;
-  --color-recover-mid: #4e8e6c;
-  --color-recover-bright: #7fb99b;
+  /* --- recovery green, with real weight ---------------------------------
+     Bright enough to function as a signal on near-black without tipping
+     into neon. This is the colour that means revenue came back. */
+  --color-recover-deep: #0d2f21;
+  --color-recover: #2f9e6c;
+  --color-recover-mid: #46bd85;
+  --color-recover-bright: #6adba0;
 
-  /* --- semantic opportunity states ------------------------------------ */
-  --color-dormant: #8a8880;
-  --color-dormant-ink: #6c6e69;
-  --color-engaged: #96692a;
-  --color-engaged-ink: #c9964f;
+  /* --- semantic opportunity states -------------------------------------- */
+  --color-dormant: #6f736c;
+  --color-dormant-ink: #5c605a;
+  --color-engaged: #b07f33;
+  --color-engaged-ink: #e0a458;
 
-  /* --- hairlines ------------------------------------------------------ */
-  --color-rule: #1215131f;
-  --color-rule-soft: #12151312;
-  --color-rule-ink: #edeae424;
-  --color-rule-ink-soft: #edeae414;
+  /* --- hairlines: quieter, because elevation does the separating -------- */
+  --color-rule: #0f121114;
+  --color-rule-soft: #0f12110d;
+  --color-rule-ink: #f4f2ed1a;
+  --color-rule-ink-soft: #f4f2ed0d;
 
   /* --- type families -------------------------------------------------- */
   --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
@@ -61,13 +66,13 @@
   --text-mono-sm--line-height: 1.35;
   --text-mono-sm--letter-spacing: 0.04em;
 
-  --text-display: clamp(2.25rem, 5.9vw, 4.5rem);
+  --text-display: clamp(2.3rem, 5.9vw, 4.5rem);
   --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.028em;
+  --text-display--letter-spacing: -0.038em;
 
-  --text-h2: clamp(1.9rem, 4.1vw, 3.25rem);
+  --text-h2: clamp(2rem, 4.3vw, 3.5rem);
   --text-h2--line-height: 1.04;
-  --text-h2--letter-spacing: -0.024em;
+  --text-h2--letter-spacing: -0.034em;
 
   --text-h3: clamp(1.3rem, 1.9vw, 1.6rem);
   --text-h3--line-height: 1.15;
@@ -88,7 +93,7 @@
 
 @layer base {
   * {
-    border-color: var(--color-rule);
+    border-color: var(--color-rule-ink);
   }
 
   html {
@@ -99,8 +104,8 @@
   }
 
   body {
-    background-color: var(--color-paper);
-    color: var(--color-graphite);
+    background-color: var(--color-ink);
+    color: var(--color-chalk);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
     -webkit-font-smoothing: antialiased;
@@ -115,6 +120,7 @@
   h3,
   h4 {
     text-wrap: balance;
+    font-weight: 600;
   }
 
   p {
@@ -127,12 +133,12 @@
   }
 
   ::selection {
-    background-color: var(--color-recover);
-    color: var(--color-paper);
+    background-color: var(--color-recover-bright);
+    color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-recover);
+    outline: 2px solid var(--color-recover-bright);
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -520,16 +526,16 @@
   /* --- display scale: three distinct typographic modes ----------------- */
   --text-mega: clamp(2.75rem, 10.5vw, 9.5rem);
   --text-mega--line-height: 0.88;
-  --text-mega--letter-spacing: -0.045em;
+  --text-mega--letter-spacing: -0.055em;
 
   --text-display-xl: clamp(2.5rem, 7vw, 5.75rem);
   --text-display-xl--line-height: 0.95;
   --text-display-xl--letter-spacing: -0.035em;
 
   /* --- depth: shadows read as light falling on a surface, never as glow */
-  --shadow-stage: 0 60px 120px -60px rgb(13 15 14 / 0.55), 0 24px 48px -32px rgb(13 15 14 / 0.3);
-  --shadow-lift: 0 24px 56px -34px rgb(13 15 14 / 0.4);
-  --shadow-inset-top: inset 0 1px 0 0 rgb(237 234 228 / 0.08);
+  --shadow-stage: 0 50px 100px -40px rgb(0 0 0 / 0.85), 0 18px 40px -22px rgb(0 0 0 / 0.6);
+  --shadow-lift: 0 22px 48px -26px rgb(0 0 0 / 0.7);
+  --shadow-inset-top: inset 0 1px 0 0 rgb(244 242 237 / 0.07);
 }
 
 /* --------------------------------------------------------------------------

@@ -36,7 +36,7 @@ export function LeakMapMobile({ on }: { on: boolean }) {
           className="absolute top-2 bottom-8 left-[5px] w-px"
           style={{
             backgroundImage:
-              'repeating-linear-gradient(to bottom, rgba(237,234,228,0.2) 0 3px, transparent 3px 9px)',
+              'repeating-linear-gradient(to bottom, rgba(244,242,237,0.3) 0 3px, transparent 3px 9px)',
           }}
         />
 

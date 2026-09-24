@@ -65,7 +65,7 @@ type CommonProps = {
 
 export function Button({
   variant = 'primary',
-  tone = 'light',
+  tone = 'ink',
   size = 'md',
   withArrow = false,
   className = '',
@@ -85,7 +85,7 @@ export function Button({
 
 export function ButtonLink({
   variant = 'primary',
-  tone = 'light',
+  tone = 'ink',
   size = 'md',
   withArrow = false,
   className = '',

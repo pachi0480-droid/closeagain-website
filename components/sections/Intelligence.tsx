@@ -8,16 +8,16 @@ import { SectionMark } from '@/components/ui/Type'
  */
 export function Intelligence() {
   return (
-    <section className="grain relative bg-paper py-24 md:py-28">
+    <section className="grain-ink relative bg-ink py-24 md:py-28">
       <div className="shell-narrow">
         <Reveal>
           <SectionMark index="06" label="Underneath" />
-          <h2 className="mt-7 max-w-[24ch] text-h3 text-graphite">
+          <h2 className="mt-7 max-w-[24ch] text-h3 text-chalk">
             Intelligence where it matters. Revenue where you feel it.
           </h2>
         </Reveal>
 
-        <div className="mt-8 max-w-[62ch] space-y-5 text-[1.0625rem] leading-relaxed text-graphite-2">
+        <div className="mt-8 max-w-[62ch] space-y-5 text-[1.0625rem] leading-relaxed text-chalk-2">
           <Reveal delay={120}>
             <p>
               CloseAgain reads what a customer actually wrote, works out what
@@ -34,7 +34,7 @@ export function Intelligence() {
             </p>
           </Reveal>
           <Reveal delay={280}>
-            <p className="text-graphite">
+            <p className="text-chalk">
               You should be able to judge this entirely on how much work it puts
               back on the schedule.
             </p>

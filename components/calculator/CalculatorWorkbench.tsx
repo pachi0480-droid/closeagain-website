@@ -114,16 +114,16 @@ export function CalculatorWorkbench() {
       </section>
 
       {/* --- the range, because one number is a guess ----------------- */}
-      <section className="grain relative bg-paper py-24 md:py-28">
+      <section className="grain-ink relative bg-ink py-24 md:py-28">
         <div className="shell">
           <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
             <div className="lg:col-span-4">
               <Reveal>
                 <SectionMark index="01" label="Sensitivity" />
-                <h2 className="mt-7 max-w-[16ch] text-h2 text-graphite">
+                <h2 className="mt-7 max-w-[16ch] text-h2 text-chalk">
                   Nobody knows their recovery rate in advance.
                 </h2>
-                <p className="mt-6 max-w-[38ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+                <p className="mt-6 max-w-[38ch] text-[0.9375rem] leading-relaxed text-chalk-2">
                   So here is the same arithmetic across the range, with
                   everything else you entered held still. The useful question is
                   not which row is right — it is whether the low row is still
@@ -141,16 +141,16 @@ export function CalculatorWorkbench() {
       </section>
 
       {/* --- cost against the estimate -------------------------------- */}
-      <section className="grain relative bg-bone py-24 md:py-28">
+      <section className="grain-ink relative bg-ink-raise py-24 md:py-28">
         <div className="shell">
           <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
             <div className="lg:col-span-4">
               <Reveal>
                 <SectionMark index="02" label="Against the plans" />
-                <h2 className="mt-7 max-w-[18ch] text-h2 text-graphite">
+                <h2 className="mt-7 max-w-[18ch] text-h2 text-chalk">
                   What the plans cost against that number.
                 </h2>
-                <p className="mt-6 max-w-[38ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+                <p className="mt-6 max-w-[38ch] text-[0.9375rem] leading-relaxed text-chalk-2">
                   This is division, not a promise. It only tells you how the
                   monthly price compares to the estimate you just built, and how
                   many recovered jobs would cover it at your average ticket.
@@ -175,11 +175,11 @@ export function CalculatorWorkbench() {
       </section>
 
       {/* --- what the model ignores ----------------------------------- */}
-      <section className="grain relative bg-paper pb-24 md:pb-28">
+      <section className="grain-ink relative bg-ink pb-24 md:pb-28">
         <div className="shell">
           <Reveal>
-            <div className="border-t border-graphite/20 pt-10">
-              <h2 className="font-mono text-mono-xs text-graphite-3 uppercase">
+            <div className="border-t border-rule-ink pt-10">
+              <h2 className="font-mono text-mono-xs text-chalk-3 uppercase">
                 What this does not account for
               </h2>
               <ul className="mt-6 grid gap-x-12 gap-y-4 sm:grid-cols-2">
@@ -192,15 +192,15 @@ export function CalculatorWorkbench() {
                   <li key={item} className="flex gap-3">
                     <span
                       aria-hidden="true"
-                      className="mt-2.5 h-px w-4 shrink-0 bg-dormant"
+                      className="mt-2.5 h-px w-4 shrink-0 bg-dormant-ink"
                     />
-                    <span className="max-w-[44ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+                    <span className="max-w-[44ch] text-[0.9375rem] leading-relaxed text-chalk-2">
                       {item}
                     </span>
                   </li>
                 ))}
               </ul>
-              <p className="mt-8 max-w-[62ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+              <p className="mt-8 max-w-[62ch] text-[0.9375rem] leading-relaxed text-chalk-2">
                 A calculator that hid these would give you a bigger number and a
                 worse decision. Treat the output as the size of the question,
                 not the size of the cheque.

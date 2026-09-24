@@ -81,7 +81,6 @@ export function EarlyAccess() {
   return (
     <section
       id="early-access"
-      data-tone="ink"
       className="grain-ink on-ink relative bg-ink pt-24 pb-24 text-chalk md:pt-32 md:pb-28"
     >
       <div className="shell">

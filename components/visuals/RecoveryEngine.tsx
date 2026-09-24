@@ -60,7 +60,7 @@ export function RecoveryEngine({ active }: { active: number }) {
                   <div className="flex items-baseline justify-between gap-3">
                     <span
                       className={`tnum font-mono text-mono-xs transition-colors duration-500 ${
-                        d === 0 ? 'text-recover-bright' : 'text-chalk-3/70'
+                        d === 0 ? 'text-recover-bright' : 'text-chalk-3'
                       }`}
                     >
                       {layer.index}
@@ -152,7 +152,7 @@ export function RecoveryEngine({ active }: { active: number }) {
                 }}
               >
                 <dt className="flex items-baseline gap-3">
-                  <span className="tnum font-mono text-[0.625rem] text-chalk-3/60">
+                  <span className="tnum font-mono text-[0.625rem] text-chalk-3">
                     {row.stage}
                   </span>
                   <span className="font-mono text-mono-xs text-chalk-3 uppercase">

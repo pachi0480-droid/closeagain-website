@@ -70,8 +70,8 @@ export function ProductStage() {
                   'shrink-0 rounded-[7px] px-3.5 py-2.5 text-[0.875rem] whitespace-nowrap',
                   'transition-colors duration-300 [transition-timing-function:var(--ease-out-quiet)]',
                   selected
-                    ? 'bg-graphite text-paper'
-                    : 'text-graphite-2 hover:bg-graphite/[0.05] hover:text-graphite',
+                    ? 'bg-chalk text-ink'
+                    : 'text-chalk-2 hover:bg-chalk/[0.06] hover:text-chalk',
                 ].join(' ')}
               >
                 {s.tab}
@@ -207,7 +207,7 @@ export function ProductStage() {
                         className="absolute top-[0.95rem] -bottom-[0.65rem] left-[1px] hidden w-px sm:block"
                         style={{
                           backgroundImage:
-                            'repeating-linear-gradient(to bottom, rgba(237,234,228,0.2) 0 3px, transparent 3px 8px)',
+                            'repeating-linear-gradient(to bottom, rgba(244,242,237,0.3) 0 3px, transparent 3px 8px)',
                         }}
                       />
                     ) : null}

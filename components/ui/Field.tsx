@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 
 const control =
   'w-full rounded-[7px] border bg-chalk/[0.03] px-3.5 py-3 text-[0.9375rem] text-chalk ' +
-  'transition-[border-color,background-color] duration-300 placeholder:text-chalk-3/70 ' +
+  'transition-[border-color,background-color] duration-300 placeholder:text-chalk-3 ' +
   'hover:bg-chalk/[0.06] focus:bg-chalk/[0.06] focus:outline-none'
 
 export function Field({
@@ -27,7 +27,7 @@ export function Field({
         className="flex items-baseline justify-between gap-3 font-mono text-mono-xs text-chalk-2 uppercase"
       >
         {label}
-        {optional ? <span className="text-chalk-3/70">Optional</span> : null}
+        {optional ? <span className="text-chalk-3">Optional</span> : null}
       </label>
       <div className="mt-2">{children}</div>
       {error ? (

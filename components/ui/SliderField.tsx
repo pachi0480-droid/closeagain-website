@@ -112,7 +112,7 @@ export function SliderField({
         <p className="max-w-[34ch] text-[0.8125rem] leading-snug text-chalk-3">
           {hint}
         </p>
-        <p className="tnum shrink-0 font-mono text-mono-xs text-chalk-3/60">
+        <p className="tnum shrink-0 font-mono text-mono-xs text-chalk-3">
           {prefix ?? ''}
           {format(min)}
           {suffix ?? ''} – {prefix ?? ''}

@@ -61,9 +61,9 @@ export function Multiply() {
           header's tone observer sees: it begins where the background is dark
           enough that light chrome would be unreadable. */}
       <div
-        data-tone="ink"
+        data-tone="light"
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 top-[38%]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[42%]"
       />
       <div
         className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden"

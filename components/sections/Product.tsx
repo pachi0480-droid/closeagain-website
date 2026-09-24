@@ -9,20 +9,20 @@ import { SectionMark } from '@/components/ui/Type'
  */
 export function Product() {
   return (
-    <section id="product" className="grain lit-warm relative bg-bone py-24 md:py-32">
+    <section id="product" className="grain-ink lit-ink relative bg-ink-raise py-24 md:py-32">
       <div className="shell">
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
           <div className="lg:col-span-6">
             <Reveal>
               <SectionMark index="03" label="Product" />
-              <h2 className="mt-7 max-w-[18ch] text-h2 text-graphite">
+              <h2 className="mt-7 max-w-[18ch] text-h2 text-chalk">
                 One recovery engine. Every place revenue slips.
               </h2>
             </Reveal>
           </div>
           <div className="mt-8 lg:col-span-5 lg:col-start-8 lg:mt-auto lg:pb-2">
             <Reveal delay={140}>
-              <p className="max-w-[44ch] text-lede text-graphite-2">
+              <p className="max-w-[44ch] text-lede text-chalk-2">
                 Pick a part of it. The region it works lights up, and you see
                 the line a customer would actually receive.
               </p>
@@ -38,14 +38,14 @@ export function Product() {
       <div className="shell">
         <Reveal delay={80}>
           <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-            <p className="max-w-[54ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+            <p className="max-w-[54ch] text-[0.9375rem] leading-relaxed text-chalk-2">
               CloseAgain is pre-launch. These are the capabilities being built
               first, and the depth of each one is being set with pilot operators
               rather than guessed at.
             </p>
             <Link
               href="/product"
-              className="link-rule group shrink-0 text-[0.9375rem] text-graphite"
+              className="link-rule group shrink-0 text-[0.9375rem] text-chalk"
             >
               See what each part does
               <svg

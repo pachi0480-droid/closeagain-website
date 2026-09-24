@@ -48,7 +48,7 @@ export function RecoverySurface() {
                   >
                     {zone.label}
                   </h3>
-                  <span className="font-mono text-[0.625rem] text-chalk-3/60 uppercase">
+                  <span className="font-mono text-[0.625rem] text-chalk-3 uppercase">
                     {zone.note}
                   </span>
                 </div>

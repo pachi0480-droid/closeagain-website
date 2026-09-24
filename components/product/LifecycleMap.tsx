@@ -38,7 +38,7 @@ export function LifecycleMap() {
           >
             {LIFECYCLE.map((stage, i) => (
               <div key={stage} className="border-l border-rule-ink pl-3">
-                <span className="tnum font-mono text-mono-xs text-chalk-3/70">
+                <span className="tnum font-mono text-mono-xs text-chalk-3">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <p className="mt-1 text-[0.8125rem] leading-tight text-chalk-2">

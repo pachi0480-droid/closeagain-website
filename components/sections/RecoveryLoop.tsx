@@ -22,7 +22,6 @@ export function RecoveryLoop() {
   return (
     <section
       id="recovery-loop"
-      data-tone="ink"
       className="grain-ink lit-ink on-ink relative bg-ink text-chalk"
     >
       <div className="shell pt-24 pb-14 md:pt-32 md:pb-16">
@@ -93,7 +92,7 @@ function StickyEngine() {
                       >
                         <span
                           className={`tnum font-mono text-mono-xs transition-colors duration-500 ${
-                            isActive ? 'text-recover-bright' : 'text-chalk-3/70'
+                            isActive ? 'text-recover-bright' : 'text-chalk-3'
                           }`}
                         >
                           {s.index}
@@ -102,7 +101,7 @@ function StickyEngine() {
                           className={`text-h3 transition-colors duration-500 ${
                             isActive
                               ? 'text-chalk'
-                              : 'text-chalk-3/55 group-hover:text-chalk-2'
+                              : 'text-chalk-2 group-hover:text-chalk-2'
                           }`}
                         >
                           {s.title}

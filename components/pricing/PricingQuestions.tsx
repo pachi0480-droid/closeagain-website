@@ -10,14 +10,14 @@ export function PricingQuestions() {
   const baseId = useId()
 
   return (
-    <dl className="border-t border-graphite/20">
+    <dl className="border-t border-rule-ink">
       {pricingFaq.map((item) => {
         const expanded = open === item.id
         const buttonId = `${baseId}-${item.id}-button`
         const panelId = `${baseId}-${item.id}-panel`
 
         return (
-          <div key={item.id} className="border-b border-rule">
+          <div key={item.id} className="border-b border-rule-ink">
             <dt>
               <button
                 type="button"
@@ -33,7 +33,7 @@ export function PricingQuestions() {
               >
                 <span
                   className={`max-w-[38ch] text-[1.125rem] tracking-[-0.015em] transition-colors duration-300 ${
-                    expanded ? 'text-graphite' : 'text-graphite-2 group-hover:text-graphite'
+                    expanded ? 'text-chalk' : 'text-chalk-2 group-hover:text-chalk'
                   }`}
                 >
                   {item.q}
@@ -57,7 +57,7 @@ export function PricingQuestions() {
             >
               <div className="overflow-hidden">
                 <p
-                  className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-graphite-2 transition-opacity duration-500 ${
+                  className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-chalk-2 transition-opacity duration-500 ${
                     expanded ? 'opacity-100' : 'opacity-0'
                   }`}
                 >

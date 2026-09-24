@@ -12,20 +12,20 @@ export function Faq() {
   const baseId = useId()
 
   return (
-    <section id="faq" className="grain relative bg-paper py-24 md:py-32">
+    <section id="faq" className="grain-ink relative bg-ink py-24 md:py-32">
       <div className="shell">
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
           <div className="lg:col-span-4">
             <Reveal>
               <SectionMark index="11" label="Questions" />
-              <h2 className="mt-7 max-w-[14ch] text-h2 text-graphite">
+              <h2 className="mt-7 max-w-[14ch] text-h2 text-chalk">
                 Before you ask.
               </h2>
-              <p className="mt-6 max-w-[34ch] text-[0.9375rem] leading-relaxed text-graphite-2">
+              <p className="mt-6 max-w-[34ch] text-[0.9375rem] leading-relaxed text-chalk-2">
                 Anything not covered here, write to{' '}
                 <a
                   href={`mailto:${site.email}`}
-                  className="link-rule text-graphite"
+                  className="link-rule text-chalk"
                 >
                   {site.email}
                 </a>
@@ -35,14 +35,14 @@ export function Faq() {
           </div>
 
           <div className="mt-12 lg:col-span-7 lg:col-start-6 lg:mt-0">
-            <dl className="border-t border-graphite/20">
+            <dl className="border-t border-rule-ink">
               {faq.map((item) => {
                 const expanded = open === item.id
                 const buttonId = `${baseId}-${item.id}-button`
                 const panelId = `${baseId}-${item.id}-panel`
 
                 return (
-                  <div key={item.id} className="border-b border-rule">
+                  <div key={item.id} className="border-b border-rule-ink">
                     <dt>
                       <button
                         type="button"
@@ -59,8 +59,8 @@ export function Faq() {
                         <span
                           className={`max-w-[38ch] text-[1.125rem] tracking-[-0.015em] transition-colors duration-300 ${
                             expanded
-                              ? 'text-graphite'
-                              : 'text-graphite-2 group-hover:text-graphite'
+                              ? 'text-chalk'
+                              : 'text-chalk-2 group-hover:text-chalk'
                           }`}
                         >
                           {item.q}
@@ -88,7 +88,7 @@ export function Faq() {
                     >
                       <div className="overflow-hidden">
                         <p
-                          className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-graphite-2 transition-opacity duration-500 ${
+                          className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-chalk-2 transition-opacity duration-500 ${
                             expanded ? 'opacity-100' : 'opacity-0'
                           }`}
                         >

@@ -57,12 +57,6 @@ export function Disperse() {
       className="relative h-[102vh] lg:h-[120vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
-      {/* the header inverts once the surface is dark enough to need it */}
-      <div
-        data-tone="ink"
-        className="pointer-events-none absolute inset-x-0 top-[44%] bottom-0"
-      />
-
       <div
         className="sticky top-0 flex h-screen items-center overflow-hidden"
         style={{
@@ -77,7 +71,7 @@ export function Disperse() {
               // Mixed toward the full-strength inks at each end: mixing two
               // mid-tones leaves the label grey-on-grey halfway through.
               color:
-                'color-mix(in oklab, var(--color-chalk) calc(var(--p) * 100%), var(--color-graphite))',
+                'var(--color-chalk-3)',
             }}
           >
             One month, at your numbers

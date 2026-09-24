@@ -7,7 +7,6 @@ export function Footer() {
 
   return (
     <footer
-      data-tone="ink"
       className="on-ink border-t border-rule-ink bg-ink text-chalk"
     >
       <div className="shell py-14 md:py-16">

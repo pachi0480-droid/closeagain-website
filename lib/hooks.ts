@@ -192,10 +192,12 @@ export function useSequence(
  * rather than sitting as a pale bar over a dark section.
  */
 export function useSurfaceTone(headerHeight = 76) {
-  const [tone, setTone] = useState<'light' | 'ink'>('light')
+  // Ink is the default ground, so the chrome starts inverted and the light
+  // break sections are what opt out.
+  const [tone, setTone] = useState<'light' | 'ink'>('ink')
 
   useEffect(() => {
-    const sections = document.querySelectorAll('[data-tone="ink"]')
+    const sections = document.querySelectorAll('[data-tone="light"]')
     if (sections.length === 0) return
 
     const intersecting = new Set<Element>()
@@ -206,7 +208,7 @@ export function useSurfaceTone(headerHeight = 76) {
           if (entry.isIntersecting) intersecting.add(entry.target)
           else intersecting.delete(entry.target)
         }
-        setTone(intersecting.size > 0 ? 'ink' : 'light')
+        setTone(intersecting.size > 0 ? 'light' : 'ink')
       },
       {
         // Collapse the root to a band the height of the header.

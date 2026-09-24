@@ -30,7 +30,6 @@ export function Converge() {
   return (
     <section
       ref={ref}
-      data-tone="ink"
       className="relative h-[102vh] bg-ink lg:h-[124vh]"
       style={{ '--p': 0 } as React.CSSProperties}
     >
@@ -53,7 +52,7 @@ export function Converge() {
                   top: `calc(50% + ${line.y}vh)`,
                   background: line.mine
                     ? 'var(--color-dormant-ink)'
-                    : 'rgb(237 234 228 / 0.3)',
+                    : 'rgb(244 242 237 / 0.42)',
                   // everything but the chosen one leaves
                   opacity: line.mine
                     ? 1

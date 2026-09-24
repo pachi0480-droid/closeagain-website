@@ -44,12 +44,12 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="grain lit-warm relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-bone pb-12 md:pb-14"
+      className="grain-ink lit-ink relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-ink-raise pb-12 md:pb-14"
     >
       {/* --- the live business, behind everything -------------------- */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div
-          className="field-grid absolute inset-0 opacity-60"
+          className="field-grid-ink absolute inset-0 opacity-60"
           style={{
             maskImage: 'radial-gradient(130% 95% at 60% 12%, #000 0%, transparent 74%)',
             WebkitMaskImage:
@@ -79,13 +79,13 @@ export function Hero() {
               </Reveal>
 
               <Reveal delay={90} y={20}>
-                <h1 className="mt-6 text-display text-graphite">
+                <h1 className="mt-6 text-display text-chalk">
                   Recover the leads you already paid for.
                 </h1>
               </Reveal>
 
               <Reveal delay={190} y={16}>
-                <p className="mt-7 max-w-[42ch] text-lede text-graphite-2">
+                <p className="mt-7 max-w-[42ch] text-lede text-chalk-2">
                   Every lead you buy is already moving — toward a booked job, or
                   toward gone. CloseAgain works the moment it starts going the
                   wrong way.
@@ -104,8 +104,8 @@ export function Hero() {
               </Reveal>
 
               <Reveal delay={360} y={10}>
-                <p className="mt-8 flex items-center gap-2.5 font-mono text-mono-xs text-graphite-3 uppercase">
-                  <span className="status-dot bg-recover text-recover" data-pulse="true" />
+                <p className="mt-8 flex items-center gap-2.5 font-mono text-mono-xs text-chalk-3 uppercase">
+                  <span className="status-dot bg-recover-bright text-recover-bright" data-pulse="true" />
                   Pre-launch · accepting pilot interest
                 </p>
               </Reveal>

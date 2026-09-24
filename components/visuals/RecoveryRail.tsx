@@ -5,16 +5,16 @@ import { heroWaypoints } from '@/data/scenarios'
 
 const stateDot: Record<string, string> = {
   neutral: 'bg-graphite-3',
-  lost: 'bg-dormant',
-  engaged: 'bg-engaged',
-  recovered: 'bg-recover',
+  lost: 'bg-dormant-ink',
+  engaged: 'bg-engaged-ink',
+  recovered: 'bg-recover-bright',
 }
 
 const stateText: Record<string, string> = {
-  neutral: 'text-graphite-3',
-  lost: 'text-dormant',
-  engaged: 'text-engaged',
-  recovered: 'text-recover',
+  neutral: 'text-chalk-3',
+  lost: 'text-dormant-ink',
+  engaged: 'text-engaged-ink',
+  recovered: 'text-recover-bright',
 }
 
 /**
@@ -50,7 +50,7 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
         {/* the break, and the bridge across it */}
         <div className="absolute inset-y-0" style={{ left: '33%', width: '28%' }}>
           <div
-            className="absolute inset-0 bg-paper transition-opacity duration-700"
+            className="absolute inset-0 bg-ink transition-opacity duration-700"
             style={{ opacity: bridged ? 0 : 1 }}
           />
           <div
@@ -63,7 +63,7 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
         {heroWaypoints.map((point, i) => (
           <span
             key={point.label}
-            className={`absolute top-1/2 h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full ring-[4px] ring-paper transition-colors duration-700 ${
+            className={`absolute top-1/2 h-[7px] w-[7px] -translate-x-1/2 -translate-y-1/2 rounded-full ring-[4px] ring-ink transition-colors duration-700 ${
               i <= waypoint ? stateDot[point.state] : 'bg-graphite/15'
             }`}
             style={{ left: `${point.at}%` }}
@@ -78,13 +78,13 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
           <span className="relative block">
             <RecoveryPulse fire={recovered} />
             <span
-              className={`relative block h-3 w-3 rounded-full ring-1 ring-paper transition-colors duration-700 ${
+              className={`relative block h-3 w-3 rounded-full ring-1 ring-ink transition-colors duration-700 ${
                 recovered
-                  ? 'bg-recover'
+                  ? 'bg-recover-bright'
                   : waypoint >= 2
-                    ? 'bg-engaged'
+                    ? 'bg-engaged-ink'
                     : waypoint >= 1
-                      ? 'bg-dormant'
+                      ? 'bg-dormant-ink'
                       : 'bg-graphite-2'
               }`}
             />
@@ -109,12 +109,12 @@ export function RecoveryRail({ waypoint }: { waypoint: number }) {
             >
               <span
                 className={`tnum font-mono text-mono-xs whitespace-nowrap uppercase transition-colors duration-700 ${
-                  active ? stateText[point.state] : 'text-graphite-3'
+                  active ? stateText[point.state] : 'text-chalk-3'
                 }`}
               >
                 {point.label}
               </span>
-              <span className="tnum font-mono text-[0.625rem] whitespace-nowrap text-graphite-3/70">
+              <span className="tnum font-mono text-[0.625rem] whitespace-nowrap text-chalk-3">
                 {point.time}
               </span>
             </span>

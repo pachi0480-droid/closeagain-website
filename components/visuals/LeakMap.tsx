@@ -62,7 +62,7 @@ export function LeakMap({ on, drawn }: { on: boolean; drawn: boolean }) {
                 y1={26}
                 x2={x}
                 y2={MAP.h - 40}
-                stroke="rgb(237 234 228 / 0.09)"
+                stroke="rgb(244 242 237 / 0.13)"
                 strokeWidth="1"
               />
               <text
@@ -143,7 +143,7 @@ export function LeakMap({ on, drawn }: { on: boolean; drawn: boolean }) {
               key={`booked-${flow.lane}`}
               d={bookedPath(flow.lane, i, bundleSize)}
               fill="none"
-              stroke="rgb(237 234 228 / 0.6)"
+              stroke="rgb(244 242 237 / 0.72)"
               strokeWidth="1.5"
               strokeLinecap="round"
               className="path-draw"
@@ -239,7 +239,7 @@ function Key({
       ? 'var(--color-recover-bright)'
       : tone === 'dormant'
         ? 'var(--color-dormant-ink)'
-        : 'rgb(237 234 228 / 0.42)'
+        : 'rgb(244 242 237 / 0.55)'
 
   return (
     <span

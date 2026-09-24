@@ -20,7 +20,6 @@ export function Calculator() {
   return (
     <section
       id="calculator"
-      data-tone="ink"
       className="grain-ink on-ink relative bg-ink py-24 text-chalk md:py-32"
     >
       <div className="shell">

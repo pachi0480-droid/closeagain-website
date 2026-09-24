@@ -57,14 +57,14 @@ export function Header() {
   const surface = condensed || open
     ? onInk
       ? 'border-b border-rule-ink bg-ink/85 backdrop-blur-[10px] backdrop-saturate-150'
-      : 'border-b border-rule bg-paper/85 backdrop-blur-[10px] backdrop-saturate-150'
+      : 'border-b border-rule-ink bg-ink/85 backdrop-blur-[10px] backdrop-saturate-150'
     : 'border-b border-transparent bg-transparent'
 
   return (
     <header
       className={[
         'fixed inset-x-0 top-0 z-50',
-        onInk ? 'on-ink text-chalk' : 'text-graphite',
+        onInk ? 'on-ink text-chalk' : 'text-chalk',
         'transition-[background-color,border-color,color,backdrop-filter] duration-500',
         '[transition-timing-function:var(--ease-out-quiet)]',
         surface,
@@ -99,10 +99,10 @@ export function Header() {
                         current
                           ? onInk
                             ? 'text-chalk'
-                            : 'text-graphite'
+                            : 'text-chalk'
                           : onInk
                             ? 'text-chalk-2 hover:text-chalk'
-                            : 'text-graphite-2 hover:text-graphite'
+                            : 'text-chalk-2 hover:text-chalk'
                       }`}
                     >
                       {item.label}
@@ -111,7 +111,7 @@ export function Header() {
                       <span
                         aria-hidden="true"
                         className={`absolute -bottom-1.5 left-0 h-px w-full origin-left transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
-                          onInk ? 'bg-recover-bright' : 'bg-recover'
+                          onInk ? 'bg-recover-bright' : 'bg-recover-bright'
                         } ${current ? 'scale-x-100' : 'scale-x-0'}`}
                       />
                     </Link>
@@ -137,7 +137,7 @@ export function Header() {
             ref={toggleRef}
             type="button"
             className={`-mr-2 flex h-11 w-11 items-center justify-center rounded-[7px] transition-colors duration-300 lg:hidden ${
-              onInk ? 'hover:bg-chalk/10' : 'hover:bg-graphite/[0.05]'
+              onInk ? 'hover:bg-chalk/10' : 'hover:bg-chalk/[0.06]'
             }`}
             aria-expanded={open}
             aria-controls="mobile-nav"
@@ -182,7 +182,7 @@ export function Header() {
         id="mobile-nav"
         hidden={!open}
         className={`lg:hidden ${
-          onInk ? 'border-t border-rule-ink bg-ink' : 'border-t border-rule bg-paper'
+          onInk ? 'border-t border-rule-ink bg-ink' : 'border-t border-rule-ink bg-ink'
         }`}
       >
         <div className="shell py-6">
@@ -191,7 +191,7 @@ export function Header() {
               <li
                 key={item.href}
                 className={`border-b last:border-b-0 ${
-                  onInk ? 'border-rule-ink-soft' : 'border-rule-soft'
+                  onInk ? 'border-rule-ink-soft' : 'border-rule-ink-soft'
                 }`}
               >
                 <Link
@@ -202,13 +202,13 @@ export function Header() {
                     isCurrent(item.href)
                       ? onInk
                         ? 'text-recover-bright'
-                        : 'text-recover'
+                        : 'text-recover-bright'
                       : ''
                   }`}
                 >
                   <span
                     className={`font-mono text-mono-xs ${
-                      onInk ? 'text-chalk-3' : 'text-graphite-3'
+                      onInk ? 'text-chalk-3' : 'text-chalk-3'
                     }`}
                   >
                     {String(i + 1).padStart(2, '0')}
@@ -233,7 +233,7 @@ export function Header() {
           </ButtonLink>
           <p
             className={`mt-4 font-mono text-mono-xs uppercase ${
-              onInk ? 'text-chalk-3' : 'text-graphite-3'
+              onInk ? 'text-chalk-3' : 'text-chalk-3'
             }`}
           >
             Pre-launch · accepting pilot interest

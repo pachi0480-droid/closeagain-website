@@ -15,7 +15,9 @@ export function MegaStatement() {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.35 })
 
   return (
-    <section className="grain lit-warm relative isolate overflow-hidden bg-paper py-28 md:py-36 lg:py-44">
+    <section
+      data-tone="light"
+      className="grain lit-warm relative isolate overflow-hidden bg-paper py-28 md:py-36 lg:py-44">
       {/* a recovery path crossing behind the words */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <svg

@@ -31,17 +31,17 @@ export function Comparison() {
   const { ref, inView } = useInViewOnce<HTMLDivElement>({ threshold: 0.3 })
 
   return (
-    <section className="grain relative bg-bone py-24 md:py-32">
+    <section className="grain-ink relative bg-ink-raise py-24 md:py-32">
       <div className="shell">
         <Reveal>
           <SectionMark index="09" label="The trade-off" />
-          <h2 className="mt-7 max-w-[24ch] text-h2 text-graphite">
+          <h2 className="mt-7 max-w-[24ch] text-h2 text-chalk">
             Lead generation gets them to the door. This is about what happens
             after.
           </h2>
         </Reveal>
 
-        <div ref={ref} className="mt-14 grid gap-px overflow-hidden rounded-[16px] bg-rule md:mt-16 lg:grid-cols-2">
+        <div ref={ref} className="mt-14 grid gap-px overflow-hidden rounded-[16px] bg-rule-ink md:mt-16 lg:grid-cols-2">
           <Panel
             eyebrow="Without CloseAgain"
             note="Costs more each year"
@@ -65,7 +65,7 @@ export function Comparison() {
         </div>
 
         <Reveal delay={100}>
-          <p className="mt-10 max-w-[58ch] text-lede text-graphite-2">
+          <p className="mt-10 max-w-[58ch] text-lede text-chalk-2">
             Same demand. Same marketing spend. Same{' '}
             {leakCounts.total} opportunities on both sides — the only difference
             is how many of them were still being worked on day three.
@@ -105,14 +105,14 @@ function Panel({
     .map((f) => f.lane)
 
   return (
-    <div className="bg-bone p-7 lg:p-9">
+    <div className="bg-ink-raise p-7 lg:p-9">
       <div className="flex items-baseline justify-between gap-4">
-        <h3 className={`text-h3 ${on ? 'text-graphite' : 'text-graphite-3'}`}>
+        <h3 className={`text-h3 ${on ? 'text-chalk' : 'text-chalk-3'}`}>
           {eyebrow}
         </h3>
         <span
           className={`shrink-0 font-mono text-mono-xs uppercase ${
-            on ? 'text-recover' : 'text-graphite-3'
+            on ? 'text-recover-bright' : 'text-chalk-3'
           }`}
         >
           {note}
@@ -144,27 +144,27 @@ function Panel({
         })}
       </div>
 
-      <p className="tnum mt-6 text-[1.375rem] tracking-[-0.02em] text-graphite">
+      <p className="tnum mt-6 text-[1.375rem] tracking-[-0.02em] text-chalk">
         {headline}
       </p>
       <p
         className={`tnum mt-1 font-mono text-mono-sm ${
-          on ? 'text-recover' : 'text-dormant'
+          on ? 'text-recover-bright' : 'text-dormant-ink'
         }`}
       >
         {sub}
       </p>
 
-      <ul className="mt-8 border-t border-rule">
+      <ul className="mt-8 border-t border-rule-ink">
         {items.map((item) => (
           <li
             key={item}
-            className={`flex items-center gap-4 border-b border-rule-soft py-3.5 text-[1.0625rem] last:border-b-0 ${
-              on ? 'text-graphite' : 'text-graphite-3'
+            className={`flex items-center gap-4 border-b border-rule-ink-soft py-3.5 text-[1.0625rem] last:border-b-0 ${
+              on ? 'text-chalk' : 'text-chalk-3'
             }`}
           >
             <span
-              className={`h-px w-5 shrink-0 ${on ? 'bg-recover' : 'bg-dormant'}`}
+              className={`h-px w-5 shrink-0 ${on ? 'bg-recover-bright' : 'bg-dormant-ink'}`}
             />
             {item}
           </li>

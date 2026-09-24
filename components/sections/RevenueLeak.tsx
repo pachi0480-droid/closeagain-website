@@ -26,7 +26,6 @@ export function RevenueLeak() {
   return (
     <section
       id="leak"
-      data-tone="ink"
       className="grain-ink lit-ink on-ink relative bg-ink py-24 text-chalk md:py-32"
     >
       <div className="shell">

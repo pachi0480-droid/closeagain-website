@@ -66,7 +66,7 @@ export function HeroStage({ step }: { step: number }) {
             className="absolute top-5 bottom-5 left-[5.85rem] w-px sm:left-[6.35rem]"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(to bottom, rgba(237,234,228,0.18) 0 3px, transparent 3px 9px)',
+                'repeating-linear-gradient(to bottom, rgba(244,242,237,0.28) 0 3px, transparent 3px 9px)',
             }}
           />
           <div
@@ -145,7 +145,7 @@ export function HeroStage({ step }: { step: number }) {
                   >
                     {beat.body}
                   </span>
-                  <span className="tnum font-mono text-[0.625rem] text-chalk-3/80">
+                  <span className="tnum font-mono text-[0.625rem] text-chalk-3">
                     {mine ? 'CloseAgain' : 'Customer'} · {beat.time}
                   </span>
                 </li>

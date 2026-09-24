@@ -10,20 +10,20 @@ import { SectionMark } from '@/components/ui/Type'
  */
 export function Pricing() {
   return (
-    <section id="pricing" className="grain relative bg-limestone/70 py-24 md:py-32">
+    <section id="pricing" className="grain-ink relative bg-ink-raise py-24 md:py-32">
       <div className="shell">
         <div className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-12">
           <div className="lg:col-span-7">
             <Reveal>
               <SectionMark index="10" label="Pricing" />
-              <h2 className="mt-7 max-w-[18ch] text-h2 text-graphite">
+              <h2 className="mt-7 max-w-[18ch] text-h2 text-chalk">
                 Monthly pricing. Nothing to unpick.
               </h2>
             </Reveal>
           </div>
           <div className="mt-6 lg:col-span-4 lg:col-start-9 lg:mt-0">
             <Reveal delay={140}>
-              <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-graphite-2">
+              <p className="max-w-[40ch] text-[1.0625rem] leading-relaxed text-chalk-2">
                 Plans differ by how much of the lead lifecycle CloseAgain is
                 recovering — not by how many messages you are rationed.
               </p>
@@ -37,10 +37,10 @@ export function Pricing() {
 
         <Reveal delay={120}>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
-            <p className="font-mono text-mono-xs text-graphite-3 uppercase">
+            <p className="font-mono text-mono-xs text-chalk-3 uppercase">
               Monthly · no annual contract · no annual pricing
             </p>
-            <Link href="/pricing" className="link-rule text-[0.9375rem] text-graphite">
+            <Link href="/pricing" className="link-rule text-[0.9375rem] text-chalk">
               Compare what each plan covers
             </Link>
           </div>

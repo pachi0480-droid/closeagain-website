@@ -221,3 +221,53 @@ export function useSurfaceTone(headerHeight = 76) {
 
   return tone
 }
+
+/**
+ * Writes scroll progress through an element as `--p` (0 to 1) directly on the
+ * node, without React state.
+ *
+ * Scroll-linked scenes need to be coupled to the scrollbar exactly, and a
+ * transition would make them lag. Driving geometry from one custom property
+ * means one style write per frame and no re-render, however many elements the
+ * scene contains. Under reduced motion the scene is pinned to its end state.
+ */
+export function useScrollVar<T extends HTMLElement = HTMLDivElement>() {
+  const ref = useRef<T | null>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.setProperty('--p', '1')
+      return
+    }
+
+    let frame = 0
+
+    const measure = () => {
+      frame = 0
+      const rect = el.getBoundingClientRect()
+      const scrollable = rect.height - window.innerHeight
+      const p =
+        scrollable <= 0 ? 0 : Math.min(1, Math.max(0, -rect.top / scrollable))
+      el.style.setProperty('--p', p.toFixed(4))
+    }
+
+    const schedule = () => {
+      if (frame) return
+      frame = requestAnimationFrame(measure)
+    }
+
+    schedule()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+    }
+  }, [])
+
+  return ref
+}

@@ -1,99 +1,126 @@
-import { HeroSequence } from '@/components/recovery/HeroSequence'
+'use client'
+
+import { HeroStage } from '@/components/visuals/HeroStage'
+import { RecoveryRail } from '@/components/visuals/RecoveryRail'
+import { SignalField } from '@/components/visuals/SignalField'
+import { usePointerDepth } from '@/components/visuals/usePointerDepth'
 import { ButtonLink } from '@/components/ui/Button'
-import { Illustrative } from '@/components/ui/Disclaimer'
 import { Reveal } from '@/components/ui/Reveal'
 import { Eyebrow } from '@/components/ui/Type'
+import { heroBeats, heroWaypointForStep } from '@/data/scenarios'
 import { cta, site } from '@/data/site'
+import { trackOnce } from '@/lib/analytics'
+import { usePrefersReducedMotion, useSequence } from '@/lib/hooks'
 
+const TOTAL = heroBeats.length
+
+/**
+ * The hero is one scene, not a headline beside a screenshot.
+ *
+ * A single opportunity enters at 6:42 PM, stalls when nobody answers,
+ * is intercepted, and completes its path to a booked window. The stage shows
+ * the conversation; the full-bleed rail beneath shows the journey, including
+ * the break that CloseAgain bridges. Both are driven by one state machine, so
+ * the two halves of the scene can never disagree.
+ */
 export function Hero() {
+  const reduced = usePrefersReducedMotion()
+  const scene = usePointerDepth<HTMLDivElement>()
+  const { ref, step } = useSequence(TOTAL, {
+    stepMs: 1150,
+    holdMs: 5200,
+    enabled: !reduced,
+    onComplete: () => trackOnce('hero_sequence_completed'),
+  })
+
+  const waypoint = heroWaypointForStep[Math.min(step, TOTAL)]
+
   return (
-    <section className="grain relative isolate overflow-hidden bg-bone pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-[9.5rem] lg:pb-28">
-      <HeroBackdrop />
+    <section
+      ref={ref}
+      className="grain lit-warm relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-bone pb-12 md:pb-14"
+    >
+      {/* --- the live business, behind everything -------------------- */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div
+          className="field-grid absolute inset-0 opacity-60"
+          style={{
+            maskImage: 'radial-gradient(130% 95% at 60% 12%, #000 0%, transparent 74%)',
+            WebkitMaskImage:
+              'radial-gradient(130% 95% at 60% 12%, #000 0%, transparent 74%)',
+          }}
+        />
+        {/* architectural verticals: the structure the scene is built on */}
+        <div className="absolute inset-0 hidden lg:block">
+          {[18, 42, 66, 84].map((x) => (
+            <span
+              key={x}
+              className="absolute inset-y-0 w-px bg-graphite/[0.045]"
+              style={{ left: `${x}%` }}
+            />
+          ))}
+        </div>
+        <SignalField className="hidden opacity-90 md:block" />
+      </div>
 
-      <div className="shell">
-        <div className="grid items-start gap-10 md:gap-14 lg:grid-cols-12 lg:items-center lg:gap-x-12 lg:gap-y-0">
-          {/* --- the argument ----------------------------------------- */}
-          <div className="lg:col-span-7">
-            <Reveal y={12}>
-              <Eyebrow>{site.category}</Eyebrow>
-            </Reveal>
+      <div ref={scene} className="relative">
+        <div className="shell pt-28 md:pt-32 lg:pt-36">
+          <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-x-8">
+            {/* --- the claim ---------------------------------------- */}
+            <div className="lg:col-span-7">
+              <Reveal y={12}>
+                <Eyebrow>{site.category}</Eyebrow>
+              </Reveal>
 
-            <Reveal delay={90} y={20}>
-              <h1 className="mt-5 max-w-[20ch] text-display text-graphite">
-                Recover the leads you already paid for.
-              </h1>
-            </Reveal>
+              <Reveal delay={90} y={20}>
+                <h1 className="mt-6 text-display text-graphite">
+                  Recover the leads you already paid for.
+                </h1>
+              </Reveal>
 
-            <Reveal delay={190} y={16}>
-              <p className="mt-7 max-w-[46ch] text-lede text-graphite-2">
-                CloseAgain works the moments between interest and booked revenue —
-                the missed call, the slow reply, the estimate that went quiet — and
-                is built to turn more of them back into jobs on the schedule.
-              </p>
-            </Reveal>
+              <Reveal delay={190} y={16}>
+                <p className="mt-7 max-w-[42ch] text-lede text-graphite-2">
+                  Every lead you buy is already moving — toward a booked job, or
+                  toward gone. CloseAgain works the moment it starts going the
+                  wrong way.
+                </p>
+              </Reveal>
 
-            <Reveal delay={280} y={14}>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <ButtonLink href={cta.target} size="lg" withArrow>
-                  {cta.primary}
-                </ButtonLink>
-                <ButtonLink href="#leak" size="lg" variant="secondary">
-                  {cta.leak}
-                </ButtonLink>
-              </div>
-            </Reveal>
+              <Reveal delay={280} y={14}>
+                <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <ButtonLink href={cta.target} size="lg" withArrow>
+                    {cta.primary}
+                  </ButtonLink>
+                  <ButtonLink href="#leak" size="lg" variant="secondary">
+                    {cta.leak}
+                  </ButtonLink>
+                </div>
+              </Reveal>
 
-            <Reveal delay={360} y={10}>
-              <p className="mt-8 flex items-center gap-2.5 font-mono text-mono-xs text-graphite-3 uppercase">
-                <span className="status-dot bg-recover text-recover" data-pulse="true" />
-                Pre-launch · accepting pilot interest
-              </p>
-            </Reveal>
+              <Reveal delay={360} y={10}>
+                <p className="mt-8 flex items-center gap-2.5 font-mono text-mono-xs text-graphite-3 uppercase">
+                  <span className="status-dot bg-recover text-recover" data-pulse="true" />
+                  Pre-launch · accepting pilot interest
+                </p>
+              </Reveal>
+            </div>
+
+            {/* --- the scene, running off the right edge ------------ */}
+            <div className="lg:col-span-5 lg:bleed-right lg:pl-4">
+              <Reveal delay={240} y={26}>
+                <HeroStage step={step} />
+              </Reveal>
+            </div>
           </div>
+        </div>
 
-          {/* --- the proof -------------------------------------------- */}
-          <div className="lg:col-span-5 lg:pt-1">
-            <Reveal delay={240} y={26}>
-              <HeroSequence />
-              <Illustrative className="mt-3.5 pl-0.5" />
-            </Reveal>
+        {/* --- the journey, full width -------------------------------- */}
+        <div className="mt-14 md:mt-16">
+          <div className="bleed px-5 md:px-10 lg:px-14">
+            <RecoveryRail waypoint={waypoint} />
           </div>
         </div>
       </div>
     </section>
-  )
-}
-
-/**
- * Environmental depth: a faint measured field, one soft warm light, and a
- * horizon line. No particles, no orbs, nothing floating.
- */
-function HeroBackdrop() {
-  return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-      <div
-        className="field-grid absolute inset-0 opacity-70"
-        style={{
-          maskImage:
-            'radial-gradient(120% 90% at 62% 18%, #000 0%, transparent 72%)',
-          WebkitMaskImage:
-            'radial-gradient(120% 90% at 62% 18%, #000 0%, transparent 72%)',
-        }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(85% 60% at 72% 8%, rgba(255,252,244,0.95) 0%, rgba(255,252,244,0) 60%)',
-        }}
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 h-56"
-        style={{
-          background:
-            'linear-gradient(to bottom, rgba(242,238,231,0) 0%, var(--color-paper) 100%)',
-        }}
-      />
-    </div>
   )
 }

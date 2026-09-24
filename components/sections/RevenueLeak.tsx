@@ -1,109 +1,132 @@
 'use client'
 
-import { LeakPath } from '@/components/recovery/LeakPath'
-import { RecoveryDivider } from '@/components/recovery/RecoveryDivider'
+import { useState } from 'react'
+import { LeakMap } from '@/components/visuals/LeakMap'
+import { LeakMapMobile } from '@/components/visuals/LeakMapMobile'
 import { Reveal } from '@/components/ui/Reveal'
-import { StatusTag } from '@/components/ui/StatusDot'
-import { Accent, Eyebrow, SectionMark } from '@/components/ui/Type'
-import { leaks } from '@/data/leaks'
+import { Accent, SectionMark } from '@/components/ui/Type'
+import { leakCounts } from '@/data/leak-map'
 import { trackOnce } from '@/lib/analytics'
+import { useInViewOnce } from '@/lib/hooks'
 
+/**
+ * Where revenue goes.
+ *
+ * The hero followed one opportunity. This is the whole month at once — and the
+ * toggle is the argument: same demand, same spend, different outcome for seven
+ * of the twelve that were going to disappear.
+ */
 export function RevenueLeak() {
-  return (
-    <section id="leak" className="grain relative bg-paper">
-      <div className="shell">
-        <RecoveryDivider />
-      </div>
+  const [on, setOn] = useState(false)
+  const { ref, inView } = useInViewOnce<HTMLDivElement>({
+    threshold: 0.18,
+    onEnter: () => trackOnce('leak_moment_viewed', { moment: 'leak-map' }),
+  })
 
-      {/* --- the turn: from "you may be losing money" to "here is where" --- */}
-      <div className="shell pt-20 pb-20 md:pt-28 md:pb-24">
+  return (
+    <section
+      id="leak"
+      data-tone="ink"
+      className="grain-ink lit-ink on-ink relative bg-ink py-24 text-chalk md:py-32"
+    >
+      <div className="shell">
+        {/* --- the turn ------------------------------------------------ */}
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
-          <div className="lg:col-span-8 lg:col-start-4">
+          <div className="lg:col-span-7">
             <Reveal>
-              <p className="max-w-[22ch] text-h2 text-graphite">
+              <SectionMark index="01" label="Where it goes" tone="ink" />
+              <p className="mt-8 max-w-[22ch] text-h2 text-chalk">
                 Revenue rarely disappears all at once.
               </p>
-            </Reveal>
-            <Reveal delay={140}>
-              <p className="mt-4 max-w-[22ch] text-h2 text-graphite-3">
+              <p className="mt-4 max-w-[22ch] text-h2 text-chalk-3">
                 It leaks out in <Accent>moments</Accent>.
               </p>
             </Reveal>
-            <Reveal delay={260}>
-              <p className="mt-8 max-w-[50ch] text-lede text-graphite-2">
-                Every one of these happens after the customer has already raised
-                their hand. The money is spent. The interest is real. And then
-                nothing happens next.
+          </div>
+          <div className="mt-8 lg:col-span-4 lg:col-start-9 lg:mt-auto lg:pb-2">
+            <Reveal delay={140}>
+              <p className="max-w-[40ch] text-lede text-chalk-2">
+                A month of demand, drawn as movement. Every one of these had
+                already raised a hand — the money was spent and the interest was
+                real. Watch where they stop.
               </p>
             </Reveal>
           </div>
         </div>
-      </div>
 
-      {/* --- the ledger ---------------------------------------------------- */}
-      <div className="shell pb-24 md:pb-32">
-        <Reveal>
-          <SectionMark index="01" label="Where it goes" />
-          {/* the axis every row below is measured against */}
-          <div className="mt-8 flex items-baseline justify-between gap-6 border-b border-graphite/20 pb-2.5">
-            <Eyebrow>Interest</Eyebrow>
-            <Eyebrow>Booked revenue</Eyebrow>
+        {/* --- the toggle --------------------------------------------- */}
+        <Reveal delay={100} className="mt-14 md:mt-16">
+          <div
+            role="group"
+            aria-label="Compare the same demand with and without CloseAgain"
+            className="inline-flex rounded-[9px] border border-rule-ink p-1"
+          >
+            {[
+              { label: 'Without CloseAgain', value: false },
+              { label: 'With CloseAgain', value: true },
+            ].map((option) => {
+              const active = on === option.value
+              return (
+                <button
+                  key={option.label}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setOn(option.value)}
+                  className={[
+                    'rounded-[6px] px-4 py-2.5 text-[0.875rem] whitespace-nowrap',
+                    'transition-colors duration-400 [transition-timing-function:var(--ease-out-quiet)]',
+                    active
+                      ? option.value
+                        ? 'bg-recover-bright text-ink'
+                        : 'bg-chalk text-ink'
+                      : 'text-chalk-2 hover:bg-chalk/[0.07] hover:text-chalk',
+                  ].join(' ')}
+                >
+                  {option.label}
+                </button>
+              )
+            })}
           </div>
         </Reveal>
 
-        <ol>
-          {leaks.map((leak) => (
-            <li key={leak.id}>
-              <LeakRow leak={leak} />
-            </li>
-          ))}
-        </ol>
+        {/* --- the map ------------------------------------------------- */}
+        <div ref={ref} className="mt-6">
+          <div className="hidden lg:block">
+            <LeakMap on={on} drawn={inView} />
+          </div>
+          <div className="lg:hidden">
+            <LeakMapMobile on={on} />
+          </div>
+        </div>
+
+        {/* --- what it means ----------------------------------------- */}
+        <Reveal delay={80}>
+          <p className="mt-10 max-w-[64ch] text-lede text-chalk-2">
+            {on ? (
+              <>
+                Same demand. Same marketing spend. Same {leakCounts.total}{' '}
+                opportunities.{' '}
+                <span className="text-chalk">
+                  {leakCounts.recovered} of the {leakCounts.lost} that were going
+                  to disappear are back in the flow
+                </span>{' '}
+                — and {leakCounts.stillLost} are still gone, because some of them
+                always will be.
+              </>
+            ) : (
+              <>
+                {leakCounts.booked} of {leakCounts.total} make it through on their
+                own.{' '}
+                <span className="text-chalk">
+                  The other {leakCounts.lost} stop at a gate
+                </span>{' '}
+                — not because the lead was bad, but because nobody got to it in
+                time.
+              </>
+            )}
+          </p>
+        </Reveal>
       </div>
     </section>
-  )
-}
-
-function LeakRow({ leak }: { leak: (typeof leaks)[number] }) {
-  return (
-    <Reveal
-      className="group border-b border-rule py-9 md:py-11"
-      onEnter={() => trackOnce('leak_moment_viewed', { moment: leak.id })}
-    >
-      <div className="grid gap-x-10 gap-y-4 lg:grid-cols-12">
-        <div className="lg:col-span-1">
-          <span className="tnum font-mono text-mono-sm text-graphite-3 transition-colors duration-500 group-hover:text-graphite">
-            {leak.index}
-          </span>
-        </div>
-
-        <div className="lg:col-span-4">
-          <h3 className="max-w-[20ch] text-h3 text-graphite">{leak.title}</h3>
-          <p className="tnum mt-3 font-mono text-mono-xs text-graphite-3 uppercase">
-            {leak.time} · {leak.source}
-          </p>
-          <p className="mt-1 font-mono text-mono-xs text-graphite-3 uppercase">
-            {leak.job}
-          </p>
-        </div>
-
-        <div className="lg:col-span-7">
-          <p className="max-w-[58ch] text-[1.0625rem] leading-relaxed text-graphite-2">
-            {leak.scene[0]}{' '}
-            <span className="text-graphite-3">{leak.scene[1]}</span>
-          </p>
-        </div>
-      </div>
-
-      {/* how far this one got before it stopped moving */}
-      <div className="mt-8 md:mt-9">
-        <LeakPath progress={leak.progress} />
-        <div className="mt-3.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-          <StatusTag state="lost" label={leak.outcome} />
-          <span className="tnum font-mono text-mono-xs text-graphite-3 uppercase">
-            Stopped {Math.round(leak.progress * 100)}% along
-          </span>
-        </div>
-      </div>
-    </Reveal>
   )
 }

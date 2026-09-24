@@ -155,17 +155,26 @@
    ========================================================================== */
 
 @utility shell {
+  --shell-max: 78rem;
+  --shell-gutter: 1.25rem;
+  /* Distance from the shell's content edge out to the viewport edge, negated.
+     Children use this to bleed past the container without percentage maths
+     against their own grid column. */
+  --bleed-out: calc(
+    -1 * ((100vw - min(var(--shell-max), 100vw)) / 2 + var(--shell-gutter))
+  );
+
   width: 100%;
-  max-width: 78rem;
+  max-width: var(--shell-max);
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: var(--shell-gutter);
 
   @media (width >= 48rem) {
-    padding-inline: 2.5rem;
+    --shell-gutter: 2.5rem;
   }
 
   @media (width >= 80rem) {
-    padding-inline: 3.5rem;
+    --shell-gutter: 3.5rem;
   }
 }
 
@@ -480,4 +489,233 @@
       animation: none;
     }
   }
+}
+
+/* ==========================================================================
+   THE RECOVERY FIELD — visual foundation
+   ==========================================================================
+   Revenue has motion. Every opportunity is travelling toward BOOKED or toward
+   LOST, and CloseAgain changes the direction. Everything below exists to say
+   that: the rails opportunities travel, the light that falls on them, the
+   pulse that fires when one is recovered.
+   ========================================================================== */
+
+@theme {
+  /* --- display scale: three distinct typographic modes ----------------- */
+  --text-mega: clamp(2.75rem, 10.5vw, 9.5rem);
+  --text-mega--line-height: 0.88;
+  --text-mega--letter-spacing: -0.045em;
+
+  --text-display-xl: clamp(2.5rem, 7vw, 5.75rem);
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--letter-spacing: -0.035em;
+
+  /* --- depth: shadows read as light falling on a surface, never as glow */
+  --shadow-stage: 0 60px 120px -60px rgb(13 15 14 / 0.55), 0 24px 48px -32px rgb(13 15 14 / 0.3);
+  --shadow-lift: 0 24px 56px -34px rgb(13 15 14 / 0.4);
+  --shadow-inset-top: inset 0 1px 0 0 rgb(237 234 228 / 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Scale variation. The old site put everything in one container; these let a
+   scene break out of it.
+   -------------------------------------------------------------------------- */
+
+@utility bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+/** Contained on the left, running off the right edge of the viewport. */
+@utility bleed-right {
+  margin-right: var(--bleed-out);
+}
+
+@utility bleed-left {
+  margin-left: var(--bleed-out);
+}
+
+/* --------------------------------------------------------------------------
+   Lighting. Warm surfaces get environmental light; ink surfaces get localized
+   light around whatever is active. No cheap glows.
+   -------------------------------------------------------------------------- */
+
+@utility lit-warm {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(70% 55% at 78% 4%, rgb(255 253 246 / 0.95), transparent 66%),
+      radial-gradient(90% 70% at 8% 96%, rgb(216 207 191 / 0.4), transparent 70%);
+  }
+}
+
+@utility lit-ink {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 50% at 70% 10%, rgb(237 234 228 / 0.07), transparent 70%),
+      radial-gradient(50% 60% at 12% 92%, rgb(127 185 155 / 0.06), transparent 72%);
+  }
+}
+
+/** A rail's surface: a hairline with light pooling along it. */
+@utility rail-sheen {
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--color-rule) 12%,
+    var(--color-rule) 88%,
+    transparent
+  );
+}
+
+@utility rail-sheen-ink {
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--color-rule-ink) 10%,
+    var(--color-rule-ink) 90%,
+    transparent
+  );
+}
+
+/* --------------------------------------------------------------------------
+   THE RECOVERY PULSE — the site's signature interaction.
+   Fires once when an opportunity is recovered. Green travelling outward from
+   the event, then gone. The visitor learns: green pulse = revenue recovered.
+   -------------------------------------------------------------------------- */
+
+@layer components {
+  @keyframes recovery-pulse {
+    0% {
+      opacity: 0.7;
+      transform: scale(0.4);
+    }
+    70% {
+      opacity: 0;
+      transform: scale(2.6);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2.6);
+    }
+  }
+
+  .pulse-ring {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin: -1.125rem 0 0 -1.125rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-recover-bright);
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .pulse-ring[data-fire='true'] {
+    animation: recovery-pulse 1.5s var(--ease-out-quiet) forwards;
+  }
+
+  .pulse-ring[data-delay='1'] {
+    animation-delay: 0.18s;
+  }
+
+  /* --- a signal drifting through the background field ------------------ */
+  @keyframes signal-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(var(--drift, 90px), 0, 0);
+    }
+  }
+
+  .signal-drift {
+    animation: signal-drift var(--drift-ms, 30s) linear infinite alternate;
+  }
+
+  /* --- a path drawing itself along its own length --------------------- */
+  .path-draw {
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 1.4s var(--ease-out-quiet);
+    transition-delay: var(--draw-delay, 0ms);
+  }
+
+  .path-draw[data-drawn='true'] {
+    stroke-dashoffset: 0;
+  }
+
+  /* --- an opportunity marker travelling a rail ------------------------ */
+  .travel {
+    transition:
+      left 1.15s var(--ease-in-out-quiet),
+      transform 0.7s var(--ease-out-quiet),
+      opacity 0.7s var(--ease-out-quiet);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .signal-drift,
+    .pulse-ring[data-fire='true'] {
+      animation: none !important;
+    }
+
+    .path-draw {
+      stroke-dashoffset: 0 !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Materiality. A stage is a surface with light on its top edge and the room
+   falling away beneath it — not a translucent pane.
+   -------------------------------------------------------------------------- */
+
+@utility stage-ink {
+  position: relative;
+  background-color: var(--color-ink);
+  box-shadow: var(--shadow-stage), var(--shadow-inset-top);
+}
+
+@utility hairline-top {
+  &::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgb(237 234 228 / 0.16),
+      transparent
+    );
+  }
+}
+
+/* Pointer-driven depth, applied by a hook that writes --px/--py in [-1, 1]. */
+@utility depth-layer {
+  transform: translate3d(
+    calc(var(--px, 0) * var(--depth, 4px)),
+    calc(var(--py, 0) * var(--depth, 4px)),
+    0
+  );
+  transition: transform 0.5s var(--ease-out-quiet);
 }

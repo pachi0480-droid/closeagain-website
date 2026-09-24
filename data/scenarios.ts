@@ -333,4 +333,78 @@ export const scenarios: Scenario[] = [
   },
 ]
 
-export const heroScenario = scenarios[0]
+/* -------------------------------------------------------------------------- */
+/* Hero scene                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The hero's cinematic beat sheet: one opportunity entering, stalling,
+ * being intercepted, and completing its path to a booked window.
+ *
+ * Structured rather than hard-coded into the animation so the story can be
+ * rewritten without touching choreography. Illustrative — this is not a
+ * record of live customer activity.
+ */
+export type HeroBeat =
+  | { kind: 'event'; time: string; label: string; detail: string; state: OpportunityState }
+  | { kind: 'message'; time: string; from: 'customer' | 'closeagain'; body: string }
+  | { kind: 'booking'; time: string; window: string; service: string }
+
+export const heroBeats: HeroBeat[] = [
+  {
+    kind: 'event',
+    time: '6:42 PM',
+    label: 'Inbound call',
+    detail: 'AC not cooling · Google LSA',
+    state: 'neutral',
+  },
+  {
+    kind: 'event',
+    time: '6:42 PM',
+    label: 'No answer',
+    detail: 'After hours · no voicemail left',
+    state: 'lost',
+  },
+  {
+    kind: 'event',
+    time: '6:42 PM',
+    label: 'CloseAgain detected',
+    detail: 'Recovery opened 40 seconds after ring-out',
+    state: 'engaged',
+  },
+  {
+    kind: 'message',
+    time: '6:43 PM',
+    from: 'customer',
+    body: 'AC stopped cooling this afternoon.',
+  },
+  {
+    kind: 'message',
+    time: '6:44 PM',
+    from: 'closeagain',
+    body: 'I can get someone out. Is tomorrow morning or afternoon better?',
+  },
+  {
+    kind: 'message',
+    time: '6:46 PM',
+    from: 'customer',
+    body: 'Morning.',
+  },
+  {
+    kind: 'booking',
+    time: '6:47 PM',
+    window: 'Tomorrow · 9:00–11:00 AM',
+    service: 'Diagnostic',
+  },
+]
+
+/** The four waypoints the hero rail is labelled with. */
+export const heroWaypoints = [
+  { at: 7, time: '6:42 PM', label: 'Inbound', state: 'neutral' as OpportunityState },
+  { at: 33, time: '6:42 PM', label: 'Missed', state: 'lost' as OpportunityState },
+  { at: 61, time: '6:44 PM', label: 'Engaged', state: 'engaged' as OpportunityState },
+  { at: 93, time: '6:47 PM', label: 'Booked', state: 'recovered' as OpportunityState },
+]
+
+/** Which waypoint the marker sits on at each step of the beat sheet. */
+export const heroWaypointForStep = [0, 0, 1, 2, 2, 2, 3, 3]

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ButtonLink } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
 import { cta } from '@/data/site'
@@ -15,6 +16,21 @@ import { useInViewOnce } from '@/lib/hooks'
 export function FinalSignalCTA() {
   return (
     <section className="relative isolate overflow-hidden border-t border-rule bg-void py-24 md:py-32">
+      {/*
+        Cubes seated in the dock at the end of the path: booked work, as an
+        object. Sits under the converging lines so the drawn resolution and
+        the physical one are the same beat.
+      */}
+      <Image
+        src="/signal-arrival.webp"
+        alt=""
+        aria-hidden="true"
+        width={1500}
+        height={996}
+        sizes="100vw"
+        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-[34rem] lg:block w-full object-cover object-center opacity-[0.2] [mask-image:linear-gradient(to_top,black_0%,transparent_85%)]"
+      />
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"

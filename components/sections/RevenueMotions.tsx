@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Reveal } from '@/components/ui/Reveal'
 import { SectionMark } from '@/components/ui/Type'
 import { convergence, motions, type Motion } from '@/data/motions'
@@ -23,8 +24,23 @@ export function RevenueMotions() {
   return (
     <section
       id={chapter.motions}
-      className="relative scroll-mt-24 border-t border-rule bg-void"
+      className="relative scroll-mt-24 overflow-hidden border-t border-rule bg-void"
     >
+      {/*
+        A signal stopped at a clean break in the path. The chapter's premise
+        made physical, masked back until it reads as depth rather than
+        illustration — the type stays the loudest thing on the screen.
+      */}
+      <Image
+        src="/signal-break.webp"
+        alt=""
+        aria-hidden="true"
+        width={1500}
+        height={996}
+        sizes="100vw"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[38rem] lg:block w-full object-cover object-center opacity-[0.22] [mask-image:linear-gradient(to_bottom,black_0%,transparent_88%)]"
+      />
+
       <div className="shell-wide pt-24 md:pt-28">
         <Reveal>
           <SectionMark index="03" label="Two revenue motions" />

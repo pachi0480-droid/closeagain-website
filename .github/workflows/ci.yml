@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, typecheck and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22 rather than whatever a contributor happens to run locally:
+      # it satisfies Next's >=20.9 floor and matches what a deploy target
+      # would use, so this job catches version-sensitive breakage instead of
+      # mirroring one machine.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # The three checks run independently. A PR author should see every
+      # failure in one pass rather than fixing them one run at a time, so a
+      # failed step does not stop the ones after it — only a cancelled job does.
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: npm run lint
+
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        run: npm run typecheck
+
+      - name: Build
+        if: ${{ !cancelled() }}
+        run: npm run build

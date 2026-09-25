@@ -1,70 +1,64 @@
 import type { Metadata, Viewport } from 'next'
-import { IBM_Plex_Mono, Instrument_Sans, Instrument_Serif } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Footer } from '@/components/layout/Footer'
 import { Header } from '@/components/layout/Header'
 import { site } from '@/data/site'
 import './globals.css'
 
-const sans = Instrument_Sans({
+/**
+ * One engineered grotesk and one technical mono. Both are variable fonts
+ * served from the same origin as the page, so the whole type system costs two
+ * requests and never flashes a fallback metric.
+ */
+const sans = Geist({
   subsets: ['latin'],
-  variable: '--font-instrument-sans',
+  variable: '--font-geist',
   display: 'swap',
 })
 
-const serif = Instrument_Serif({
+const mono = Geist_Mono({
   subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  variable: '--font-instrument-serif',
-  display: 'swap',
-})
-
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
+  variable: '--font-geist-mono',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: 'CloseAgain — Revenue Recovery for Home Services',
+    default: 'CloseAgain — Turn Demand Into Booked Jobs',
     template: '%s — CloseAgain',
   },
   description: site.description,
   applicationName: site.name,
   alternates: { canonical: '/' },
   keywords: [
-    'revenue recovery',
+    'demand to revenue',
     'home services',
     'missed call recovery',
     'lead follow-up',
+    'estimate follow-up',
     'HVAC software',
     'plumbing software',
-    'electrical contractor software',
+    'roofing software',
   ],
   openGraph: {
     type: 'website',
     siteName: site.name,
     url: site.url,
-    title: 'CloseAgain — Revenue Recovery for Home Services',
+    title: 'CloseAgain — Turn Demand Into Booked Jobs',
     description: site.description,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CloseAgain — Revenue Recovery for Home Services',
+    title: 'CloseAgain — Turn Demand Into Booked Jobs',
     description: site.description,
   },
   robots: { index: true, follow: true },
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fbf9f5' },
-    { media: '(prefers-color-scheme: dark)', color: '#0d0f0e' },
-  ],
-  colorScheme: 'light',
+  themeColor: '#080a09',
+  colorScheme: 'dark',
 }
 
 /** Truthful structured data only: who we are and what the site is. */
@@ -92,18 +86,21 @@ const structuredData = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <head>
         {/* Reveals are progressive enhancement: without JS the page is simply
             all visible, rather than a column of invisible sections. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important}`}</style>
+          <style>{
+            `[data-reveal]{opacity:1!important;transform:none!important}` +
+            `[data-step]{opacity:1!important;visibility:visible!important;transform:none!important}`
+          }</style>
         </noscript>
       </head>
       <body className="antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-[7px] focus:bg-graphite focus:px-4 focus:py-2.5 focus:text-sm focus:text-paper"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-[8px] focus:bg-signal focus:px-4 focus:py-2.5 focus:text-sm focus:font-medium focus:text-void"
         >
           Skip to content
         </a>

@@ -4,34 +4,31 @@ import Link from 'next/link'
 import type { ComponentProps, ReactNode } from 'react'
 
 type Variant = 'primary' | 'secondary' | 'quiet'
-type Tone = 'light' | 'ink'
 type Size = 'md' | 'lg'
 
 const base =
-  'group relative inline-flex select-none items-center justify-center gap-2 rounded-[7px] ' +
-  'font-medium tracking-[-0.01em] whitespace-nowrap ' +
+  'group relative inline-flex select-none items-center justify-center gap-2 rounded-[8px] ' +
+  'font-medium tracking-[-0.012em] whitespace-nowrap ' +
   'transition-[background-color,border-color,color,transform] duration-300 ' +
   '[transition-timing-function:var(--ease-out-quiet)] active:translate-y-px ' +
   'disabled:pointer-events-none disabled:opacity-50'
 
 const sizes: Record<Size, string> = {
+  /** 44px minimum, so every control clears the touch-target floor. */
   md: 'h-11 px-5 text-[0.9375rem]',
   lg: 'h-[3.25rem] px-6 text-base',
 }
 
-const styles: Record<Tone, Record<Variant, string>> = {
-  light: {
-    primary: 'bg-graphite text-paper hover:bg-recover-deep',
-    secondary:
-      'border border-rule text-graphite hover:border-graphite/35 hover:bg-graphite/[0.04]',
-    quiet: 'text-graphite-2 hover:text-graphite',
-  },
-  ink: {
-    primary: 'bg-chalk text-ink hover:bg-recover-bright',
-    secondary:
-      'border border-rule-ink text-chalk hover:border-chalk/35 hover:bg-chalk/[0.06]',
-    quiet: 'text-chalk-2 hover:text-chalk',
-  },
+/**
+ * Signal green is the CTA. It is the same green that means "moving" and
+ * "booked" everywhere else on the page, which is the point: the button is the
+ * next action.
+ */
+const styles: Record<Variant, string> = {
+  primary: 'bg-signal text-void hover:bg-warm-white',
+  secondary:
+    'border border-steel text-warm-white hover:border-signal/60 hover:bg-signal/[0.07]',
+  quiet: 'text-muted hover:text-warm-white',
 }
 
 export function Arrow({ className = '' }: { className?: string }) {
@@ -41,12 +38,12 @@ export function Arrow({ className = '' }: { className?: string }) {
       fill="none"
       aria-hidden="true"
       focusable="false"
-      className={`caret h-[0.6rem] w-[0.72rem] ${className}`}
+      className={`h-[0.6rem] w-[0.72rem] transition-transform duration-300 [transition-timing-function:var(--ease-out-quiet)] group-hover:translate-x-[3px] ${className}`}
     >
       <path
         d="M0.75 5h9.5M7 1.5 10.5 5 7 8.5"
         stroke="currentColor"
-        strokeWidth="1.4"
+        strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -56,7 +53,6 @@ export function Arrow({ className = '' }: { className?: string }) {
 
 type CommonProps = {
   variant?: Variant
-  tone?: Tone
   size?: Size
   withArrow?: boolean
   children: ReactNode
@@ -65,7 +61,6 @@ type CommonProps = {
 
 export function Button({
   variant = 'primary',
-  tone = 'ink',
   size = 'md',
   withArrow = false,
   className = '',
@@ -74,7 +69,7 @@ export function Button({
 }: CommonProps & Omit<ComponentProps<'button'>, 'children' | 'className'>) {
   return (
     <button
-      className={`${base} ${sizes[size]} ${styles[tone][variant]} ${className}`}
+      className={`${base} ${sizes[size]} ${styles[variant]} ${className}`}
       {...rest}
     >
       {children}
@@ -85,7 +80,6 @@ export function Button({
 
 export function ButtonLink({
   variant = 'primary',
-  tone = 'ink',
   size = 'md',
   withArrow = false,
   className = '',
@@ -99,7 +93,7 @@ export function ButtonLink({
   return (
     <Link
       href={href}
-      className={`${base} ${sizes[size]} ${styles[tone][variant]} ${className}`}
+      className={`${base} ${sizes[size]} ${styles[variant]} ${className}`}
       {...rest}
     >
       {children}

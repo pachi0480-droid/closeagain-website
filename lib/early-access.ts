@@ -15,13 +15,14 @@
 
 export type EarlyAccessPayload = {
   name: string
-  email: string
   company: string
+  email: string
   phone: string
   trade: string
-  teamSize: string
+  serviceArea: string
   leadVolume: string
-  biggestLeak: string
+  biggestGap: string
+  context: string
 }
 
 export type SubmitResult =
@@ -66,6 +67,8 @@ export function validate(payload: EarlyAccessPayload): FieldErrors {
 
   if (!payload.company.trim()) errors.company = 'Enter your company name.'
   if (!payload.trade) errors.trade = 'Select your primary trade.'
+  if (!payload.serviceArea.trim())
+    errors.serviceArea = 'Enter the area you serve.'
 
   return errors
 }

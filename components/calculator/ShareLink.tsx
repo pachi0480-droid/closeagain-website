@@ -24,10 +24,10 @@ export function ShareLink() {
 
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-      <Button type="button" tone="ink" variant="secondary" onClick={copy}>
+      <Button type="button" variant="secondary" onClick={copy}>
         {copied ? 'Link copied' : 'Copy link to these numbers'}
       </Button>
-      <p aria-live="polite" className="font-mono text-mono-xs text-chalk-3 uppercase">
+      <p aria-live="polite" className="font-mono text-mono-xs uppercase text-secondary">
         {copied
           ? 'Your assumptions travel with the link'
           : 'The link carries your assumptions'}

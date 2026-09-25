@@ -3,7 +3,7 @@ import { plans, planMatrix, type MatrixCell } from '@/data/pricing'
 function Cell({ value, plan }: { value: MatrixCell; plan: string }) {
   if (typeof value === 'string') {
     return (
-      <span className="font-mono text-mono-xs text-chalk-2 uppercase">
+      <span className="font-mono text-mono-xs text-muted uppercase">
         {value}
       </span>
     )
@@ -14,7 +14,7 @@ function Cell({ value, plan }: { value: MatrixCell; plan: string }) {
       {/* a mark, plus text only a screen reader reads */}
       <span
         aria-hidden="true"
-        className="inline-block h-[7px] w-[7px] rounded-full bg-recover-bright"
+        className="inline-block h-[7px] w-[7px] rounded-full bg-signal"
       />
       <span className="sr-only">Included in {plan}</span>
     </>
@@ -22,7 +22,7 @@ function Cell({ value, plan }: { value: MatrixCell; plan: string }) {
     <>
       <span
         aria-hidden="true"
-        className="inline-block h-px w-3 bg-dormant/60"
+        className="inline-block h-px w-3 bg-quiet/60"
       />
       <span className="sr-only">Not included in {plan}</span>
     </>
@@ -38,7 +38,7 @@ export function PlanMatrix() {
     <div>
       {/* The table is wider than a phone. Say so, rather than leaving the
           scroll to be discovered. */}
-      <p className="mb-4 flex items-center gap-2 font-mono text-mono-xs text-chalk-3 uppercase lg:hidden">
+      <p className="mb-4 flex items-center gap-2 font-mono text-mono-xs text-secondary uppercase lg:hidden">
         Scroll to compare
         <svg viewBox="0 0 12 10" fill="none" aria-hidden="true" className="h-[0.6rem] w-[0.72rem]">
           <path
@@ -57,8 +57,8 @@ export function PlanMatrix() {
           What each CloseAgain plan covers, by capability.
         </caption>
         <thead>
-          <tr className="border-b border-rule-ink">
-            <th scope="col" className="w-[38%] py-4 font-mono text-mono-xs font-normal text-chalk-3 uppercase">
+          <tr className="border-b border-rule">
+            <th scope="col" className="w-[38%] py-4 font-mono text-mono-xs font-normal text-secondary uppercase">
               Capability
             </th>
             {plans.map((plan) => (
@@ -67,10 +67,10 @@ export function PlanMatrix() {
                 scope="col"
                 className="py-4 pl-6 font-normal"
               >
-                <span className="block text-[1.0625rem] tracking-[-0.015em] text-chalk">
+                <span className="block text-[1.0625rem] tracking-[-0.015em] text-warm-white">
                   {plan.name}
                 </span>
-                <span className="tnum mt-1 block font-mono text-mono-xs text-chalk-3">
+                <span className="tnum mt-1 block font-mono text-mono-xs text-secondary">
                   {plan.price === null
                     ? plan.priceLabel
                     : `$${plan.price.toLocaleString('en-US')} / mo`}
@@ -86,16 +86,16 @@ export function PlanMatrix() {
               <th
                 scope="colgroup"
                 colSpan={plans.length + 1}
-                className="border-b border-rule-ink pt-9 pb-2.5 font-mono text-mono-xs font-normal text-chalk-3 uppercase"
+                className="border-b border-rule pt-9 pb-2.5 font-mono text-mono-xs font-normal text-secondary uppercase"
               >
                 {group.group}
               </th>
             </tr>
             {group.rows.map((row) => (
-              <tr key={row.label} className="border-b border-rule-ink-soft">
+              <tr key={row.label} className="border-b border-rule-soft">
                 <th
                   scope="row"
-                  className="py-3.5 pr-6 text-[0.9375rem] font-normal text-chalk-2"
+                  className="py-3.5 pr-6 text-[0.9375rem] font-normal text-muted"
                 >
                   {row.label}
                 </th>

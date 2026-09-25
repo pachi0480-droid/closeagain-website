@@ -1,25 +1,23 @@
 import type { Metadata } from 'next'
-import { CapabilityDetail } from '@/components/product/CapabilityDetail'
-import { LifecycleMap } from '@/components/product/LifecycleMap'
 import { PageIntro } from '@/components/layout/PageIntro'
-import { ProductStage } from '@/components/visuals/ProductStage'
-import { EarlyAccess } from '@/components/sections/EarlyAccess'
-import { Integrations } from '@/components/sections/Integrations'
+import { Capabilities } from '@/components/product/Capabilities'
+import { AuditForm } from '@/components/sections/AuditForm'
+import { CommandCenter } from '@/components/sections/CommandCenter'
 import { ButtonLink } from '@/components/ui/Button'
 import { Reveal } from '@/components/ui/Reveal'
 import { SectionMark } from '@/components/ui/Type'
-import { capabilities } from '@/data/capabilities'
+import { compatibility } from '@/data/industries'
 import { cta } from '@/data/site'
 
 export const metadata: Metadata = {
   title: 'Product',
   description:
-    'One recovery engine across the whole lead lifecycle: missed calls, slow lead response, cold estimates, no-shows and dormant leads — with the recovery attributed so you can see what came back.',
+    'One system across the whole lifecycle: new inquiries, missed calls, slow response, cold estimates, no-shows and dormant leads — each with a next action and a path to booked work.',
   alternates: { canonical: '/product' },
   openGraph: {
     title: 'Product — CloseAgain',
     description:
-      'One recovery engine across the whole lead lifecycle, with every recovery attributed to the moment it was slipping.',
+      'One system across the whole lifecycle, with every opportunity carrying its own next action.',
     url: '/product',
   },
 }
@@ -29,8 +27,8 @@ export default function ProductPage() {
     <>
       <PageIntro
         eyebrow="Product"
-        title="One recovery engine. Every place revenue slips."
-        lede="Six capabilities, one system. They share the same conversation, the same booking path and the same record, so a recovered lead does not arrive at your office as a mystery."
+        title="One system. Every place demand stalls."
+        lede="The capabilities share the same conversation, the same booking path and the same record, so a recovered opportunity does not arrive at your office as a mystery."
         aside={
           <ButtonLink href={cta.target} withArrow>
             {cta.primary}
@@ -38,77 +36,34 @@ export default function ProductPage() {
         }
       />
 
-      {/* --- what it covers, in one picture --------------------------- */}
-      <section className="grain relative bg-paper pb-24 md:pb-28">
-        <div className="shell">
+      <section className="border-t border-rule bg-void py-20 md:py-24">
+        <div className="shell-wide">
           <Reveal>
-            <SectionMark index="01" label="Coverage" />
+            <SectionMark index="01" label="Capabilities" />
+            <h2 className="mt-6 max-w-[24ch] text-h2 font-semibold uppercase text-warm-white">
+              What each part actually does.
+            </h2>
           </Reveal>
-          <Reveal delay={100} className="mt-8">
-            <LifecycleMap />
-          </Reveal>
-          <Reveal delay={140}>
-            <p className="mt-8 max-w-[62ch] text-[0.9375rem] leading-relaxed text-graphite-2">
-              Most tools pick one moment in this path. The reason CloseAgain
-              covers the whole thing is that revenue does not leak in one place
-              — it leaks at whichever point your team happens to be busiest.
+
+          <div className="mt-12">
+            <Capabilities />
+          </div>
+
+          <Reveal delay={80}>
+            <p className="mt-10 max-w-[64ch] text-[0.9375rem] leading-relaxed text-muted">
+              Most tools pick one moment in this path. CloseAgain covers the
+              whole thing because demand does not stall in one place — it
+              stalls at whichever point your team happens to be busiest.
+            </p>
+            <p className="mt-4 max-w-[64ch] text-[0.9375rem] leading-relaxed text-secondary">
+              {compatibility}
             </p>
           </Reveal>
         </div>
       </section>
 
-      {/* --- the capabilities, one at a time -------------------------- */}
-      <section className="grain relative bg-bone pt-20 pb-6 md:pt-24">
-        <div className="shell">
-          <Reveal>
-            <SectionMark index="02" label="Capabilities" />
-            <h2 className="mt-7 max-w-[22ch] text-h2 text-graphite">
-              What each part actually does.
-            </h2>
-          </Reveal>
-        </div>
-      </section>
-
-      {capabilities.map((capability, i) => (
-        <CapabilityDetail
-          key={capability.id}
-          capability={capability}
-          tone={i % 2 === 0 ? 'bone' : 'paper'}
-        />
-      ))}
-
-      {/* --- the operational view ------------------------------------- */}
-      <section className="grain relative bg-limestone/70 py-24 md:py-28">
-        <div className="shell">
-          <div className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-12">
-            <div className="lg:col-span-6">
-              <Reveal>
-                <SectionMark index="04" label="Recovery feed" />
-                <h2 className="mt-7 max-w-[20ch] text-h2 text-graphite">
-                  Every recovery is a record you can read.
-                </h2>
-              </Reveal>
-            </div>
-            <div className="mt-6 lg:col-span-5 lg:col-start-8 lg:mt-0">
-              <Reveal delay={140}>
-                <p className="max-w-[44ch] text-[1.0625rem] leading-relaxed text-graphite-2">
-                  The same four moments from the homepage, in the view your
-                  office would work from. Timestamps, what was said, and where
-                  the opportunity ended up.
-                </p>
-              </Reveal>
-            </div>
-          </div>
-
-        </div>
-
-        <Reveal delay={120} className="shell-wide mt-14 md:mt-16">
-          <ProductStage />
-        </Reveal>
-      </section>
-
-      <Integrations />
-      <EarlyAccess />
+      <CommandCenter />
+      <AuditForm />
     </>
   )
 }

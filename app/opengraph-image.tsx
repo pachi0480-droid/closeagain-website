@@ -1,8 +1,21 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
 
-export const alt = 'CloseAgain — Revenue Recovery for Home Services'
+export const alt = 'CloseAgain — Turn demand into booked jobs'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+
+/**
+ * The share card.
+ *
+ * The background is the Signal Room's own atmosphere — a low horizon, a
+ * receding grid and one bright node with its filaments running out to the
+ * right. Every word on the card is drawn here, as real text, over it.
+ */
+const background = `data:image/jpeg;base64,${readFileSync(
+  join(process.cwd(), 'app', 'og-background.jpg'),
+).toString('base64')}`
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -14,51 +27,71 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          backgroundColor: '#0D0F0E',
-          padding: '72px 80px',
-          color: '#EDEAE4',
+          backgroundColor: '#080A09',
+          backgroundImage: `url(${background})`,
+          backgroundSize: '1200px 630px',
+          padding: '68px 76px',
+          color: '#F4F1E9',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <svg width="30" height="30" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M16.31 8.07A6.6 6.6 0 1 1 11.93 3.69"
-              stroke="#7FB99B"
-              strokeWidth="1.7"
+        {/* the lockup */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 15 }}>
+          <svg width="37" height="26" viewBox="0 0 26 18" fill="none">
+            <g
+              stroke="#B7FF6A"
+              strokeWidth="2"
               strokeLinecap="round"
-            />
-            <circle cx="16.29" cy="3.71" r="1.75" fill="#7FB99B" />
+              strokeLinejoin="round"
+            >
+              <path d="M2 13H8" />
+              <path d="M8 13L13 5" />
+              <path d="M13 5H18" />
+            </g>
+            <circle cx="22" cy="5" r="2.4" fill="#B7FF6A" />
           </svg>
-          <span style={{ fontSize: 30, letterSpacing: '-0.03em' }}>CloseAgain</span>
+          <span style={{ fontSize: 31, letterSpacing: '-0.03em', fontWeight: 600 }}>
+            CloseAgain
+          </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span
             style={{
-              fontSize: 19,
-              letterSpacing: '0.16em',
-              color: '#74776F',
+              fontSize: 18,
+              letterSpacing: '0.17em',
+              color: '#9BA39D',
               textTransform: 'uppercase',
             }}
           >
-            Revenue recovery for home services
+            Demand-to-revenue infrastructure for home services
           </span>
           <span
             style={{
-              marginTop: 26,
-              fontSize: 82,
-              lineHeight: 1.02,
-              letterSpacing: '-0.035em',
-              maxWidth: 940,
+              marginTop: 24,
+              fontSize: 86,
+              lineHeight: 1.0,
+              letterSpacing: '-0.045em',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              maxWidth: 900,
             }}
           >
-            Recover the leads you already paid for.
+            Turn demand into booked jobs.
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ width: 300, height: 1, backgroundColor: '#7FB99B' }} />
-          <span style={{ width: 9, height: 9, borderRadius: 9, backgroundColor: '#7FB99B' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div
+            style={{
+              width: 9,
+              height: 9,
+              borderRadius: 9,
+              backgroundColor: '#B7FF6A',
+            }}
+          />
+          <span style={{ fontSize: 22, color: '#9BA39D' }}>
+            Every opportunity gets a next action.
+          </span>
         </div>
       </div>
     ),

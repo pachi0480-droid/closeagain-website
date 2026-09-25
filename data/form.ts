@@ -1,27 +1,35 @@
-/** Field options for the early-access form. */
+/** Field options for the Revenue Gap Audit form. */
 
-export const trades = ['HVAC', 'Plumbing', 'Electrical', 'Multi-trade', 'Other'] as const
-
-export const teamSizes = [
-  '1–5 people',
-  '6–15 people',
-  '16–40 people',
-  '40+ people',
+export const trades = [
+  'HVAC',
+  'Plumbing',
+  'Electrical',
+  'Roofing',
+  'Restoration',
+  'Remodeling',
+  'Windows & doors',
+  'Garage doors',
+  'Pest control',
+  'Landscaping',
+  'Pool services',
+  'Multi-trade',
+  'Other',
 ] as const
 
 export const leadVolumes = [
   'Under 100 / month',
-  '100–300 / month',
-  '300–750 / month',
+  '100\u2013300 / month',
+  '300\u2013750 / month',
   '750+ / month',
   'Not sure',
 ] as const
 
-export const leakSources = [
+export const gaps = [
+  'Need more new opportunities',
+  'Slow response',
   'Missed calls',
-  'Slow lead response',
-  'Estimate follow-up',
-  'No-shows',
-  'Old leads',
-  'Not sure yet',
+  'Estimates not closing',
+  'Inconsistent follow-up',
+  'Old leads sitting untouched',
+  'Unsure \u2014 help identify it',
 ] as const

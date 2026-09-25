@@ -10,18 +10,22 @@ import {
 } from '@/lib/calculator'
 
 const KEYS: (keyof CalculatorInputs)[] = [
-  'opportunities',
-  'leakageRate',
-  'recoveryRate',
+  'leadsPerMonth',
   'jobValue',
+  'bookingRate',
+  'followUpRate',
+  'additionalLeads',
+  'recoveryRate',
 ]
 
 /** Short query keys, so a shared link stays readable. */
 const PARAM: Record<keyof CalculatorInputs, string> = {
-  opportunities: 'o',
-  leakageRate: 'l',
-  recoveryRate: 'r',
+  leadsPerMonth: 'l',
   jobValue: 'v',
+  bookingRate: 'b',
+  followUpRate: 'f',
+  additionalLeads: 'a',
+  recoveryRate: 'r',
 }
 
 function readFromLocation(): CalculatorInputs | null {

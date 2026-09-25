@@ -10,14 +10,14 @@ export function PricingQuestions() {
   const baseId = useId()
 
   return (
-    <dl className="border-t border-rule-ink">
+    <dl className="border-t border-rule">
       {pricingFaq.map((item) => {
         const expanded = open === item.id
         const buttonId = `${baseId}-${item.id}-button`
         const panelId = `${baseId}-${item.id}-panel`
 
         return (
-          <div key={item.id} className="border-b border-rule-ink">
+          <div key={item.id} className="border-b border-rule">
             <dt>
               <button
                 type="button"
@@ -33,15 +33,15 @@ export function PricingQuestions() {
               >
                 <span
                   className={`max-w-[38ch] text-[1.125rem] tracking-[-0.015em] transition-colors duration-300 ${
-                    expanded ? 'text-chalk' : 'text-chalk-2 group-hover:text-chalk'
+                    expanded ? 'text-warm-white' : 'text-muted group-hover:text-warm-white'
                   }`}
                 >
                   {item.q}
                 </span>
                 <span aria-hidden="true" className="relative mt-2 block h-3 w-3 shrink-0">
-                  <span className="absolute top-1/2 left-0 h-px w-3 -translate-y-1/2 bg-graphite-2" />
+                  <span className="absolute top-1/2 left-0 h-px w-3 -translate-y-1/2 bg-muted" />
                   <span
-                    className={`absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-graphite-2 transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
+                    className={`absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-muted transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
                       expanded ? 'scale-y-0' : 'scale-y-100'
                     }`}
                   />
@@ -57,7 +57,7 @@ export function PricingQuestions() {
             >
               <div className="overflow-hidden">
                 <p
-                  className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-chalk-2 transition-opacity duration-500 ${
+                  className={`max-w-[58ch] pb-7 text-[1.0625rem] leading-relaxed text-muted transition-opacity duration-500 ${
                     expanded ? 'opacity-100' : 'opacity-0'
                   }`}
                 >

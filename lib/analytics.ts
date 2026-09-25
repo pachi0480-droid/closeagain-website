@@ -8,15 +8,19 @@
 
 export type AnalyticsEvent =
   | 'hero_cta_clicked'
-  | 'hero_sequence_completed'
-  | 'leak_moment_viewed'
-  | 'recovery_loop_stage_viewed'
-  | 'recovery_feed_scenario_changed'
+  /** Chapter two: which lead scenario the visitor chose to watch. */
+  | 'scenario_selected'
+  /** Chapter four: the radar. */
+  | 'radar_filtered'
+  | 'radar_signal_selected'
+  /** Chapter six: the growth-gap model. */
   | 'calculator_started'
   | 'calculator_input_changed'
   | 'calculator_completed'
+  /** Chapter seven. */
+  | 'industry_selected'
+  /** Chapter eight. */
   | 'pricing_cta_clicked'
-  | 'pricing_plan_focused'
   | 'faq_opened'
   | 'early_access_started'
   | 'early_access_submitted'

@@ -1,82 +1,90 @@
 'use client'
 
-import { calculate, type CalculatorInputs } from '@/lib/calculator'
-import { formatCurrency } from '@/lib/format'
-
-const RATES = [10, 20, 30, 40, 50]
+import { Eyebrow } from '@/components/ui/Type'
+import { type CalculatorInputs, sensitivity } from '@/lib/calculator'
+import { formatCurrency, formatNumber } from '@/lib/format'
 
 /**
- * The same arithmetic at other recovery assumptions.
+ * The same arithmetic across a range of recovery rates.
  *
- * Nobody knows their real recovery rate before they try, so the honest move is
- * to show the whole range rather than defend one number.
+ * Nobody knows their recovery rate in advance, and defending a single number
+ * would be dishonest. The operator's own rate is marked in the row it falls
+ * nearest, so the table is read as a range and not a promise.
  */
 export function Sensitivity({ inputs }: { inputs: CalculatorInputs }) {
-  const rows = RATES.map((rate) => ({
-    rate,
-    ...calculate({ ...inputs, recoveryRate: rate }),
-    current: rate === inputs.recoveryRate,
-  }))
-
-  const max = Math.max(...rows.map((r) => r.monthlyValue))
+  const rows = sensitivity(inputs)
 
   return (
-    <table className="w-full border-collapse text-left">
-      <caption className="sr-only">
-        Estimated monthly revenue opportunity at different recovery rates,
-        using your other assumptions.
-      </caption>
-      <thead>
-        <tr className="border-b border-rule-ink">
-          <th scope="col" className="py-3 font-mono text-mono-xs font-normal text-chalk-3 uppercase">
-            If you recover
-          </th>
-          <th scope="col" className="py-3 text-right font-mono text-mono-xs font-normal text-chalk-3 uppercase">
-            Per month
-          </th>
-          <th scope="col" className="hidden py-3 text-right font-mono text-mono-xs font-normal text-chalk-3 uppercase sm:table-cell">
-            Per year
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => (
-          <tr key={row.rate} className="group border-b border-rule-ink-soft">
-            <th scope="row" className="py-4 pr-4 font-normal">
-              <span className="flex items-center gap-3">
-                <span
-                  className={`tnum font-mono text-[0.9375rem] ${
-                    row.current ? 'text-recover-bright' : 'text-chalk-2'
+    <div className="mt-14">
+      <Eyebrow>If the recovery rate is different</Eyebrow>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[34rem] border-collapse text-left">
+          <caption className="sr-only">
+            Illustrative monthly upside from working the follow-up gap, across a
+            range of recovery rates.
+          </caption>
+          <thead>
+            <tr className="border-b border-rule">
+              <th
+                scope="col"
+                className="pb-3 font-mono text-mono-xs font-normal uppercase text-secondary"
+              >
+                Recovery rate
+              </th>
+              <th
+                scope="col"
+                className="pb-3 text-right font-mono text-mono-xs font-normal uppercase text-secondary"
+              >
+                Jobs recovered
+              </th>
+              <th
+                scope="col"
+                className="pb-3 text-right font-mono text-mono-xs font-normal uppercase text-secondary"
+              >
+                Monthly upside
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const current = row.recoveryRate === inputs.recoveryRate
+              return (
+                <tr
+                  key={row.recoveryRate}
+                  className={`border-b border-rule-soft last:border-b-0 ${
+                    current ? 'bg-signal/[0.06]' : ''
                   }`}
                 >
-                  {row.rate}%
-                </span>
-                {row.current ? (
-                  <span className="font-mono text-mono-xs text-recover-bright uppercase">
-                    Your assumption
-                  </span>
-                ) : null}
-              </span>
-              {/* proportional bar, so the shape of the range is visible */}
-              <span
-                aria-hidden="true"
-                className="mt-2 block h-px origin-left bg-recover/45 transition-[width] duration-500"
-                style={{ width: `${(row.monthlyValue / max) * 100}%` }}
-              />
-            </th>
-            <td
-              className={`tnum py-4 text-right align-top font-mono text-[0.9375rem] ${
-                row.current ? 'text-chalk' : 'text-chalk-2'
-              }`}
-            >
-              {formatCurrency(row.monthlyValue)}
-            </td>
-            <td className="tnum hidden py-4 text-right align-top font-mono text-[0.9375rem] text-chalk-3 sm:table-cell">
-              {formatCurrency(row.annualValue)}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+                  <th
+                    scope="row"
+                    className={`tnum py-3 font-mono text-[0.9375rem] font-normal ${
+                      current ? 'text-signal' : 'text-muted'
+                    }`}
+                  >
+                    {row.recoveryRate}%
+                    {current ? (
+                      <span className="ml-2 font-mono text-mono-xs uppercase">
+                        Yours
+                      </span>
+                    ) : null}
+                  </th>
+                  <td className="tnum py-3 text-right font-mono text-[0.9375rem] text-muted">
+                    {formatNumber(row.conversionJobs)}
+                  </td>
+                  <td
+                    className={`tnum py-3 text-right font-mono text-[0.9375rem] ${
+                      current ? 'text-warm-white' : 'text-muted'
+                    }`}
+                  >
+                    {formatCurrency(row.conversionUpside)}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }

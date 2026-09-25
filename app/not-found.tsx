@@ -14,7 +14,7 @@ export const metadata: Metadata = {
  */
 export default function NotFound() {
   return (
-    <section className="grain relative isolate overflow-hidden bg-bone pt-36 pb-28 md:pt-44 md:pb-36">
+    <section className="grain relative isolate overflow-hidden bg-graphite pt-36 pb-28 md:pt-44 md:pb-36">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div
           className="field-grid absolute inset-0 opacity-60"
@@ -29,11 +29,11 @@ export default function NotFound() {
       <div className="shell">
         <Eyebrow>Error 404</Eyebrow>
 
-        <h1 className="mt-5 max-w-[16ch] text-h2 text-graphite">
+        <h1 className="mt-5 max-w-[16ch] text-h2 text-warm-white">
           This one got away.
         </h1>
 
-        <p className="mt-6 max-w-[46ch] text-lede text-graphite-2">
+        <p className="mt-6 max-w-[46ch] text-lede text-muted">
           The page you were after is not here. Fitting, for a company built
           around things that go missing — but let us get you back on the path.
         </p>
@@ -58,7 +58,7 @@ export default function NotFound() {
         </div>
 
         <nav aria-label="Site" className="mt-16 border-t border-rule pt-8">
-          <h2 className="font-mono text-mono-xs text-graphite-3 uppercase">
+          <h2 className="font-mono text-mono-xs text-secondary uppercase">
             Or head to
           </h2>
           <ul className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
@@ -66,7 +66,7 @@ export default function NotFound() {
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="link-rule text-[0.9375rem] text-graphite-2 transition-colors duration-300 hover:text-graphite"
+                  className="underline decoration-steel underline-offset-4 hover:decoration-signal text-[0.9375rem] text-muted transition-colors duration-300 hover:text-warm-white"
                 >
                   {item.label}
                 </a>

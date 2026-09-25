@@ -1,19 +1,13 @@
 import type { Metadata } from 'next'
+import { AuditForm } from '@/components/sections/AuditForm'
 import { CalculatorWorkbench } from '@/components/calculator/CalculatorWorkbench'
 import { PageIntro } from '@/components/layout/PageIntro'
-import { EarlyAccess } from '@/components/sections/EarlyAccess'
 
 export const metadata: Metadata = {
-  title: 'Revenue recovery calculator',
+  title: 'Growth-gap calculator',
   description:
-    'Put in your own inbound volume, leakage and average job value, and see what follow-up leakage could be costing you each month. Illustrative, transparent arithmetic — no benchmark, no borrowed average.',
+    'Model what your follow-up gap is worth, and whether adding demand or working the demand you already have is the larger move.',
   alternates: { canonical: '/calculator' },
-  openGraph: {
-    title: 'Revenue recovery calculator — CloseAgain',
-    description:
-      'What could follow-up leakage be costing you? Use your numbers, see the arithmetic, share the link.',
-    url: '/calculator',
-  },
 }
 
 export default function CalculatorPage() {
@@ -21,11 +15,11 @@ export default function CalculatorPage() {
     <>
       <PageIntro
         eyebrow="Calculator"
-        title="What could follow-up leakage be costing you?"
-        lede="Four assumptions, one multiplication, and the whole thing shown in the open. Change any of them and the link at the top of your browser changes with it, so you can send this to whoever signs off."
+        title="What is your follow-up gap worth?"
+        lede="Six assumptions and one multiplication. Share the link and the assumptions travel with it."
       />
       <CalculatorWorkbench />
-      <EarlyAccess />
+      <AuditForm />
     </>
   )
 }

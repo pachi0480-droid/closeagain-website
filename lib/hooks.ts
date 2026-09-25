@@ -273,3 +273,70 @@ export function useScrollVar<T extends HTMLElement = HTMLDivElement>() {
 
   return ref
 }
+
+/**
+ * Restrained proximity. On pointer move, writes `--near` in [0, 1] on every
+ * `[data-signal]` descendant, falling off with distance from the pointer.
+ *
+ * The field holds six cards, so this is six distance calculations on an
+ * rAF-throttled move — cheap enough to do in JavaScript and far more on
+ * message than a blanket parallax. Skipped on touch and under reduced motion.
+ */
+export function useProximity<T extends HTMLElement = HTMLDivElement>() {
+  const ref = useRef<T | null>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+
+    const targets = Array.from(
+      el.querySelectorAll<HTMLElement>('[data-signal]'),
+    )
+    if (targets.length === 0) return
+
+    let frame = 0
+
+    const apply = (clientX: number, clientY: number, active: boolean) => {
+      for (const target of targets) {
+        if (!active) {
+          target.style.setProperty('--near', '0')
+          continue
+        }
+        const r = target.getBoundingClientRect()
+        const dx = clientX - (r.left + r.width / 2)
+        const dy = clientY - (r.top + r.height / 2)
+        const distance = Math.hypot(dx, dy)
+        // Full response within 90px, nothing beyond 260px.
+        const near = Math.max(0, Math.min(1, (260 - distance) / 170))
+        target.style.setProperty('--near', near.toFixed(3))
+        // Lean a few pixels toward the pointer, never more than four.
+        target.style.setProperty(
+          '--lift-x',
+          `${Math.max(-4, Math.min(4, dx / 40)).toFixed(2)}px`,
+        )
+      }
+    }
+
+    const onMove = (e: PointerEvent) => {
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        apply(e.clientX, e.clientY, true)
+      })
+    }
+
+    const onLeave = () => apply(0, 0, false)
+
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerleave', onLeave)
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerleave', onLeave)
+    }
+  }, [])
+
+  return ref
+}

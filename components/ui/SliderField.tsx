@@ -55,19 +55,19 @@ export function SliderField({
   const fill = (tick / TICKS) * 100
 
   return (
-    <div className="border-b border-rule-ink py-6 first:pt-0 last:border-b-0">
+    <div className="border-b border-rule py-5 first:pt-0 last:border-b-0">
       <div className="flex items-end justify-between gap-5">
         <label
           id={labelId}
           htmlFor={numberId}
-          className="font-mono text-mono-xs text-chalk-2 uppercase"
+          className="font-mono text-mono-xs text-muted uppercase"
         >
           {label}
         </label>
 
-        <div className="flex items-baseline gap-1 text-chalk">
+        <div className="flex items-baseline gap-1 text-warm-white">
           {prefix ? (
-            <span className="font-mono text-[0.9375rem] text-chalk-3">{prefix}</span>
+            <span className="font-mono text-[0.9375rem] text-secondary">{prefix}</span>
           ) : null}
           <input
             id={numberId}
@@ -82,10 +82,10 @@ export function SliderField({
               if (Number.isFinite(next)) onChange(next)
             }}
             onBlur={onCommit}
-            className="bare-number tnum w-[5.5ch] rounded-[5px] bg-transparent text-right font-mono text-[1.375rem] text-chalk transition-colors duration-300 hover:bg-chalk/5 focus:bg-chalk/5"
+            className="bare-number tnum w-[5.5ch] rounded-[5px] bg-transparent text-right font-mono text-[1.375rem] text-warm-white transition-colors duration-300 hover:bg-warm-white/5 focus:bg-warm-white/5"
           />
           {suffix ? (
-            <span className="font-mono text-[0.9375rem] text-chalk-3">{suffix}</span>
+            <span className="font-mono text-[0.9375rem] text-secondary">{suffix}</span>
           ) : null}
         </div>
       </div>
@@ -108,11 +108,11 @@ export function SliderField({
         style={{ '--fill': `${fill}%` } as React.CSSProperties}
       />
 
-      <div className="mt-1.5 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
-        <p className="max-w-[34ch] text-[0.8125rem] leading-snug text-chalk-3">
+      <div className="mt-1 flex items-baseline justify-between gap-4">
+        <p className="max-w-[34ch] text-[0.8125rem] leading-snug text-secondary">
           {hint}
         </p>
-        <p className="tnum shrink-0 font-mono text-mono-xs text-chalk-3">
+        <p className="tnum shrink-0 font-mono text-mono-xs text-secondary">
           {prefix ?? ''}
           {format(min)}
           {suffix ?? ''} – {prefix ?? ''}

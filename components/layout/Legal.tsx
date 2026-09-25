@@ -24,25 +24,25 @@ export function LegalPage({
 }) {
   return (
     <>
-      <section className="grain-ink relative bg-ink-raise pt-32 pb-14 md:pt-36 md:pb-16">
+      <section className="grain relative bg-graphite pt-32 pb-14 md:pt-36 md:pb-16">
         <div className="shell">
           <Reveal y={12}>
             <Eyebrow>Legal</Eyebrow>
           </Reveal>
           <Reveal delay={80} y={16}>
-            <h1 className="mt-5 max-w-[20ch] text-h2 text-chalk">{title}</h1>
+            <h1 className="mt-5 max-w-[20ch] text-h2 text-warm-white">{title}</h1>
           </Reveal>
           <Reveal delay={160} y={12}>
-            <p className="mt-6 font-mono text-mono-xs text-chalk-3 uppercase">
+            <p className="mt-6 font-mono text-mono-xs text-secondary uppercase">
               Last updated {updated}
             </p>
-            <p className="mt-6 max-w-[58ch] text-lede text-chalk-2">{summary}</p>
+            <p className="mt-6 max-w-[58ch] text-lede text-muted">{summary}</p>
           </Reveal>
 
           <Reveal delay={220}>
             <div className="mt-8 flex max-w-[58ch] gap-3 border-l-2 border-engaged/50 pl-4">
-              <p className="text-[0.9375rem] leading-relaxed text-chalk-2">
-                <span className="font-mono text-mono-xs text-engaged-ink uppercase">
+              <p className="text-[0.9375rem] leading-relaxed text-muted">
+                <span className="font-mono text-mono-xs text-risk uppercase">
                   Pre-launch draft.
                 </span>{' '}
                 CloseAgain has not launched, and this document has not been
@@ -55,23 +55,23 @@ export function LegalPage({
         </div>
       </section>
 
-      <section className="grain-ink relative bg-ink pb-24 md:pb-28">
+      <section className="grain relative bg-void pb-24 md:pb-28">
         <div className="shell">
           <div className="lg:grid lg:grid-cols-12 lg:gap-x-12">
             {/* contents */}
             <nav aria-label="On this page" className="lg:col-span-3">
-              <h2 className="font-mono text-mono-xs text-chalk-3 uppercase">
+              <h2 className="font-mono text-mono-xs text-secondary uppercase">
                 Contents
               </h2>
               <ol className="mt-4 flex flex-col gap-2 lg:sticky lg:top-24">
                 {sections.map((section, i) => (
                   <li key={section.id} className="flex gap-3">
-                    <span className="tnum font-mono text-mono-xs text-chalk-3">
+                    <span className="tnum font-mono text-mono-xs text-secondary">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <a
                       href={`#${section.id}`}
-                      className="text-[0.9375rem] text-chalk-2 transition-colors duration-300 hover:text-chalk"
+                      className="text-[0.9375rem] text-muted transition-colors duration-300 hover:text-warm-white"
                     >
                       {section.heading}
                     </a>
@@ -86,24 +86,24 @@ export function LegalPage({
                   key={section.id}
                   id={section.id}
                   as="section"
-                  className="scroll-mt-24 border-t border-rule-ink pt-8 pb-10 first:border-t-0 first:pt-0"
+                  className="scroll-mt-24 border-t border-rule pt-8 pb-10 first:border-t-0 first:pt-0"
                 >
                   <div className="flex items-baseline gap-4">
-                    <span className="tnum font-mono text-mono-sm text-chalk-3">
+                    <span className="tnum font-mono text-mono-sm text-secondary">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <h2 className="text-h3 text-chalk">{section.heading}</h2>
+                    <h2 className="text-h3 text-warm-white">{section.heading}</h2>
                   </div>
-                  <div className="mt-5 max-w-[64ch] space-y-4 pl-9 text-[1.0625rem] leading-relaxed text-chalk-2">
+                  <div className="mt-5 max-w-[64ch] space-y-4 pl-9 text-[1.0625rem] leading-relaxed text-muted">
                     {section.body}
                   </div>
                 </Reveal>
               ))}
 
-              <div className="mt-4 border-t border-rule-ink pt-8">
-                <p className="max-w-[58ch] text-[0.9375rem] leading-relaxed text-chalk-2">
+              <div className="mt-4 border-t border-rule pt-8">
+                <p className="max-w-[58ch] text-[0.9375rem] leading-relaxed text-muted">
                   Questions about any of this go to{' '}
-                  <a href={`mailto:${site.email}`} className="link-rule text-chalk">
+                  <a href={`mailto:${site.email}`} className="underline decoration-steel underline-offset-4 hover:decoration-signal text-warm-white">
                     {site.email}
                   </a>
                   .

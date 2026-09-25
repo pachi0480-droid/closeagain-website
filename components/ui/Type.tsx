@@ -1,60 +1,58 @@
 import type { ReactNode } from 'react'
 
-/** Small mono label. Used for section markers, statuses and metadata. */
+/** Small technical label. Section markers, statuses, metadata. */
 export function Eyebrow({
   children,
-  tone = 'light',
+  tone = 'muted',
   className = '',
 }: {
   children: ReactNode
-  tone?: 'light' | 'ink' | 'recover'
+  tone?: 'muted' | 'signal' | 'secondary'
   className?: string
 }) {
   const colour =
-    tone === 'ink'
-      ? 'text-chalk-3'
-      : tone === 'recover'
-        ? 'text-recover'
-        : 'text-graphite-3'
+    tone === 'signal'
+      ? 'text-signal'
+      : tone === 'secondary'
+        ? 'text-secondary'
+        : 'text-muted'
 
   return (
-    <span
-      className={`font-mono text-mono-xs uppercase ${colour} ${className}`}
-    >
+    <span className={`font-mono text-mono-xs uppercase ${colour} ${className}`}>
       {children}
     </span>
   )
 }
 
-/** Numbered section marker: a rule, an index and a label. */
+/** Numbered chapter marker: a rule, an index, a label. */
 export function SectionMark({
   index,
   label,
-  tone = 'light',
   className = '',
 }: {
   index: string
   label: string
-  tone?: 'light' | 'ink'
   className?: string
 }) {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <span
-        className={`h-px w-8 ${tone === 'ink' ? 'bg-chalk/30' : 'bg-graphite/25'}`}
-      />
-      <Eyebrow tone={tone}>
+      <span aria-hidden="true" className="h-px w-8 bg-steel" />
+      <Eyebrow>
         {index} — {label}
       </Eyebrow>
     </div>
   )
 }
 
-/** Rare editorial emphasis. Used on single words, never on a whole line. */
-export function Accent({ children }: { children: ReactNode }) {
+/**
+ * The one honesty label a conceptual module carries. Rendered once per
+ * module, at the section header — never repeated inside the cards.
+ */
+export function ModuleLabel({ children }: { children: ReactNode }) {
   return (
-    <em className="font-serif font-normal not-italic italic tracking-[-0.01em]">
+    <span className="inline-flex items-center gap-2 rounded-full border border-steel px-3 py-1 font-mono text-mono-xs uppercase text-secondary">
+      <span aria-hidden="true" className="dot text-secondary" />
       {children}
-    </em>
+    </span>
   )
 }

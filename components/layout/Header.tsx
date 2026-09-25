@@ -7,18 +7,20 @@ import { ButtonLink } from '@/components/ui/Button'
 import { Wordmark } from '@/components/ui/Mark'
 import { cta, nav } from '@/data/site'
 import { track } from '@/lib/analytics'
-import { useScrollOffset, useSurfaceTone } from '@/lib/hooks'
+import { useScrollOffset } from '@/lib/hooks'
 
+/**
+ * Sticky chrome. Transparent over the hero, then a solid graphite bar with a
+ * hairline once the page moves — the room closing in around the content.
+ */
 export function Header() {
   const offset = useScrollOffset()
-  const tone = useSurfaceTone()
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const condensed = offset > 28
   const toggleRef = useRef<HTMLButtonElement | null>(null)
 
   const close = useCallback(() => setOpen(false), [])
-  const onInk = tone === 'ink'
 
   /** Anchor links live on the homepage, so only real routes can be current. */
   const isCurrent = (href: string) =>
@@ -54,23 +56,21 @@ export function Header() {
     return () => query.removeEventListener('change', onChange)
   }, [])
 
-  const surface = condensed || open
-    ? onInk
-      ? 'border-b border-rule-ink bg-ink/85 backdrop-blur-[10px] backdrop-saturate-150'
-      : 'border-b border-rule-ink bg-ink/85 backdrop-blur-[10px] backdrop-saturate-150'
-    : 'border-b border-transparent bg-transparent'
+  const surface =
+    condensed || open
+      ? 'border-b border-rule bg-void/88 backdrop-blur-[12px] backdrop-saturate-150'
+      : 'border-b border-transparent bg-transparent'
 
   return (
     <header
       className={[
-        'fixed inset-x-0 top-0 z-50',
-        onInk ? 'on-ink text-chalk' : 'text-chalk',
-        'transition-[background-color,border-color,color,backdrop-filter] duration-500',
+        'fixed inset-x-0 top-0 z-50 text-warm-white',
+        'transition-[background-color,border-color,backdrop-filter] duration-500',
         '[transition-timing-function:var(--ease-out-quiet)]',
         surface,
       ].join(' ')}
     >
-      <div className="shell">
+      <div className="shell-wide">
         <div
           className={[
             'flex items-center justify-between gap-6',
@@ -81,7 +81,7 @@ export function Header() {
           <Link
             href="/"
             aria-label="CloseAgain — home"
-            className="transition-opacity duration-300 hover:opacity-70"
+            className="transition-opacity duration-300 hover:opacity-75"
           >
             <Wordmark />
           </Link>
@@ -96,23 +96,15 @@ export function Header() {
                       href={item.href}
                       aria-current={current ? 'page' : undefined}
                       className={`relative text-[0.9375rem] transition-colors duration-300 ${
-                        current
-                          ? onInk
-                            ? 'text-chalk'
-                            : 'text-chalk'
-                          : onInk
-                            ? 'text-chalk-2 hover:text-chalk'
-                            : 'text-chalk-2 hover:text-chalk'
+                        current ? 'text-warm-white' : 'text-muted hover:text-warm-white'
                       }`}
                     >
                       {item.label}
-                      {/* a rule rather than a pill: quieter, and it matches
-                          the recovery-line language used everywhere else */}
                       <span
                         aria-hidden="true"
-                        className={`absolute -bottom-1.5 left-0 h-px w-full origin-left transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
-                          onInk ? 'bg-recover-bright' : 'bg-recover-bright'
-                        } ${current ? 'scale-x-100' : 'scale-x-0'}`}
+                        className={`absolute -bottom-1.5 left-0 h-px w-full origin-left bg-signal transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)] ${
+                          current ? 'scale-x-100' : 'scale-x-0'
+                        }`}
                       />
                     </Link>
                   </li>
@@ -124,7 +116,6 @@ export function Header() {
           <div className="hidden lg:block">
             <ButtonLink
               href={cta.chromeTarget}
-              tone={onInk ? 'ink' : 'light'}
               size="md"
               withArrow
               onClick={() => track('nav_cta_clicked', { location: 'header' })}
@@ -136,9 +127,7 @@ export function Header() {
           <button
             ref={toggleRef}
             type="button"
-            className={`-mr-2 flex h-11 w-11 items-center justify-center rounded-[7px] transition-colors duration-300 lg:hidden ${
-              onInk ? 'hover:bg-chalk/10' : 'hover:bg-chalk/[0.06]'
-            }`}
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-[8px] transition-colors duration-300 hover:bg-warm-white/10 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => {
@@ -170,7 +159,9 @@ export function Header() {
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 className="origin-center transition-transform duration-500 [transition-timing-function:var(--ease-out-quiet)]"
-                style={open ? { transform: 'translateY(-5px) rotate(-45deg)' } : undefined}
+                style={
+                  open ? { transform: 'translateY(-5px) rotate(-45deg)' } : undefined
+                }
               />
             </svg>
           </button>
@@ -181,36 +172,21 @@ export function Header() {
       <div
         id="mobile-nav"
         hidden={!open}
-        className={`lg:hidden ${
-          onInk ? 'border-t border-rule-ink bg-ink' : 'border-t border-rule-ink bg-ink'
-        }`}
+        className="border-t border-rule bg-void lg:hidden"
       >
-        <div className="shell py-6">
+        <div className="shell-wide py-6">
           <ul className="flex flex-col">
             {nav.map((item, i) => (
-              <li
-                key={item.href}
-                className={`border-b last:border-b-0 ${
-                  onInk ? 'border-rule-ink-soft' : 'border-rule-ink-soft'
-                }`}
-              >
+              <li key={item.href} className="border-b border-rule-soft last:border-b-0">
                 <Link
                   href={item.href}
                   onClick={close}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
-                  className={`flex items-baseline gap-4 py-4 text-[1.375rem] tracking-[-0.02em] ${
-                    isCurrent(item.href)
-                      ? onInk
-                        ? 'text-recover-bright'
-                        : 'text-recover-bright'
-                      : ''
+                  className={`flex items-baseline gap-4 py-4 text-[1.375rem] tracking-[-0.025em] ${
+                    isCurrent(item.href) ? 'text-signal' : 'text-warm-white'
                   }`}
                 >
-                  <span
-                    className={`font-mono text-mono-xs ${
-                      onInk ? 'text-chalk-3' : 'text-chalk-3'
-                    }`}
-                  >
+                  <span className="font-mono text-mono-xs text-secondary tnum">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   {item.label}
@@ -220,7 +196,6 @@ export function Header() {
           </ul>
           <ButtonLink
             href={cta.chromeTarget}
-            tone={onInk ? 'ink' : 'light'}
             size="lg"
             withArrow
             className="mt-6 w-full"
@@ -231,11 +206,7 @@ export function Header() {
           >
             {cta.primary}
           </ButtonLink>
-          <p
-            className={`mt-4 font-mono text-mono-xs uppercase ${
-              onInk ? 'text-chalk-3' : 'text-chalk-3'
-            }`}
-          >
+          <p className="mt-4 font-mono text-mono-xs uppercase text-secondary">
             Pre-launch · accepting pilot interest
           </p>
         </div>

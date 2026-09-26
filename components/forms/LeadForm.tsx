@@ -2,25 +2,31 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
+import { flushSync } from 'react-dom'
 import { Arrow } from '@/components/ui/links'
-import type { FieldDefinition } from '@/content/forms'
-import { formMessages } from '@/content/forms'
+import { formMessages, inquiryDetails, planNote, type FieldDefinition } from '@/content/forms'
 import { planById, planSummary } from '@/content/pricing'
-import { endpointFor, honeypotField } from '@/lib/forms/protocol'
+import { endpointFor, fallbackIds, honeypotField } from '@/lib/forms/protocol'
 import { normalizeValue, validateField, validateSubmission, type FormKind } from '@/lib/forms/schema'
 import { formReducer, initialFormState } from '@/lib/forms/state'
 import { sendSubmission } from '@/lib/forms/transport'
 
 const subscribeNoop = () => () => {}
 
+const inDetails = (field: FieldDefinition) => field.group === 'details'
+
 /**
- * The “Contact to buy” form.
+ * The inquiry form.
+ *
+ * Four answers are asked for up front; everything else waits inside a native
+ * “Add details (optional)” disclosure, which works without JavaScript and
+ * opens by itself when one of its fields needs attention or was pre-filled.
  *
  * With JavaScript: validates as the visitor goes, submits in the background,
  * and only moves on to the confirmation page after the server confirms the
  * details were delivered. Entered text is never cleared by a failure. A plan
  * or industry chosen elsewhere on the site (?plan=growth, ?industry=…) is
- * pre-selected and confirmed in words.
+ * pre-selected, and a chosen plan is confirmed in words.
  *
  * Without JavaScript: the same endpoint accepts a normal form post, the
  * browser's own validation applies, and the server redirects to the
@@ -49,6 +55,7 @@ export function LeadForm({
   )
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
+  const detailsRef = useRef<HTMLDetailsElement>(null)
   const statusRef = useRef<HTMLDivElement>(null)
   // Server markup keeps native validation for no-JS visitors; once hydrated,
   // the form's own messages take over.
@@ -56,24 +63,42 @@ export function LeadForm({
 
   const submitting = state.status === 'submitting' || state.status === 'success'
   const id = (name: string) => `${kind}-${name}`
+  const mainFields = fields.filter((field) => !inDetails(field))
+  const detailFields = fields.filter(inDetails)
 
-  // Pre-select what the visitor already chose elsewhere on the site.
+  // Pre-select what the visitor already chose elsewhere on the site, and
+  // reveal the optional details if one of them was filled in that way.
   useEffect(() => {
     const form = formRef.current
     if (!form) return
     const params = new URLSearchParams(window.location.search)
+    let reveal = false
     for (const field of fields) {
       const wanted = params.get(field.name)
       if (!wanted || field.kind !== 'choice') continue
       if (!field.options?.some((option) => option.value === wanted)) continue
       const control = form.elements.namedItem(field.name)
-      if (control instanceof HTMLSelectElement) control.value = wanted
+      if (control instanceof HTMLSelectElement) {
+        control.value = wanted
+        if (inDetails(field)) reveal = true
+      }
     }
+    if (reveal && detailsRef.current) detailsRef.current.open = true
   }, [fields])
 
+  // Called once the errors are on screen (see flushSync below), so the whole
+  // field — label, control and message — can be brought into view.
   const focusFirstInvalid = (errors: Record<string, string>) => {
-    const first = fields.find((field) => errors[field.name])
-    if (first) formRef.current?.querySelector<HTMLElement>(`[name="${first.name}"]`)?.focus()
+    const invalid = fields.filter((field) => errors[field.name])
+    if (invalid.length === 0) return
+    // A closed disclosure hides its fields, so open it before focusing one.
+    if (invalid.some(inDetails) && detailsRef.current) detailsRef.current.open = true
+    const control = formRef.current?.querySelector<HTMLElement>(`[name="${invalid[0].name}"]`)
+    if (!control) return
+    control.focus({ preventScroll: true })
+    // Scroll margins on .field keep it clear of the sticky header.
+    const field = control.closest<HTMLElement>('.field') ?? control
+    field.scrollIntoView({ block: 'nearest' })
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -86,7 +111,7 @@ export function LeadForm({
 
     const checked = validateSubmission(kind, raw)
     if (!checked.ok) {
-      dispatch({ type: 'client-invalid', errors: checked.errors })
+      flushSync(() => dispatch({ type: 'client-invalid', errors: checked.errors }))
       focusFirstInvalid(checked.errors)
       return
     }
@@ -97,7 +122,7 @@ export function LeadForm({
       honeypot: String(data.get(honeypotField) ?? ''),
     })
     inFlight.current = false
-    dispatch({ type: 'outcome', outcome })
+    flushSync(() => dispatch({ type: 'outcome', outcome }))
 
     if (outcome.status === 'ok') {
       router.push('/thank-you')
@@ -122,8 +147,85 @@ export function LeadForm({
         ? 'idle'
         : 'problem'
 
-  const planChoice = plan ?? linkedPlan
-  const chosen = planById(planChoice)
+  const chosen = planById(plan ?? linkedPlan)
+
+  const renderField = (field: FieldDefinition) => {
+    const error = state.errors[field.name]
+    const hintId = field.hint ? `${id(field.name)}-hint` : undefined
+    const errorId = error ? `${id(field.name)}-error` : undefined
+    const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+    const common = {
+      id: id(field.name),
+      name: field.name,
+      required: field.required,
+      'aria-invalid': error ? true : undefined,
+      'aria-describedby': describedBy,
+      className: 'field__control',
+      onBlur: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
+      onChange: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
+    } as const
+
+    return (
+      <div
+        key={field.name}
+        className={['field', field.half && 'field--half', error && 'field--invalid'].filter(Boolean).join(' ')}
+      >
+        <label className="field__label" htmlFor={id(field.name)}>
+          {field.label}
+          {field.hint && (
+            <span id={hintId} className="field__hint">
+              {' '}
+              {field.hint}
+            </span>
+          )}
+        </label>
+
+        {field.kind === 'multiline' ? (
+          <textarea {...common} rows={4} maxLength={field.max} />
+        ) : field.kind === 'choice' ? (
+          <div className="field__select">
+            <select {...common} defaultValue={field.defaultValue ?? ''}>
+              {field.placeholderOption !== undefined && <option value="">{field.placeholderOption}</option>}
+              {field.options?.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <input
+            {...common}
+            type={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : 'text'}
+            inputMode={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : undefined}
+            autoComplete={field.autoComplete}
+            autoCapitalize={field.kind === 'email' ? 'none' : undefined}
+            spellCheck={field.kind === 'email' ? false : undefined}
+            maxLength={field.max}
+          />
+        )}
+
+        {error && (
+          <p id={errorId} className="field__error">
+            <span className="field__error-mark" aria-hidden="true">
+              !
+            </span>
+            {error}
+          </p>
+        )}
+
+        {field.name === 'plan' && (
+          <p className="field__note" aria-live="polite">
+            {chosen && (
+              <>
+                {planNote.lead} <strong>{planSummary(chosen)}</strong>. {planNote.follow}
+              </>
+            )}
+          </p>
+        )}
+      </div>
+    )
+  }
 
   return (
     <form
@@ -139,99 +241,31 @@ export function LeadForm({
       {/* Explanations for the no-JavaScript path, shown only when the server
           redirects back here with one of these anchors. */}
       <div className="form__fallbacks">
-        <p id="form-invalid" className="form-note form-note--problem">
+        <p id={fallbackIds.invalid} className="form-note form-note--problem">
           {formMessages.returned.invalid}
         </p>
-        <p id="form-unavailable" className="form-note form-note--problem">
+        <p id={fallbackIds.unavailable} className="form-note form-note--problem">
           {formMessages.unavailable}
         </p>
-        <p id="form-failed" className="form-note form-note--problem">
+        <p id={fallbackIds.failed} className="form-note form-note--problem">
           {formMessages.returned.failed}
         </p>
-        <p id="form-busy" className="form-note form-note--problem">
+        <p id={fallbackIds.busy} className="form-note form-note--problem">
           {formMessages.busy}
         </p>
       </div>
 
-      <p className="form__plan" aria-live="polite">
-        {chosen ? (
-          <>
-            You selected <strong>{planSummary(chosen)}</strong>.
-          </>
-        ) : planChoice === 'unsure' ? (
-          <>We’ll recommend the right plan for your business.</>
-        ) : null}
-      </p>
+      <div className="form__grid">{mainFields.map(renderField)}</div>
 
-      <div className="form__grid">
-        {fields.map((field) => {
-          const error = state.errors[field.name]
-          const hintId = field.hint ? `${id(field.name)}-hint` : undefined
-          const errorId = error ? `${id(field.name)}-error` : undefined
-          const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
-          const common = {
-            id: id(field.name),
-            name: field.name,
-            required: field.required,
-            'aria-invalid': error ? true : undefined,
-            'aria-describedby': describedBy,
-            className: 'field__control',
-            onBlur: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
-            onChange: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
-          } as const
-
-          return (
-            <div
-              key={field.name}
-              className={['field', field.half && 'field--half', error && 'field--invalid'].filter(Boolean).join(' ')}
-            >
-              <label className="field__label" htmlFor={id(field.name)}>
-                {field.label}
-                {field.hint && (
-                  <span id={hintId} className="field__hint">
-                    {' '}
-                    {field.hint}
-                  </span>
-                )}
-              </label>
-
-              {field.kind === 'multiline' ? (
-                <textarea {...common} rows={4} maxLength={field.max} />
-              ) : field.kind === 'choice' ? (
-                <div className="field__select">
-                  <select {...common} defaultValue="">
-                    <option value="">{field.placeholderOption ?? 'Choose one'}</option>
-                    {field.options?.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <input
-                  {...common}
-                  type={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : 'text'}
-                  inputMode={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : undefined}
-                  autoComplete={field.autoComplete}
-                  autoCapitalize={field.kind === 'email' ? 'none' : undefined}
-                  spellCheck={field.kind === 'email' ? false : undefined}
-                  maxLength={field.max}
-                />
-              )}
-
-              {error && (
-                <p id={errorId} className="field__error">
-                  <span className="field__error-mark" aria-hidden="true">
-                    !
-                  </span>
-                  {error}
-                </p>
-              )}
-            </div>
-          )
-        })}
-      </div>
+      {detailFields.length > 0 && (
+        <details ref={detailsRef} className="form__details">
+          <summary className="form__summary">
+            <span>{inquiryDetails.summary}</span>
+            <span className="form__summary-icon" aria-hidden="true" />
+          </summary>
+          <div className="form__grid form__grid--details">{detailFields.map(renderField)}</div>
+        </details>
+      )}
 
       {/* Honeypot: invisible to people, tempting to form-filling bots. */}
       <div className="form__trap" aria-hidden="true">
@@ -246,7 +280,7 @@ export function LeadForm({
           <span className="form__button-labels">
             <span className={submitting ? 'is-hidden' : undefined}>{submitLabel}</span>
             <span className={submitting ? undefined : 'is-hidden'} aria-hidden={!submitting}>
-              Sending…
+              {formMessages.submitting}
             </span>
           </span>
           <Arrow />

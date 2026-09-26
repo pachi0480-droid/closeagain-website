@@ -360,49 +360,6 @@ export const faq = {
   },
 } as const
 
-export const contact = {
-  meta: {
-    title: 'Contact to buy',
-    description:
-      'Tell us about your business and choose a plan. Plans start at $499/month with monthly billing and setup assistance included.',
-  },
-  eyebrow: 'Contact to buy',
-  title: 'Ready to close more conversations?',
-  lede: 'Tell us about your business. We’ll confirm the right plan and setup.',
-  terms: ['Plans start at $499/month.', 'Monthly billing.', 'Setup assistance included.'],
-  next: {
-    title: 'What happens next',
-    steps: ['Send your information', 'We confirm the right setup', 'Connect your tools', 'Launch CloseAgain'],
-  },
-  form: {
-    submit: 'Send my details',
-    guidance: 'No payment is taken here. Please don’t include sensitive information.',
-  },
-} as const
-
-export const thankYou = {
-  meta: { title: 'Thank you' },
-  purchase: {
-    eyebrow: 'Details received',
-    title: 'The conversation starts here.',
-    body: 'Thanks — we’ve received your details. Next, we’ll confirm the right plan and setup for your business.',
-  },
-  neutral: {
-    eyebrow: 'CloseAgain',
-    title: 'Let’s start a conversation.',
-    body: 'Choose a plan or tell us about your business — whichever suits you.',
-    actions: [
-      { label: 'Contact to buy', href: '/contact' },
-      { label: 'See pricing', href: '/pricing' },
-    ],
-  },
-  actions: {
-    primary: { label: 'How getting started works', href: '/getting-started' },
-    secondary: { label: 'Back to home', href: '/' },
-  },
-  bubble: 'Let’s talk.',
-} as const
-
 export const notFound = {
   code: '404',
   title: 'Let’s try that again.',

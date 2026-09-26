@@ -238,7 +238,7 @@ export const pricingPage = {
     title: 'Pick a plan, or talk it through.',
     body: 'Setup timing depends on your integrations and requirements.',
     cta: { label: 'Contact to buy', href: '/contact' },
-    secondary: { label: 'What happens after you buy', href: '/after-you-buy' },
+    secondary: { label: 'How getting started works', href: '/getting-started' },
   },
 } as const
 
@@ -350,7 +350,7 @@ export const faq = {
     {
       q: 'What happens after I contact you?',
       a: 'We review your details, confirm the right plan and setup, help connect your tools, and launch CloseAgain with you.',
-      links: [{ label: 'What happens after you buy', href: '/after-you-buy' }],
+      links: [{ label: 'How getting started works', href: '/getting-started' }],
     },
   ],
   closing: {
@@ -397,7 +397,7 @@ export const thankYou = {
     ],
   },
   actions: {
-    primary: { label: 'What happens after you buy', href: '/after-you-buy' },
+    primary: { label: 'How getting started works', href: '/getting-started' },
     secondary: { label: 'Back to home', href: '/' },
   },
   bubble: 'Let’s talk.',

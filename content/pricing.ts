@@ -1,9 +1,16 @@
 /**
- * CloseAgain plans — the single source for prices and plan contents.
+ * CloseAgain plans — the single source for every price and plan fact.
  *
- * Used by the pricing page, the homepage pricing band, the contact form's plan
- * picker, and the operator dashboard's billing views. Change a price or a
- * feature here and every surface follows.
+ * The pricing page, the homepage pricing overview, the inquiry form, the
+ * break-even explainer, page metadata and the demo's billing views all read
+ * from here. Nothing else on the site may type a price: a test fails if a
+ * dollar amount appears in any other content or component file.
+ *
+ * What is confirmed: the four prices, monthly billing, setup assistance on
+ * every plan, and each plan's feature list as supplied by the owner. What is
+ * not: numeric allowances, seat counts, supported channels, overage and
+ * contract terms — see docs/open-questions.md. Those are described as
+ * “confirmed in your proposal”, never invented.
  */
 
 export type PlanId = 'core' | 'growth' | 'scale' | 'enterprise'
@@ -13,93 +20,102 @@ export type Plan = {
   name: string
   /** Monthly price in USD, or null for custom pricing. */
   monthly: number | null
-  priceLabel: string
   tagline: string
-  audience?: string
+  /** “Best for …” — who the plan suits. */
+  bestFor: string
+  /** What this plan adds over the one before it, in one sentence. */
+  step: string
   /** Heading above the feature list, e.g. “Everything in Core, plus”. */
   includesLabel: string
+  /** Only what this plan adds — nothing repeated from the plan below. */
   features: string[]
   cta: { label: string; href: string }
-  highlight?: string
+  /** A recommendation with its reason. Never a popularity claim. */
+  recommendation?: { label: string; basis: string }
 }
 
-export const billingNote = 'Monthly billing'
+export const billingNote = 'Billed monthly'
 export const setupNote = 'Setup assistance included'
-export const startingPrice = 499
+
+export const formatPrice = (amount: number) => `$${amount.toLocaleString('en-US')}`
 
 export const plans: Plan[] = [
   {
     id: 'core',
     name: 'Core',
     monthly: 499,
-    priceLabel: '$499',
     tagline: 'Start strong.',
-    audience: 'For smaller businesses that need reliable lead capture and follow-up.',
+    bestFor: 'Smaller businesses that need every inquiry answered and followed up, reliably.',
+    step: 'Follow-up for new inquiries and older leads, with one inbox for replies.',
     includesLabel: 'Includes',
     features: [
-      'New lead capture',
+      'New inquiry capture',
       'Automated follow-up',
-      'Old lead re-engagement',
+      'Older lead re-engagement',
       'Conversation inbox',
       'Basic reporting',
       'Standard integrations',
       'Standard support',
     ],
-    cta: { label: 'Get Core', href: '/contact?plan=core' },
+    cta: { label: 'Choose Core', href: '/contact?plan=core' },
   },
   {
     id: 'growth',
     name: 'Growth',
     monthly: 899,
-    priceLabel: '$899',
     tagline: 'Build momentum.',
+    bestFor: 'Businesses that book appointments and want follow-up shaped around their own process.',
+    step: 'Adds custom follow-up sequences, appointment workflows and advanced automations.',
     includesLabel: 'Everything in Core, plus',
     features: [
-      'Advanced automations',
-      'Additional integrations',
       'Custom follow-up sequences',
       'Appointment workflows',
+      'Advanced automations',
       'Advanced analytics',
-      'Higher usage',
+      'Additional integrations',
+      'Higher usage allowance',
       'Priority support',
     ],
-    cta: { label: 'Get Growth', href: '/contact?plan=growth' },
+    cta: { label: 'Choose Growth', href: '/contact?plan=growth' },
   },
   {
     id: 'scale',
     name: 'Scale',
     monthly: 1499,
-    priceLabel: '$1,499',
     tagline: 'Move faster.',
+    bestFor: 'Teams where several people work leads and need workflows and pipeline stages of their own.',
+    step: 'Adds multi-user collaboration, custom workflows and pipeline customization.',
     includesLabel: 'Everything in Growth, plus',
     features: [
-      'Higher usage limits',
-      'Custom workflows',
       'Multi-user collaboration',
-      'Advanced reporting',
+      'Custom workflows',
       'Pipeline customization',
+      'Advanced reporting',
+      'Higher usage limits',
       'Priority onboarding',
-      'Priority support',
     ],
-    cta: { label: 'Get Scale', href: '/contact?plan=scale' },
-    // A claim about customers' choices: keep it only while it is true.
-    highlight: 'Most popular',
+    cta: { label: 'Choose Scale', href: '/contact?plan=scale' },
+    recommendation: {
+      label: 'Recommended for teams',
+      basis: 'The first plan where several people can work leads together.',
+    },
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     monthly: null,
-    priceLabel: 'Custom',
     tagline: 'Built around you.',
+    bestFor: 'Multi-location organizations with their own integration, permission and reporting needs.',
+    step: 'Scoped around your locations, permissions, integrations and reporting.',
     includesLabel: 'Includes',
     features: [
-      'Custom usage',
-      'Custom integrations',
       'Multi-location support',
       'Advanced permissions',
+      'Custom integrations',
       'Custom workflows',
-      'Dedicated onboarding',
       'Custom reporting',
+      'Custom usage',
+      'Dedicated onboarding',
       'Priority support',
     ],
     cta: { label: 'Talk to us', href: '/contact?plan=enterprise' },
@@ -108,65 +124,101 @@ export const plans: Plan[] = [
 
 export const planById = (id: string | null | undefined) => plans.find((plan) => plan.id === id)
 
+/** “$899”, or “Custom”. */
+export const priceLabel = (plan: Plan) => (plan.monthly === null ? 'Custom' : formatPrice(plan.monthly))
+
+/** “$899/month”, or “custom pricing”. */
+export const pricePerMonth = (plan: Plan) =>
+  plan.monthly === null ? 'custom pricing' : `${formatPrice(plan.monthly)}/month`
+
 /** “Growth — $899/month”, “Enterprise — custom pricing”. */
-export const planSummary = (plan: Plan) =>
-  plan.monthly === null ? `${plan.name} — custom pricing` : `${plan.name} — ${plan.priceLabel}/month`
+export const planSummary = (plan: Plan) => `${plan.name} — ${pricePerMonth(plan)}`
+
+const listed = plans.flatMap((plan) => (plan.monthly === null ? [] : [plan.monthly]))
+
+/** The lowest listed monthly price. */
+export const startingMonthly = Math.min(...listed)
+
+/** “Plans start at $499/month”. */
+export const startingPriceText = `Plans start at ${formatPrice(startingMonthly)}/month`
+
+/** The short terms line used beside calls to action. */
+export const planTerms = [startingPriceText, billingNote, setupNote] as const
 
 /**
- * The comparison matrix. `true` = included, `false` = not included, a string
- * = included with that qualifier. Enterprise cells describe its own list;
- * confirm anything marked “Custom” with the team before quoting it.
+ * What a proposal settles before anything is billed. These are the facts the
+ * public site does not state, because they have not been confirmed yet.
  */
-export const comparison: Array<{
-  group: string
-  rows: Array<{ label: string; values: Record<PlanId, boolean | string> }>
-}> = [
+export const proposalCovers = [
+  'Which channels CloseAgain will use for your business',
+  'Your included usage, and what happens if you go over it',
+  'How many people on your team can use it',
+  'Any setup or additional charges',
+  'The minimum term and how to cancel',
+] as const
+
+/**
+ * The comparison, row by row, in the owner's own terms. `true` = included,
+ * `false` = not included, a string = included at that level.
+ *
+ * Enterprise is scoped individually; its cells follow its own feature list.
+ * Cells marked “Custom” for Enterprise are inferred from that list and are
+ * recorded in docs/open-questions.md.
+ */
+export type ComparisonRow = { label: string; note?: string; values: Record<PlanId, boolean | string> }
+
+export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
   {
-    group: 'Leads and follow-up',
+    group: 'Follow-up',
     rows: [
-      { label: 'New lead capture', values: { core: true, growth: true, scale: true, enterprise: true } },
+      { label: 'New inquiry capture', values: { core: true, growth: true, scale: true, enterprise: true } },
       { label: 'Automated follow-up', values: { core: true, growth: true, scale: true, enterprise: true } },
-      { label: 'Old lead re-engagement', values: { core: true, growth: true, scale: true, enterprise: true } },
+      { label: 'Older lead re-engagement', values: { core: true, growth: true, scale: true, enterprise: true } },
       { label: 'Conversation inbox', values: { core: true, growth: true, scale: true, enterprise: true } },
       { label: 'Custom follow-up sequences', values: { core: false, growth: true, scale: true, enterprise: true } },
     ],
   },
   {
-    group: 'Workflows',
+    group: 'Next steps and workflows',
     rows: [
-      { label: 'Advanced automations', values: { core: false, growth: true, scale: true, enterprise: true } },
       { label: 'Appointment workflows', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'Advanced automations', values: { core: false, growth: true, scale: true, enterprise: true } },
       { label: 'Custom workflows', values: { core: false, growth: false, scale: true, enterprise: true } },
       { label: 'Pipeline customization', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
     ],
   },
   {
-    group: 'Insight',
+    group: 'Reporting',
     rows: [
       {
-        label: 'Reporting',
+        label: 'Reporting level',
         values: { core: 'Basic', growth: 'Advanced analytics', scale: 'Advanced reporting', enterprise: 'Custom reporting' },
       },
     ],
   },
   {
-    group: 'Team and scale',
+    group: 'Team and locations',
     rows: [
-      { label: 'Usage', values: { core: 'Standard', growth: 'Higher', scale: 'Higher limits', enterprise: 'Custom' } },
       { label: 'Multi-user collaboration', values: { core: false, growth: false, scale: true, enterprise: true } },
       { label: 'Advanced permissions', values: { core: false, growth: false, scale: false, enterprise: true } },
       { label: 'Multi-location support', values: { core: false, growth: false, scale: false, enterprise: true } },
     ],
   },
   {
-    group: 'Connections and support',
+    group: 'Usage, setup and support',
     rows: [
       {
+        label: 'Usage allowance',
+        note: 'Exact allowances are confirmed in your proposal.',
+        values: { core: 'Included', growth: 'Higher', scale: 'Higher limits', enterprise: 'Custom' },
+      },
+      {
         label: 'Integrations',
+        note: 'Tell us your tools; fit is confirmed before you commit.',
         values: { core: 'Standard', growth: 'Additional', scale: 'Additional', enterprise: 'Custom' },
       },
       {
-        label: 'Onboarding',
+        label: 'Setup',
         values: {
           core: 'Setup assistance',
           growth: 'Setup assistance',
@@ -175,6 +227,7 @@ export const comparison: Array<{
         },
       },
       { label: 'Support', values: { core: 'Standard', growth: 'Priority', scale: 'Priority', enterprise: 'Priority' } },
+      { label: 'Billing', values: { core: 'Monthly', growth: 'Monthly', scale: 'Monthly', enterprise: 'Agreed individually' } },
     ],
   },
 ]

@@ -5,7 +5,7 @@
  * check that actually counts), so the two can never disagree.
  */
 
-import { plans } from './pricing.ts'
+import { planSummary, plans } from './pricing.ts'
 
 export type FieldKind = 'text' | 'email' | 'tel' | 'multiline' | 'choice'
 
@@ -51,7 +51,7 @@ export const leadVolumeOptions = asOptions([
 export const planOptions: FieldOption[] = [
   ...plans.map((plan) => ({
     value: plan.id,
-    label: plan.monthly === null ? `${plan.name} — custom pricing` : `${plan.name} — ${plan.priceLabel}/month`,
+    label: planSummary(plan),
   })),
   { value: 'unsure', label: 'Not sure yet — recommend one' },
 ]

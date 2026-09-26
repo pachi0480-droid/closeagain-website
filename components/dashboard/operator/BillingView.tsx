@@ -7,7 +7,7 @@ import { monthlyPrice, planDistribution, planMovements } from '@/content/demo/bi
 import { fmtCurrency, fmtDate, fmtDateYear, fmtNumber } from '@/content/demo/format'
 import { allInvoices, clientName, clientShort, renewals, upsellOpportunities } from '@/content/demo/operator'
 import { DAY, DEMO_NOW } from '@/content/demo/time'
-import { planById } from '@/content/pricing'
+import { planById, priceLabel } from '@/content/pricing'
 import { StackedBar } from '../charts'
 import { useToast, usePending } from '../Toasts'
 import { Badge, EmptyState, Metric, PageHeader, Pager, Panel, SelectField, cx } from '../ui'
@@ -78,7 +78,7 @@ export function BillingView() {
                 label: slice.plan.name,
                 value: slice.mrr,
                 display: fmtCurrency(slice.mrr),
-                detail: `${slice.count} ${slice.count === 1 ? 'client' : 'clients'} · ${slice.plan.monthly ? `${slice.plan.priceLabel}/mo each` : 'custom contract (sample value)'}${mrr ? ` · ${Math.round((slice.mrr / mrr) * 100)}% of MRR` : ''}`,
+                detail: `${slice.count} ${slice.count === 1 ? 'client' : 'clients'} · ${slice.plan.monthly ? `${priceLabel(slice.plan)}/mo each` : 'custom contract (sample value)'}${mrr ? ` · ${Math.round((slice.mrr / mrr) * 100)}% of MRR` : ''}`,
                 shade: (index + 1) as 1 | 2 | 3 | 4,
               }))}
             />

@@ -10,7 +10,7 @@ import { kits } from '@/content/demo/kits'
 import { FEATURED_CLIENT_ID } from '@/content/demo/clients'
 import { attentionNotes, integrationCatalog } from '@/content/demo/workspace'
 import type { IntegrationId, IntegrationStatus, Person } from '@/content/demo/types'
-import { planById } from '@/content/pricing'
+import { planById, priceLabel } from '@/content/pricing'
 import { TimeChart } from '../charts'
 import { Dialog } from '../Dialog'
 import { integrationIcon } from '../integrationIcons'
@@ -534,7 +534,7 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
                   <div>
                     <dt>Plan</dt>
                     <dd>
-                      {plan?.name} · {client.plan === 'enterprise' ? `${fmtCurrency(client.contractMonthly ?? 0)}/mo sample contract` : `${plan?.priceLabel}/mo`}
+                      {plan?.name} · {client.plan === 'enterprise' ? `${fmtCurrency(client.contractMonthly ?? 0)}/mo sample contract` : `${plan ? priceLabel(plan) : ''}/mo`}
                     </dd>
                   </div>
                 </dl>

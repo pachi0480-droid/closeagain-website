@@ -6,7 +6,7 @@ import { useState, type FormEvent } from 'react'
 import { invoicesFor, monthlyPrice, nextRenewal } from '@/content/demo/billing'
 import { fmtAgo, fmtCurrency, fmtDateYear } from '@/content/demo/format'
 import { workspaceAccount, workspaceClient, workspaceNotifications, workspaceTeam } from '@/content/demo/workspace'
-import { billingNote, planById, planSummary, setupNote } from '@/content/pricing'
+import { billingNote, planById, planSummary, priceLabel, setupNote } from '@/content/pricing'
 import { useToast, usePending } from '../Toasts'
 import { Avatar, Badge, PageHeader, SelectField, Switch, TabPanel, Tabs, TextField } from '../ui'
 import { useClientDemo, type InvitedMember } from './state'
@@ -208,7 +208,7 @@ function BillingTab() {
           {plan.name}
         </h2>
         <p className="app-plan__price">
-          <span className="app-plan__amount">{plan.priceLabel}</span>
+          <span className="app-plan__amount">{priceLabel(plan)}</span>
           <span className="ui-meta">/month · {billingNote.toLowerCase()}</span>
         </p>
         <p className="ui-meta">{planSummary(plan)} · {setupNote}</p>

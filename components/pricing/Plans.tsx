@@ -2,7 +2,7 @@ import { Check, Minus } from 'lucide-react'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { Arrow } from '@/components/ui/links'
-import { comparison, plans, type Plan } from '@/content/pricing'
+import { comparison, plans, priceLabel, type Plan } from '@/content/pricing'
 import { CompareToggle } from './CompareToggle'
 
 const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 90}ms` }) as CSSProperties
@@ -18,7 +18,7 @@ export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }
       {plans.map((plan, i) => (
         <li
           key={plan.id}
-          className={['plan', `plan--${plan.id}`, plan.highlight && 'plan--featured'].filter(Boolean).join(' ')}
+          className={['plan', `plan--${plan.id}`, plan.recommendation && 'plan--featured'].filter(Boolean).join(' ')}
           data-reveal
           style={delay(i)}
         >
@@ -33,21 +33,21 @@ function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }
   const headingId = `plan-${plan.id}-${variant}`
   return (
     <article className="plan__card" aria-labelledby={headingId}>
-      {plan.highlight && (
+      {plan.recommendation && (
         <>
           <span className="plan__bookmark" aria-hidden="true" />
-          <p className="plan__flag">{plan.highlight}</p>
+          <p className="plan__flag">{plan.recommendation.label}</p>
         </>
       )}
       <h3 id={headingId} className="plan__name">
         {plan.name}
       </h3>
       <p className="plan__price">
-        <span className="plan__amount">{plan.priceLabel}</span>
+        <span className="plan__amount">{priceLabel(plan)}</span>
         {plan.monthly !== null && <span className="plan__per">/month</span>}
       </p>
       <p className="plan__tagline">{plan.tagline}</p>
-      {variant === 'full' && plan.audience && <p className="plan__audience">{plan.audience}</p>}
+      {variant === 'full' && <p className="plan__audience">{plan.bestFor}</p>}
 
       <Link href={plan.cta.href} className="plan__cta">
         <span>{variant === 'compact' ? (plan.monthly === null ? 'Talk to us' : 'Choose plan') : plan.cta.label}</span>
@@ -84,10 +84,10 @@ export function CompareMatrix({ openLabel, closeLabel }: { openLabel: string; cl
                 <span className="sr-only">Feature</span>
               </th>
               {plans.map((plan) => (
-                <th key={plan.id} scope="col" className={plan.highlight ? 'is-featured' : undefined}>
+                <th key={plan.id} scope="col" className={plan.recommendation ? 'is-featured' : undefined}>
                   <span className="compare__plan">{plan.name}</span>
                   <span className="compare__price">
-                    {plan.priceLabel}
+                    {priceLabel(plan)}
                     {plan.monthly !== null && '/mo'}
                   </span>
                 </th>
@@ -107,7 +107,7 @@ export function CompareMatrix({ openLabel, closeLabel }: { openLabel: string; cl
                   {plans.map((plan) => {
                     const value = row.values[plan.id]
                     return (
-                      <td key={plan.id} className={plan.highlight ? 'is-featured' : undefined}>
+                      <td key={plan.id} className={plan.recommendation ? 'is-featured' : undefined}>
                         {value === true ? (
                           <>
                             <Check className="compare__yes" size={16} strokeWidth={2} aria-hidden="true" />

@@ -8,7 +8,7 @@ import { pageMetadata } from '@/lib/seo'
 export const metadata: Metadata = pageMetadata({
   title: afterYouBuy.meta.title,
   description: afterYouBuy.meta.description,
-  path: '/after-you-buy',
+  path: '/getting-started',
 })
 
 /** Six plain steps from choosing a plan to going live. */

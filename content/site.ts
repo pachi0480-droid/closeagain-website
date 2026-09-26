@@ -17,11 +17,13 @@ const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/
 export const site = {
   name: 'CloseAgain',
   tagline: 'The conversation isn’t over.',
-  /** The one-sentence explanation. Keep it this short. */
+  /** What CloseAgain is, in four words. */
+  category: 'Automated lead follow-up and recovery',
+  /** The one-paragraph explanation. Keep it this short. */
   promise:
-    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
+    'Turn more of the leads you already have into paying customers. CloseAgain follows up with new inquiries and re-engages older leads, helping your team book more appointments and close more sales.',
   description:
-    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
+    'CloseAgain follows up with new inquiries and re-engages older leads automatically, helping your team book more appointments and close more sales.',
   origin: configuredOrigin || null,
 } as const
 
@@ -41,7 +43,7 @@ export const headerNav: NavLink[] = [
 /** Mobile menu: every public page, in reading order. */
 export const menuNav: NavLink[] = [
   ...headerNav,
-  { label: 'After you buy', href: '/after-you-buy' },
+  { label: 'Getting started', href: '/getting-started' },
   { label: 'About', href: '/about' },
 ]
 
@@ -52,7 +54,7 @@ export const footerGroups: Array<{ title: string; links: NavLink[] }> = [
       { label: 'How it works', href: '/how-it-works' },
       { label: 'Features', href: '/features' },
       { label: 'Pricing', href: '/pricing' },
-      { label: 'Product demo', href: '/demo' },
+      { label: 'Sample dashboard', href: '/demo' },
     ],
   },
   {
@@ -61,18 +63,24 @@ export const footerGroups: Array<{ title: string; links: NavLink[] }> = [
       { label: 'Who it’s for', href: '/who-its-for' },
       { label: 'About', href: '/about' },
       { label: 'FAQ', href: '/faq' },
-      { label: 'After you buy', href: '/after-you-buy' },
+      { label: 'Getting started', href: '/getting-started' },
     ],
   },
   {
-    title: 'Get started',
+    title: 'Next step',
     links: [
-      { label: 'Contact to buy', href: '/contact' },
+      { label: 'Find the right plan', href: '/contact' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },
     ],
   },
 ]
 
-/** The primary call to action everywhere on the site. */
-export const buyCta = { label: 'Contact to buy', href: '/contact' } as const
+/**
+ * The primary call to action everywhere on the site. It opens an inquiry —
+ * a conversation about fit, scope and plan — not a checkout, and says so.
+ */
+export const primaryCta = { label: 'Find the right plan', href: '/contact' } as const
+
+/** The quieter route for visitors who want to understand the service first. */
+export const learnCta = { label: 'See how it works', href: '/how-it-works' } as const

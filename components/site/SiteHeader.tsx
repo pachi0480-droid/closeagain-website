@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Arrow, Wordmark } from '@/components/ui/links'
-import { buyCta, headerNav, menuNav } from '@/content/site'
+import { headerNav, menuNav, primaryCta } from '@/content/site'
 import { MobileMenu } from './MobileMenu'
 import { NavLink } from './NavLink'
 
@@ -23,11 +23,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="site-header__actions">
-          <Link href={buyCta.href} className="btn site-header__cta">
-            <span>{buyCta.label}</span>
+          <Link href={primaryCta.href} className="btn site-header__cta">
+            <span>{primaryCta.label}</span>
             <Arrow />
           </Link>
-          <MobileMenu links={menuNav} cta={buyCta} />
+          <MobileMenu links={menuNav} cta={primaryCta} />
         </div>
       </div>
     </header>

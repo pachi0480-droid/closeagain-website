@@ -111,6 +111,6 @@ export const home = {
     title: 'Ready to close more conversations?',
     body: 'Plans start at $499/month. Monthly billing. Setup assistance included.',
     cta: { label: 'Contact to buy', href: '/contact' },
-    secondary: { label: 'What happens after you buy', href: '/after-you-buy' },
+    secondary: { label: 'How getting started works', href: '/getting-started' },
   },
 } as const

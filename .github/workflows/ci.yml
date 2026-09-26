@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   verify:
-    name: Lint, typecheck and build
+    name: Lint, typecheck, test and build
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -35,7 +35,7 @@ jobs:
       - name: Install
         run: npm ci
 
-      # The three checks run independently. A PR author should see every
+      # The checks run independently. A PR author should see every
       # failure in one pass rather than fixing them one run at a time, so a
       # failed step does not stop the ones after it — only a cancelled job does.
       - name: Lint
@@ -45,6 +45,11 @@ jobs:
       - name: Typecheck
         if: ${{ !cancelled() }}
         run: npm run typecheck
+
+      # Form submission behaviour (Node's built-in test runner, no extra deps).
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: npm test
 
       - name: Build
         if: ${{ !cancelled() }}

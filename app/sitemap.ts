@@ -1,22 +1,27 @@
 import type { MetadataRoute } from 'next'
-import { site } from '@/data/site'
+import { privacy, terms } from '@/content/legal'
+import { isIndexable, site } from '@/content/site'
 
-const routes = [
-  { path: '', priority: 1, changeFrequency: 'weekly' },
-  { path: '/product', priority: 0.9, changeFrequency: 'weekly' },
-  { path: '/pricing', priority: 0.9, changeFrequency: 'weekly' },
-  { path: '/calculator', priority: 0.8, changeFrequency: 'monthly' },
-  { path: '/privacy', priority: 0.2, changeFrequency: 'yearly' },
-  { path: '/terms', priority: 0.2, changeFrequency: 'yearly' },
-] as const
+/** Indexable routes only. Legal pages join once their text is approved. */
+const routes: Array<{ path: string; priority: number }> = [
+  { path: '', priority: 1 },
+  { path: '/how-it-works', priority: 0.9 },
+  { path: '/who-its-for', priority: 0.9 },
+  { path: '/book-a-demo', priority: 0.9 },
+  { path: '/pricing', priority: 0.7 },
+  { path: '/about', priority: 0.6 },
+  { path: '/faq', priority: 0.6 },
+  { path: '/contact', priority: 0.6 },
+  ...(privacy.status === 'approved' ? [{ path: '/privacy', priority: 0.2 }] : []),
+  ...(terms.status === 'approved' ? [{ path: '/terms', priority: 0.2 }] : []),
+]
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date()
-
+  // Without a real public origin there is nothing honest to list.
+  if (!isIndexable || !site.origin) return []
   return routes.map((route) => ({
-    url: `${site.url}${route.path}`,
-    lastModified,
-    changeFrequency: route.changeFrequency,
+    url: `${site.origin}${route.path}`,
+    changeFrequency: 'monthly',
     priority: route.priority,
   }))
 }

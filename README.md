@@ -1,174 +1,129 @@
 # CloseAgain — public website
 
-Demand-to-revenue infrastructure for home services. This repository is the
-**marketing site only**. The application is not built here, and nothing in it
-should be mistaken for one.
+The marketing site for CloseAgain: following up with missed inquiries and
+older leads, so the right conversations get a second chance. The primary
+conversion is a demo request; the secondary is a contact message.
+
+This repository is the website only — no product, dashboard or account area.
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
-npm run build      # production build
-npm run lint       # eslint
-npm run typecheck  # tsc --noEmit
+npm run dev          # http://localhost:3000
+npm run build        # production build
+npm start            # serve the build
+npm run lint
+npm run typecheck
+npm test             # form submission behaviour (Node's built-in runner)
+npm run forms:sink   # local stand-in form destination, for testing only
 ```
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4.
-No animation library: every transition here is CSS, driven either by state, by
-one `IntersectionObserver` primitive, or by a single scroll-linked custom
-property. That was a deliberate call — nothing in the design needed a runtime
-animation engine, so the bundle does not carry one. Smooth scrolling is the
-browser's own `scroll-behavior`, which costs nothing and never fights the
-scrollbar.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 for the reset
+only. Every marketing page is prerendered static HTML; the only dynamic pieces
+are the form endpoint and the confirmation page.
 
-## The design concept — The Signal Room
+## Before this goes live
 
-Every opportunity that reaches a home-service business enters as a **signal**
-carrying six facts: what the work is, where it came from, what state it is in,
-how long since it moved, what it might be worth, and the one next action
-assigned to it. New inquiries and reopened ones use the same vocabulary,
-because the product's argument is that they are the same queue.
+These are launch blockers — the site is complete but not production-ready
+without them:
 
-That vocabulary is defined once, in `data/signals.ts`, and every module on the
-site renders from it — the hero field, the radar, and the command centre. A
-visitor learns the language once.
-
-**State is never carried by colour alone.** Each of the six states has a word
-and a glyph alongside its colour (`stateMeta` in `data/signals.ts`).
-
-## Routes
-
-| Route | What it is |
-| --- | --- |
-| `/` | Eight chapters, end to end. The narrative lives here. |
-| `/product` | Each capability as four comparable facts, plus the command centre. |
-| `/pricing` | Plans, the full capability matrix, and pricing-specific questions. |
-| `/calculator` | Standalone and shareable. Assumptions are mirrored into the URL. |
-| `/privacy`, `/terms` | Pre-launch drafts, marked as such on the page. |
-| `/404` | Designed, not the framework default. |
-
-The homepage chapters, in order:
-
-1. **Signal Room hero** — demand arrives, one node assigns each signal an action
-2. **Watch a lead get closed** — one inquiry, step by step, three scenarios
-3. **Two revenue motions** — new and recovered demand converging on booked work
-4. **Revenue Radar** — everything in play, filterable, placed by value
-5. **Revenue Command Center** — the queue a team actually works
-6. **Growth-gap calculator** — what the follow-up gap is worth
-7. **Industries and differentiation** — who it is for, what it sits beside
-8. **Plans, audit and final CTA** — what it costs, and what happens first
+1. **Form destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
+   endpoint that accepts the JSON described in `.env.example`, optionally with
+   `FORMS_WEBHOOK_SECRET`. Until then both forms tell visitors that requests
+   are temporarily unavailable, and nothing is recorded.
+2. **Legal copy.** `/privacy` and `/terms` are marked placeholders and are kept
+   out of search. Add approved text in `content/legal.ts` and set `status` to
+   `'approved'`. The privacy policy should cover the form data, the webhook
+   destination and the short-lived `ca_receipt` confirmation cookie.
+3. **Public origin.** Set `NEXT_PUBLIC_SITE_URL` on the production deployment
+   only. Without it the site is a preview: noindex everywhere, robots.txt
+   disallows crawling, empty sitemap, no canonical URLs.
+4. **Pricing.** `content/pages.ts → pricing.offer` shows “Pricing details to be
+   confirmed.” until approved prices are added there.
 
 ## Where things live
 
 ```
-app/            routes, metadata, OG image, robots, sitemap, design tokens
+content/        ALL public copy: site/nav, home, pages, forms, legal
+app/            routes, metadata, robots, sitemap, icon, share card
+  api/forms/    the one submission endpoint (/api/forms/demo, /contact)
 components/
-  layout/       header, footer, page intro, legal shell
-  sections/     the eight homepage chapters, in narrative order
-  signal/       the Signal Room field (hero) and its mobile strip
-  product/      capability records
-  pricing/      plan grid, capability matrix, pricing questions
-  calculator/   the growth-gap stage, shared state, sensitivity, caveats
-  ui/           button, field, slider, reveal, signal, mark, type primitives
-data/           ALL copy, signals, pricing, scenarios and form options
-lib/            calculator model, analytics, form boundary, hooks, formatting
-public/         the one raster asset on the site
+  site/         header, mobile menu, footer, motion controller
+  home/         the hero composition
+  editorial/    page intro, numbered rows, trio, closing CTA, word split
+  art/          ribbon renderer, ribbon centrelines, bubbles
+  forms/        the shared form and the contact/demo page layout
+  legal/        legal document layout
+lib/
+  ribbon.ts     centreline + width profile → filled ribbon outline
+  forms/        validation, transport, state machine, server decision,
+                webhook delivery, rate limiting — framework-free and tested
+  seo.ts        per-page metadata
+styles/         tokens, base, chrome, editorial, home, pages, forms, motion
+tests/          node --test suites
+scripts/        form-sink.mjs (local test destination)
 ```
 
-**Edit copy in `data/`, not in components.** Brand, navigation, CTA labels and
-contact details are in `data/site.ts`; pricing in `data/pricing.ts`; the signal
-vocabulary and demo populations in `data/signals.ts`; the three lead scenarios
-in `data/lead-scenarios.ts`.
-
-The three honesty labels are centralised in `site.ts` as `labels`, so the
-wording cannot multiply across the page.
+**Edit words in `content/`, not in components.**
 
 ## Design system
 
-Tokens are defined once in `app/globals.css` under `@theme`.
+The approved homepage image is the reference. Colours were sampled from it:
+paper `#F2EFE7`, ink `#0D0D0B`, vermilion `#CD3926` (display and ribbon only;
+small red text uses `#B32E1D` for contrast), beige and blush bubbles, warm
+hairlines. Tokens live in `styles/tokens.css`.
 
-- **Surfaces** — five graphite steps from `void` to `steel`. Never pure black.
-- **Type** — warm white on graphite. Geist for everything, Geist Mono for
-  technical labels and data. No serif, no italic display type.
-- **Signal green** (`--color-signal`) is semantic, not decorative: active
-  opportunities, booked paths, progress, and CTAs. **At-risk orange**
-  (`--color-risk`) appears only where momentum is being lost.
-- **Tabular numerals** (`.tnum`) on every figure that changes.
+**Type.** DM Serif Display for display type — the closest openly licensed
+match found for the reference headline; it is a substitution, not the
+reference's exact face. Source Serif 4 (400/600) for reading and interface
+text; DM Serif was drawn from Source Serif, so they pair naturally. Both are
+self-hosted through `next/font` with metric-matched fallbacks.
 
-### Motion
+**The ribbon.** Every ribbon is a centreline plus a width profile
+(`components/art/ribbons.ts`), turned into one filled outline at build time by
+`lib/ribbon.ts`, so it tapers like a brush stroke and the arrowhead always sits
+on the real end tangent. The homepage ribbon was traced from the reference at
+its native 1513 × 1040 size. Wide screens scale the whole hero in units of the
+headline size (`--hs`), so type, ribbon and bubbles keep the reference's
+relationships; small screens have their own art direction and path.
 
-Motion communicates product state, never decoration. Four primitives:
+**Motion.** CSS-first, one vocabulary (`--ease-editorial`, `--ease-ui`,
+`--ease-draw`, durations in `tokens.css`):
 
-| Primitive | Where |
-| --- | --- |
-| `[data-reveal]` | one entrance transition, `IntersectionObserver`-driven |
-| `.path-draw` | a path drawing along its own length |
-| `--p` (`useScrollVar`) | scroll-linked geometry, one style write per frame |
-| `useProximity` | the hero field's restrained pointer response |
+- Homepage entrance, first visit per session: lede and CTAs settle, the ribbon
+  is revealed along its curve by a mask (it is never a thin line that
+  thickens), then the two bubbles land. Headline and header never animate.
+- One-time reveals (`data-reveal`) and scroll-drawn ribbons
+  (`data-draw="scroll"`) share a single IntersectionObserver.
+- Content is only hidden while `html.js-reveal` is set; a failsafe removes it if
+  the app script never runs. Without JavaScript, or with reduced motion,
+  everything is simply there in its finished state.
+- Native scrolling throughout; smooth only for in-page anchors.
 
-`prefers-reduced-motion: reduce` is honoured throughout: reveals resolve
-instantly, scroll-linked scenes pin to their end state, the lead scenario shows
-every step at once, and the pointer response is never attached.
+## Forms
 
-> **`.path-draw` gotcha.** With `preserveAspectRatio="none"` and
-> `vector-effect="non-scaling-stroke"`, the dash pattern is measured in screen
-> pixels while `getTotalLength()` reports user units. Set `--len` comfortably
-> larger than the path's *on-screen* length or the tail silently dashes off.
-
-## The calculator
-
-`lib/calculator.ts` holds the single model, shared by the homepage chapter and
-the `/calculator` route. Six inputs, plain multiplication, nothing hidden:
-
-```
-opportunity value = leads x job value
-booked            = leads x booking rate x job value
-follow-up gap     = unbooked demand receiving no consistent follow-up
-conversion upside = follow-up gap x recovery rate
-new-demand upside = added leads x booking rate x job value
-```
-
-The last two are deliberately kept apart: the point of the calculator is to
-show an operator whether **buying more demand** or **working the demand they
-already have** is the larger number for them.
-
-`/calculator` adds three things the homepage does not:
-
-- **URL state.** Mirrored with `history.replaceState` — shareable, no history
-  entries, no bailout from static rendering. Short keys: `?l=320&v=680&b=38…`
-- **Sensitivity.** The same arithmetic across a range of recovery rates.
-- **What the model ignores.** Capacity, close rate on recovered leads, ticket
-  variance and seasonality, stated plainly.
+- Client and server share one validation module; the server's check is the
+  one that counts. Labels are persistent; errors are specific and never rely
+  on colour.
+- Success is shown only after `POST /api/forms/<kind>` returns HTTP 200 with
+  `{"status":"ok"}`, which happens only after the webhook answered 2xx. The
+  endpoint then sets a short-lived, HttpOnly `ca_receipt` cookie scoped to
+  `/thank-you`; without it that page shows a neutral invitation, never
+  “received”. Nothing the visitor typed goes in a URL.
+- Failures (invalid, unavailable, rejected, network, timeout, rate-limited)
+  each have their own plain message, and entered text is kept.
+- Without JavaScript the same endpoint accepts a normal form post and
+  redirects to the confirmation page or back to the form with an explanation.
+- Abuse protection: a honeypot field, a per-address rate limit (in-memory,
+  per instance), cross-site post refusal and a body size cap. Server logs
+  record outcomes only, never names, emails or messages.
+- To test locally: `npm run forms:sink`, then run the site with
+  `FORMS_WEBHOOK_URL=http://127.0.0.1:4455/`. A success there proves the
+  site's behaviour, not a production integration.
 
 ## Honesty
 
-- No customer logos, testimonials, ratings, badges, counts, case studies,
-  integration claims, certifications or awards exist anywhere in the codebase.
-- Every conceptual product view carries **one** label, at the module header:
-  `Interactive product scenario` or `Illustrative product preview`.
-- Demo figures are obvious demo figures inside a conceptual interface. None of
-  them is presented as a customer result.
-- Structured data is limited to `Organization` and `WebSite`. No review schema.
-- **The audit form will not fake a success state.** See `lib/early-access.ts`:
-  with no `NEXT_PUBLIC_EARLY_ACCESS_ENDPOINT` set it returns `not-configured`,
-  and the UI says plainly that nothing was sent, with an email fallback.
-
-## Before this goes live
-
-1. `NEXT_PUBLIC_EARLY_ACCESS_ENDPOINT` — a URL accepting a JSON POST of
-   `EarlyAccessPayload`. Until this is set the form is honest but
-   non-functional, and shows a small preview notice. (`lib/early-access.ts`)
-2. `NEXT_PUBLIC_SITE_URL` — used for canonical URLs, Open Graph and the
-   sitemap. Defaults to `https://closeagain.com`. (`data/site.ts`)
-3. `site.email` in `data/site.ts` is the placeholder `hello@closeagain.com`.
-   Replace it with the real inbox — it appears in the footer, the form and the
-   structured data.
-4. Confirm the plan prices in `data/pricing.ts` are still the approved ones
-   before launch.
-
-## Analytics
-
-No provider is installed. `lib/analytics.ts` defines the event names and
-forwards to `window.dataLayer` if one exists. Point `track()` at the chosen
-tool and the whole site starts reporting without touching a component. Events
-only fire on real interaction — the calculator does not report a completion the
-visitor never asked for.
+No testimonials, logos, customer counts, ratings, integrations, AI claims,
+results, prices, timelines or compliance claims appear anywhere. Conversation
+bubbles on How it works are labelled as illustrative examples. Structured data
+is limited to `Organization` and `WebSite`, and only once a public origin is
+configured.

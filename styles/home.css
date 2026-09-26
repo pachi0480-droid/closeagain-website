@@ -1,0 +1,321 @@
+/* Homepage: the hero composition and the “Again.” split. */
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+
+.hero {
+  /* The headline size. Everything in the composition is measured in it.
+     Capped by height too, so a phone in landscape still shows the lede. */
+  --hs: clamp(3.2rem, min(15.5vw, 17svh), 6rem);
+  position: relative;
+  overflow: clip;
+}
+
+/* The ribbon sits beneath the type (z-index -1 in the root stacking context)
+   so its multiply blend picks up the paper grain. */
+.hero__ribbon {
+  position: absolute;
+  z-index: -1;
+}
+
+.hero__ribbon--wide {
+  display: none;
+}
+
+.hero__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-block: clamp(1.25rem, 4vw, 3rem) clamp(2.75rem, 8vw, 4.5rem);
+}
+
+.hero__headline {
+  position: relative;
+  order: 1;
+  font-size: var(--hs);
+  width: 100%;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: 1em;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: nowrap;
+}
+
+.hero__line {
+  display: block;
+}
+
+/* The channel the small-screen ribbon runs through. */
+.hero__line--close {
+  margin-top: 0.34em;
+}
+
+.hero__ribbon--compact {
+  /* An SVG does not stretch between left and right, so size it outright. */
+  top: 1.62em;
+  left: calc(-1 * var(--gutter));
+  width: calc(100% + var(--gutter));
+  height: 3.3em;
+}
+
+.hero__exchange {
+  order: 2;
+  position: relative;
+  width: 100%;
+  height: calc(var(--hs) * 2.3);
+}
+
+.hero__bubble {
+  position: absolute;
+  font-size: clamp(0.9375rem, 0.86rem + 0.35vw, 1rem);
+}
+
+.hero__bubble--ask {
+  top: calc(var(--hs) * 0.2);
+  right: calc(var(--hs) * 0.95);
+}
+
+.hero__bubble--reply {
+  top: calc(var(--hs) * 1.66);
+  right: 0;
+}
+
+/* On small screens the reply sits under the arrow, so its tail moves right. */
+.hero__bubble--reply .bubble__tail {
+  left: auto;
+  right: 0.35em;
+}
+
+.hero__lede {
+  order: 3;
+  margin: 0.25rem 0 0;
+  max-width: 30rem;
+  font-size: var(--text-lede);
+  line-height: 1.42;
+  color: var(--ink);
+}
+
+.hero__actions {
+  order: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 2rem;
+  margin-top: 1.9rem;
+}
+
+/* Wide screens: the reference composition, scaled as one piece. */
+@media (min-width: 960px) {
+  .hero {
+    /* 146px at the reference's 1513px width */
+    --hs: min(9.73vw, 10rem);
+  }
+
+  .hero__ribbon--wide {
+    display: block;
+    top: 0;
+    left: 50%;
+    width: calc(var(--hs) * 10.363);
+    height: calc(var(--hs) * 4.815);
+    translate: -50% 0;
+  }
+
+  .hero__ribbon--compact {
+    display: none;
+  }
+
+  .hero__stage {
+    align-items: center;
+    text-align: center;
+    min-height: calc(var(--hs) * 4.776);
+    padding-top: calc(var(--hs) * 0.467);
+    padding-bottom: calc(var(--hs) * 0.5);
+  }
+
+  .hero__title {
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+  }
+
+  .hero__line--lead,
+  .hero__line--rest {
+    display: inline;
+  }
+
+  .hero__line--close {
+    margin-top: 0;
+  }
+
+  .hero__lede {
+    margin-top: calc(var(--hs) * 0.133);
+    max-width: 32rem;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+
+  .hero__actions {
+    justify-content: center;
+    margin-top: calc(var(--hs) * 0.262);
+  }
+
+  .hero__exchange {
+    position: static;
+    height: 0;
+  }
+
+  /* The bubbles are real, readable text, so they do not shrink with the
+     composition; below the reference width they are nudged to keep clear of
+     the ribbon and the window edge. */
+  .hero__bubble {
+    font-size: clamp(0.875rem, 0.55rem + 0.5vw, 1rem);
+  }
+
+  .hero__bubble--ask {
+    top: calc(var(--hs) * 3.267);
+    left: min(calc(50% + var(--hs) * 3.825), calc(100% - 9.75rem));
+    right: auto;
+  }
+
+  .hero__bubble--reply {
+    top: calc(var(--hs) * 4.39 + max(0px, (1400px - 100vw) * 0.03));
+    right: max(0.75rem, calc(50% - var(--hs) * 5.08));
+  }
+
+  .hero__bubble--reply .bubble__tail {
+    left: 2.45em;
+    right: auto;
+  }
+
+
+}
+
+@media (min-width: 1200px) {
+  /* Wide enough for the reference's own line breaks. */
+  .hero__lede-line {
+    display: block;
+    white-space: nowrap;
+  }
+}
+
+/* ── The oversized word ────────────────────────────────────────────────── */
+
+.word-split {
+  padding-block: clamp(1.75rem, 3vw, 2.25rem) var(--section-y);
+}
+
+.word-split__inner {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.word-split__word {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--display-word);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: var(--vermilion);
+  /* Room for the descender of the g without clipping. */
+  padding-bottom: 0.08em;
+}
+
+.word-split__rule {
+  display: block;
+  width: 3.5rem;
+  height: 1px;
+  background: var(--rule-strong);
+}
+
+.word-split__body {
+  max-width: 34rem;
+  font-size: clamp(1.1875rem, 1.1rem + 0.2vw, 1.225rem);
+  line-height: 1.53;
+}
+
+.word-split__body p {
+  margin: 0;
+}
+
+.word-split__heading {
+  margin: 0 0 0.9rem;
+  font-size: var(--display-s);
+}
+
+.word-split__lines span {
+  display: inline;
+}
+
+@media (min-width: 1200px) {
+  .word-split__lines span {
+    display: block;
+  }
+}
+
+@media (min-width: 900px) {
+  .word-split__inner {
+    grid-template-columns: auto 1px minmax(0, 1fr);
+    align-items: center;
+    column-gap: clamp(2.5rem, 4.25vw, 4.25rem);
+  }
+
+  .word-split__body {
+    padding-left: 0.8rem;
+  }
+
+  .word-split__word {
+    padding-left: clamp(0rem, 1.6vw, 1.6rem);
+  }
+
+  .word-split__rule {
+    width: 1px;
+    height: clamp(5rem, 8.2vw, 7.75rem);
+    background: var(--rule);
+    align-self: center;
+    translate: 0 -0.35rem;
+  }
+}
+
+/* ── Home sections below the reference ─────────────────────────────────── */
+
+.section {
+  padding-block: var(--section-y);
+}
+
+.section + .section {
+  border-top: 1px solid var(--rule);
+}
+
+.section__head {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.section__title {
+  margin: 0;
+  font-size: var(--display-m);
+  max-width: 15em;
+}
+
+.section__foot {
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+@media (min-width: 900px) {
+  .section__head--split {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 3rem;
+  }
+}
+
+/* The reference sets “Again.” tight under the first rule. */
+.word-split--home {
+  padding-top: 0;
+}
+
+.word-split--home .word-split__word {
+  margin-top: -0.4rem;
+}

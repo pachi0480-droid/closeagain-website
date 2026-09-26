@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { RibbonBand } from '@/components/art/Ribbon'
-import { CountUp } from './CountUp'
 
 /**
  * Product previews for the marketing pages: honest slices of CloseAgain's
@@ -227,13 +226,13 @@ function SequencePreview() {
 /* ── Re-engage: a cold lead gets another chance ────────────────────────── */
 
 export function ReengagePreview({
-  name,
-  lastContact,
-  steps,
+  name = 'Maya Chen',
+  lastContact = '92 days ago',
+  steps = ['CloseAgain re-engages', 'Reply received', 'Opportunity reopened', 'Appointment booked'],
 }: {
-  name: string
-  lastContact: string
-  steps: readonly string[]
+  name?: string
+  lastContact?: string
+  steps?: readonly string[]
 }) {
   const icons: LucideIcon[] = [RotateCcw, MessageSquareReply, Zap, CalendarCheck]
   return (
@@ -451,7 +450,8 @@ function AnalyticsPreview() {
           <div key={metric.label} className="pv-metric" style={stagger(i)} data-scroll="rise">
             <span className="ui-label">{metric.label}</span>
             <span className="ui-metric">
-              <CountUp value={metric.value} suffix={metric.suffix} />
+              {metric.value.toLocaleString('en-US')}
+              {metric.suffix}
             </span>
           </div>
         ))}

@@ -231,3 +231,30 @@ export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
     ],
   },
 ]
+
+/**
+ * Which plans include a capability, derived from the comparison so the
+ * features page can never disagree with the pricing page.
+ *
+ *   availability('Appointment workflows') → { summary: 'Growth and up' }
+ *   availability('Reporting level') → { summary: 'Every plan', levels: [...] }
+ */
+export function availability(label: string): { summary: string; levels?: string[] } {
+  const row = comparison.flatMap((group) => group.rows).find((candidate) => candidate.label === label)
+  if (!row) throw new Error(`No comparison row named “${label}”`)
+  const included = plans.filter((plan) => row.values[plan.id] !== false)
+  const first = included[0]
+  const fromFirstUp = plans.slice(plans.indexOf(first))
+  const summary =
+    included.length === plans.length
+      ? 'Every plan'
+      : included.length === fromFirstUp.length && fromFirstUp.every((plan, i) => included[i] === plan)
+        ? first.id === 'enterprise'
+          ? 'Enterprise'
+          : `${first.name} and up`
+        : included.map((plan) => plan.name).join(', ')
+  const levels = included.every((plan) => typeof row.values[plan.id] === 'string')
+    ? included.map((plan) => `${plan.name}: ${String(row.values[plan.id]).toLowerCase()}`)
+    : undefined
+  return { summary, levels }
+}

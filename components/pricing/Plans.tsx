@@ -5,12 +5,16 @@ import { Arrow } from '@/components/ui/links'
 import { comparison, plans, priceLabel, type Plan } from '@/content/pricing'
 import { CompareToggle } from './CompareToggle'
 
-const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 90}ms` }) as CSSProperties
+const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }) as CSSProperties
 
 /**
- * The four plans. Scale is lifted with a vermilion edge and a small ribbon
- * bookmark; Enterprise is the one dark card. Everything else stays quiet so
- * the prices do the talking.
+ * The four plans. Each card leads with the facts that decide between them —
+ * who it is best for and what it adds over the plan before — and only then
+ * lists features, without repeating anything the lower plan already has.
+ *
+ * Scale is lifted with a vermilion edge and a small ribbon bookmark because
+ * it is recommended for teams, and the card says why. Enterprise is the one
+ * dark card.
  */
 export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
   return (
@@ -22,14 +26,14 @@ export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }
           data-reveal
           style={delay(i)}
         >
-          <PlanCard plan={plan} variant={variant} />
+          <PlanCard plan={plan} variant={variant} first={i === 0} />
         </li>
       ))}
     </ol>
   )
 }
 
-function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }) {
+function PlanCard({ plan, variant, first }: { plan: Plan; variant: 'full' | 'compact'; first: boolean }) {
   const headingId = `plan-${plan.id}-${variant}`
   return (
     <article className="plan__card" aria-labelledby={headingId}>
@@ -47,10 +51,28 @@ function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }
         {plan.monthly !== null && <span className="plan__per">/month</span>}
       </p>
       <p className="plan__tagline">{plan.tagline}</p>
-      {variant === 'full' && <p className="plan__audience">{plan.bestFor}</p>}
+
+      <dl className="plan__facts">
+        <div className="plan__fact">
+          <dt>Best for</dt>
+          <dd>{plan.bestFor}</dd>
+        </div>
+        {variant === 'full' && (
+          <div className="plan__fact">
+            <dt>{first ? 'What you get' : 'What it adds'}</dt>
+            <dd>{plan.step}</dd>
+          </div>
+        )}
+        {variant === 'full' && plan.recommendation && (
+          <div className="plan__fact plan__fact--why">
+            <dt>Why we recommend it</dt>
+            <dd>{plan.recommendation.basis}</dd>
+          </div>
+        )}
+      </dl>
 
       <Link href={plan.cta.href} className="plan__cta">
-        <span>{variant === 'compact' ? (plan.monthly === null ? 'Talk to us' : 'Choose plan') : plan.cta.label}</span>
+        <span>{plan.cta.label}</span>
         <Arrow />
       </Link>
 
@@ -103,7 +125,10 @@ export function CompareMatrix({ openLabel, closeLabel }: { openLabel: string; cl
               </tr>
               {group.rows.map((row) => (
                 <tr key={row.label}>
-                  <th scope="row">{row.label}</th>
+                  <th scope="row">
+                    {row.label}
+                    {row.note && <span className="compare__note">{row.note}</span>}
+                  </th>
                   {plans.map((plan) => {
                     const value = row.values[plan.id]
                     return (

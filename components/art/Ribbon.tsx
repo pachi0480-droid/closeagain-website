@@ -2,13 +2,13 @@ import { buildRibbon, type RibbonSpec } from '@/lib/ribbon'
 
 /**
  * How a ribbon appears:
- *  - `intro`   reveals along its curve once, on first page load
- *  - `scroll`  reveals along its curve once, when it approaches the viewport
- *  - `linked`  draws in step with scrolling (scroll-driven animation), and
- *              falls back to `scroll` where that is not supported
+ *  - `intro`   reveals along its curve once, on the first homepage load of a
+ *              session
+ *  - `scroll`  reveals along its curve once, as it arrives in view — and is
+ *              never hidden again, however the visitor scrolls afterwards
  *  - `static`  never animates
  */
-export type Draw = 'intro' | 'scroll' | 'linked' | 'static'
+export type Draw = 'intro' | 'scroll' | 'static'
 
 export type RibbonLayer = {
   spec: RibbonSpec
@@ -99,6 +99,6 @@ export function Ribbon({
  * comes from `--rw`, set by the composition so it matches the SVG ribbon it
  * joins.
  */
-export function RibbonBand({ className, draw = 'linked' }: { className?: string; draw?: Draw }) {
+export function RibbonBand({ className, draw = 'scroll' }: { className?: string; draw?: Draw }) {
   return <span className={['ribbon-band', className].filter(Boolean).join(' ')} aria-hidden="true" data-draw={draw} />
 }

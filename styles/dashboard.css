@@ -109,6 +109,14 @@
   border-color: var(--line-strong);
 }
 
+/* The client demo's workspace is a label, not a switcher. */
+.app-workspace__button--static,
+.app-workspace__button--static:hover {
+  cursor: default;
+  background: transparent;
+  border-color: var(--line);
+}
+
 .app-workspace__mark {
   display: inline-grid;
   place-items: center;

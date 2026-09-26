@@ -12,12 +12,13 @@ import { IntroMark } from './IntroMark'
  * screens get their own art direction: three lines, left-aligned, and a
  * ribbon that threads between the last two lines and lands beside the reply.
  *
- * The first visit of a session plays the entrance (motion.css): navigation,
- * then each line rising, the ribbon drawing through, the two bubbles, and
- * finally the supporting copy and calls to action settling in.
+ * The headline, the explanation and both calls to action are there on first
+ * paint and never wait for motion. Only the decoration moves: on the first
+ * visit of a session the ribbon draws through and the two bubbles follow it
+ * (motion.css).
  */
 export function Hero() {
-  const { headline, lede, primary, secondary, terms, exchange } = home.hero
+  const { category, headline, lede, primary, secondary, terms, exchange } = home.hero
 
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -30,6 +31,7 @@ export function Hero() {
       />
 
       <div className="hero__stage wrap">
+        <p className="eyebrow hero__category">{category}</p>
         <div className="hero__headline">
           <h1 id="hero-title" className="hero__title">
             <span className="hero__row hero__row--1">

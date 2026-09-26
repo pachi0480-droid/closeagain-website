@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+// The demo's own stylesheet loads only on demo routes, not with the marketing site.
+import '@/styles/dashboard.css'
 import { demoRobots } from '@/components/dashboard/metadata'
 import { OperatorShell } from '@/components/dashboard/operator/OperatorShell'
 import { OperatorDemoProvider } from '@/components/dashboard/operator/state'

@@ -40,7 +40,7 @@ export function Trail({
                   className="trail__turn-art"
                   viewBox={trailTurn.viewBox}
                   spec={side === 'left' ? trailTurn.leftToRight : trailTurn.rightToLeft}
-                  draw="linked"
+                  draw="scroll"
                 />
               </div>
             )}

@@ -1,0 +1,110 @@
+/* Document defaults, the paper, and the reading layer. */
+
+html {
+  background: var(--paper) url('/texture/paper.webp') repeat;
+  background-size: 192px 192px;
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 100%;
+  font-optical-sizing: auto;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: calc(var(--header-h) + 1.5rem);
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* The mobile menu is a modal: the page behind it holds still. */
+html:has(.menu[open]) {
+  overflow: hidden;
+}
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+main:focus {
+  outline: none;
+}
+
+::selection {
+  background: var(--bubble-blush);
+  color: var(--ink);
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+:where(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+:where(p, li, dd) {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Container ─────────────────────────────────────────────────────────── */
+
+.wrap {
+  width: min(100% - 2 * var(--gutter), var(--measure-max));
+  margin-inline: auto;
+}
+
+/* ── Skip link ─────────────────────────────────────────────────────────── */
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1.1rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--text-sm);
+  transform: translateY(-160%);
+  transition: transform var(--dur-ui) var(--ease-ui);
+}
+
+.skip-link:focus-visible,
+.skip-link:focus {
+  transform: none;
+  outline: 2px solid var(--vermilion);
+  outline-offset: 2px;
+}
+
+/* ── Rules ─────────────────────────────────────────────────────────────── */
+
+.rule {
+  border: 0;
+  height: 1px;
+  background: var(--rule);
+  margin: 0;
+}

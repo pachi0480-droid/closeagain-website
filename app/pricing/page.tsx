@@ -1,78 +1,75 @@
 import type { Metadata } from 'next'
-import { PageIntro } from '@/components/layout/PageIntro'
-import { PlanGrid } from '@/components/pricing/PlanGrid'
-import { PlanMatrix } from '@/components/pricing/PlanMatrix'
-import { PricingQuestions } from '@/components/pricing/PricingQuestions'
-import { AuditForm } from '@/components/sections/AuditForm'
-import { ButtonLink } from '@/components/ui/Button'
-import { Reveal } from '@/components/ui/Reveal'
-import { SectionMark } from '@/components/ui/Type'
-import { cta } from '@/data/site'
+import { PageIntro } from '@/components/editorial/blocks'
+import { WordSplit } from '@/components/editorial/WordSplit'
+import { ButtonLink, TextLink } from '@/components/ui/links'
+import { pricing } from '@/content/pages'
+import { pageMetadata } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Pricing',
-  description:
-    'Monthly, per business. Plans differ by how much of the lead lifecycle CloseAgain is working — not by metered message counts.',
-  alternates: { canonical: '/pricing' },
-  openGraph: {
-    title: 'Pricing — CloseAgain',
-    description:
-      'Monthly, per business. Plans differ by how much of the lifecycle CloseAgain is working.',
-    url: '/pricing',
-  },
-}
+export const metadata: Metadata = pageMetadata({
+  title: pricing.meta.title,
+  description: pricing.meta.description,
+  path: '/pricing',
+})
 
+/**
+ * No prices exist yet, so this page offers a conversation instead of tiers.
+ * When pricing is approved, fill `pricing.offer.details` in content/pages.ts
+ * and set its status to 'published'.
+ */
 export default function PricingPage() {
+  const { offer, clarity } = pricing
+
   return (
     <>
-      <PageIntro
-        eyebrow="Pricing"
-        title="Priced by how much of the lifecycle we work."
-        lede="Monthly, per business. No annual plan, no annual discount, and no metered message counts."
-        aside={
-          <ButtonLink href={cta.target} withArrow>
-            {cta.primary}
-          </ButtonLink>
-        }
-      />
+      <PageIntro eyebrow={pricing.eyebrow} title={pricing.title} lede={pricing.lede} />
 
-      <section className="border-t border-rule bg-void py-20 md:py-24">
-        <div className="shell-wide">
-          <Reveal>
-            <PlanGrid />
-          </Reveal>
+      <section className="offer-section" aria-labelledby="offer-title">
+        <div className="wrap">
+          <div className="offer" data-reveal>
+            <div className="offer__lead">
+              <h2 id="offer-title" className="offer__title">
+                {offer.title}
+              </h2>
+              <p className="offer__body">{offer.body}</p>
+              <div className="offer__actions">
+                <ButtonLink href={offer.cta.href} size="lg">
+                  {offer.cta.label}
+                </ButtonLink>
+              </div>
+              {offer.status === 'unconfirmed' ? (
+                <p className="offer__note">
+                  <span className="offer__note-mark" aria-hidden="true" />
+                  {offer.note}
+                </p>
+              ) : (
+                <ul className="offer__details">
+                  {offer.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <dl className="offer__rows">
+              {offer.rows.map((row) => (
+                <div key={row.title} className="offer__row">
+                  <dt className="offer__row-title">{row.title}</dt>
+                  <dd className="offer__row-body">{row.body}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
         </div>
       </section>
 
-      <section className="border-t border-rule bg-graphite-deep py-20 md:py-24">
-        <div className="shell-wide">
-          <Reveal>
-            <SectionMark index="02" label="What each plan covers" />
-            <h2 className="mt-6 max-w-[24ch] text-h2 font-semibold uppercase text-warm-white">
-              The whole breakdown.
-            </h2>
-          </Reveal>
-          <Reveal delay={100} className="mt-12">
-            <PlanMatrix />
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="border-t border-rule bg-void py-20 md:py-24">
-        <div className="shell-narrow">
-          <Reveal>
-            <SectionMark index="03" label="Questions" />
-            <h2 className="mt-6 max-w-[24ch] text-h2 font-semibold uppercase text-warm-white">
-              Before you ask.
-            </h2>
-          </Reveal>
-          <Reveal delay={100} className="mt-10">
-            <PricingQuestions />
-          </Reveal>
-        </div>
-      </section>
-
-      <AuditForm />
+      <WordSplit word={clarity.word} heading={clarity.title} id="clarity" className="word-split--page">
+        <p>{clarity.body}</p>
+        <p className="word-split__link">
+          <TextLink href="/faq" arrow>
+            Read the questions
+          </TextLink>
+        </p>
+      </WordSplit>
     </>
   )
 }

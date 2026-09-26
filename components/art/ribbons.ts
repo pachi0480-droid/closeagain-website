@@ -287,4 +287,219 @@ export const uTurn: Art = {
   },
 }
 
+/**
+ * Homepage “New + Old”: two conversations (the vertical bands behind each
+ * column) turn in and merge into one wider ribbon — More conversations.
+ * Column centres sit at 24% and 76% of the container, which the CSS grid
+ * guarantees with a 4% column gap. Branch ends are vertical so they meet the
+ * CSS bands seamlessly; wobble is off for the same reason.
+ */
+export const mergeWide: { viewBox: string; branches: RibbonSpec[]; trunk: RibbonSpec } = {
+  viewBox: '0 0 1280 330',
+  branches: [
+    {
+      points: [
+        [307.2, 0],
+        [307.2, 36],
+        [330, 104],
+        [430, 172],
+        [560, 214],
+        [640, 232],
+      ],
+      width: [
+        [0, 30],
+        [1, 30],
+      ],
+      wobble: 0,
+      step: 4,
+    },
+    {
+      points: [
+        [972.8, 0],
+        [972.8, 36],
+        [950, 104],
+        [850, 172],
+        [720, 214],
+        [640, 232],
+      ],
+      width: [
+        [0, 30],
+        [1, 30],
+      ],
+      wobble: 0,
+      step: 4,
+    },
+  ],
+  trunk: {
+    points: [
+      [640, 214],
+      [640, 250],
+      [640, 262],
+    ],
+    width: [
+      [0, 40],
+      [1, 40],
+    ],
+    arrow: { length: 1.7, spread: 2.6 },
+    wobble: 0,
+    step: 3,
+  },
+}
+
+export const mergeCompact: { viewBox: string; branches: RibbonSpec[]; trunk: RibbonSpec } = {
+  viewBox: '0 0 400 250',
+  branches: [
+    {
+      points: [
+        [94, 0],
+        [94, 22],
+        [110, 76],
+        [160, 122],
+        [200, 140],
+      ],
+      width: [
+        [0, 20],
+        [1, 20],
+      ],
+      wobble: 0,
+      step: 3,
+    },
+    {
+      points: [
+        [306, 0],
+        [306, 22],
+        [290, 76],
+        [240, 122],
+        [200, 140],
+      ],
+      width: [
+        [0, 20],
+        [1, 20],
+      ],
+      wobble: 0,
+      step: 3,
+    },
+  ],
+  trunk: {
+    points: [
+      [200, 128],
+      [200, 160],
+      [200, 170],
+    ],
+    width: [
+      [0, 27],
+      [1, 27],
+    ],
+    arrow: { length: 1.7, spread: 2.6 },
+    wobble: 0,
+    step: 3,
+  },
+}
+
+/**
+ * Follow-up section: the conversation arrives from the left edge, passes
+ * behind the automation preview, and carries on down the page between the
+ * two columns — it never crosses the copy.
+ */
+export const weaveWide: Art = {
+  viewBox: '0 0 1440 760',
+  spec: {
+    points: [
+      [-80, 236],
+      [120, 250],
+      [330, 292],
+      [540, 352],
+      [690, 446],
+      [760, 556],
+      [786, 640],
+    ],
+    width: [
+      [0, 40],
+      [0.5, 32],
+      [1, 30],
+    ],
+    arrow: head,
+    wobble: 0.03,
+    seed: 14,
+  },
+}
+
+/**
+ * Old leads: the ribbon goes out behind the lead card, turns, and comes back
+ * over the top — the shape of “again”. Coordinates assume the card spans
+ * x 267–933 and y 50–550 of this box (see .second__ribbon).
+ */
+export const secondChanceLoop: Art = {
+  viewBox: '0 0 1000 600',
+  spec: {
+    points: [
+      [1180, 430],
+      [900, 440],
+      [560, 452],
+      [300, 446],
+      [168, 392],
+      [120, 288],
+      [150, 170],
+      [236, 86],
+      [360, 30],
+      [500, 12],
+    ],
+    width: [
+      [0, 36],
+      [0.5, 30],
+      [1, 29],
+    ],
+    arrow: head,
+    wobble: 0.03,
+    seed: 16,
+  },
+}
+
+/**
+ * Trail turns (How it works, Features): the ribbon runs down one edge of a
+ * section, then sweeps across to the other edge for the next one. Ends are
+ * vertical and 26 units wide so they meet the CSS bands (--rw) seamlessly.
+ */
+const TRAIL_W = 26
+
+export const trailTurn: { viewBox: string; leftToRight: RibbonSpec; rightToLeft: RibbonSpec } = {
+  viewBox: '0 0 1280 200',
+  leftToRight: {
+    points: [
+      [13, 0],
+      [13, 18],
+      [52, 92],
+      [300, 104],
+      [980, 96],
+      [1228, 108],
+      [1267, 182],
+      [1267, 200],
+    ],
+    width: [
+      [0, TRAIL_W],
+      [1, TRAIL_W],
+    ],
+    wobble: 0,
+    step: 4,
+  },
+  rightToLeft: {
+    points: [
+      [1267, 0],
+      [1267, 18],
+      [1228, 92],
+      [980, 104],
+      [300, 96],
+      [52, 108],
+      [13, 182],
+      [13, 200],
+    ],
+    width: [
+      [0, TRAIL_W],
+      [1, TRAIL_W],
+    ],
+    wobble: 0,
+    step: 4,
+  },
+}
+
 export { head as arrowHead }

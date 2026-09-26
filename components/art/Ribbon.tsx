@@ -1,37 +1,50 @@
 import { buildRibbon, type RibbonSpec } from '@/lib/ribbon'
 
-type Draw = 'intro' | 'scroll' | 'static'
+/**
+ * How a ribbon appears:
+ *  - `intro`   reveals along its curve once, on first page load
+ *  - `scroll`  reveals along its curve once, when it approaches the viewport
+ *  - `linked`  draws in step with scrolling (scroll-driven animation), and
+ *              falls back to `scroll` where that is not supported
+ *  - `static`  never animates
+ */
+export type Draw = 'intro' | 'scroll' | 'linked' | 'static'
+
+export type RibbonLayer = {
+  spec: RibbonSpec
+  /** Staging for multi-part drawings: `a` draws first, then `b`, then `c`. */
+  stage?: 'a' | 'b' | 'c'
+}
 
 /**
- * A vermilion ribbon, rendered as one static filled path.
+ * A vermilion ribbon (or several, drawn as one piece), rendered as static
+ * filled paths.
  *
- * `draw` controls how it appears:
- *  - `intro`  reveals along its own curve once, on first page load
- *  - `scroll` reveals along its curve when it enters the viewport
- *  - `static` never animates
- *
- * The reveal is a mask stroked along the centreline, so the ribbon keeps its
+ * The reveal is a mask stroked along each centreline, so a ribbon keeps its
  * full width and tapering at every moment — it is never a thin line that
- * thickens. Without CSS animation (reduced motion, no JavaScript for `scroll`)
- * the mask is already complete and the ribbon is simply there.
+ * thickens. Without CSS animation (reduced motion, no JavaScript) every mask
+ * is already complete and the ribbon is simply there.
  */
 export function Ribbon({
   id,
   spec,
+  layers,
   viewBox,
   preserveAspectRatio = 'xMidYMid meet',
   className,
   draw = 'static',
 }: {
   id: string
-  spec: RibbonSpec
+  spec?: RibbonSpec
+  layers?: RibbonLayer[]
   viewBox: string
   preserveAspectRatio?: string
   className?: string
   draw?: Draw
 }) {
-  const geometry = buildRibbon(spec)
-  const maskId = `${id}-reveal`
+  const parts = layers ?? (spec ? [{ spec }] : [])
+  const geometries = parts.map((part) => ({ ...buildRibbon(part.spec), stage: part.stage }))
+  const animated = draw !== 'static'
 
   return (
     <svg
@@ -42,25 +55,50 @@ export function Ribbon({
       focusable="false"
       data-draw={draw}
     >
-      {draw !== 'static' && (
+      {animated && (
         <defs>
-          <mask id={maskId} maskUnits="userSpaceOnUse" x="-5000" y="-5000" width="15000" height="15000">
-            <path
-              className="ribbon__guide"
-              d={geometry.guide}
-              pathLength={1}
-              strokeWidth={Math.ceil(geometry.maxWidth * 1.4)}
-              strokeLinecap="butt"
-              strokeLinejoin="round"
-            />
-          </mask>
+          {geometries.map((geometry, i) => (
+            <mask
+              key={i}
+              id={`${id}-reveal-${i}`}
+              maskUnits="userSpaceOnUse"
+              x="-5000"
+              y="-5000"
+              width="15000"
+              height="15000"
+            >
+              <path
+                className={['ribbon__guide', geometry.stage && `ribbon__guide--${geometry.stage}`]
+                  .filter(Boolean)
+                  .join(' ')}
+                d={geometry.guide}
+                pathLength={1}
+                strokeWidth={Math.ceil(geometry.maxWidth * 1.4)}
+                strokeLinecap="butt"
+                strokeLinejoin="round"
+              />
+            </mask>
+          ))}
         </defs>
       )}
-      <path
-        className="ribbon__shape"
-        d={geometry.outline}
-        mask={draw !== 'static' ? `url(#${maskId})` : undefined}
-      />
+      {geometries.map((geometry, i) => (
+        <path
+          key={i}
+          className="ribbon__shape"
+          d={geometry.outline}
+          mask={animated ? `url(#${id}-reveal-${i})` : undefined}
+        />
+      ))}
     </svg>
   )
+}
+
+/**
+ * A straight vertical run of ribbon, as an element rather than a drawing, so
+ * it can stretch to whatever height the content beside it needs. Its width
+ * comes from `--rw`, set by the composition so it matches the SVG ribbon it
+ * joins.
+ */
+export function RibbonBand({ className, draw = 'linked' }: { className?: string; draw?: Draw }) {
+  return <span className={['ribbon-band', className].filter(Boolean).join(' ')} aria-hidden="true" data-draw={draw} />
 }

@@ -18,7 +18,7 @@
 import type { FieldValues, FormKind } from './schema.ts'
 
 export type DeliveryPayload = {
-  type: 'demo-request' | 'contact-message'
+  type: 'purchase-inquiry'
   submittedAt: string
   fields: FieldValues
 }
@@ -58,7 +58,7 @@ export function resolveDelivery(
   return {
     async deliver(kind, fields) {
       const payload: DeliveryPayload = {
-        type: kind === 'demo' ? 'demo-request' : 'contact-message',
+        type: `${kind}-inquiry` as const,
         submittedAt: new Date().toISOString(),
         fields,
       }

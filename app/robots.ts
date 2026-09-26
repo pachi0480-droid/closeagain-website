@@ -3,8 +3,8 @@ import { isIndexable, site } from '@/content/site'
 
 /**
  * Production (a public origin is configured): crawl the marketing pages, not
- * the confirmation page or the form endpoint. Anything else — a preview, a
- * local build — asks every crawler to stay out.
+ * the confirmation page, the form endpoint or the sample-data product demo.
+ * Anything else — a preview, a local build — asks every crawler to stay out.
  */
 export default function robots(): MetadataRoute.Robots {
   if (!isIndexable || !site.origin) {
@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/thank-you'],
+        disallow: ['/api/', '/thank-you', '/demo'],
       },
     ],
     sitemap: `${site.origin}/sitemap.xml`,

@@ -1,0 +1,423 @@
+/* Plans and the comparison matrix. */
+
+.plans {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan {
+  position: relative;
+}
+
+.plan__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.75rem 1.5rem 1.6rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  transition:
+    translate 280ms var(--ease-editorial),
+    border-color var(--dur-ui) var(--ease-ui),
+    box-shadow 280ms var(--ease-editorial);
+}
+
+.plan:hover .plan__card,
+.plan:focus-within .plan__card {
+  translate: 0 -4px;
+  border-color: var(--ink);
+  box-shadow: var(--shadow-soft);
+}
+
+.plan__name {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.plan__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin: 1.1rem 0 0;
+}
+
+.plan__amount {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 2.1rem + 1.8vw, 3.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+.plan__per {
+  font-size: 0.9375rem;
+  color: var(--ink-3);
+}
+
+.plan__tagline {
+  margin: 0.8rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.plan__audience {
+  margin: 0.55rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+.plan__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3rem;
+  margin-top: 1.5rem;
+  padding: 0 1rem 0 1.15rem;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 1rem;
+  transition: background-color var(--dur-press) var(--ease-ui);
+}
+
+.plan__cta:hover {
+  background: #2c2b27;
+}
+
+.plan:hover .plan__cta .arrow,
+.plan__cta:focus-visible .arrow {
+  translate: 4px 0;
+}
+
+.plan__includes {
+  margin-top: 1.6rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--line);
+}
+
+.plan__includes-label {
+  margin: 0 0 0.6rem;
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.plan__features {
+  display: grid;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan__features li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.3rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+
+.plan__tick {
+  flex: none;
+  color: var(--vermilion);
+  translate: 0 0.15em;
+}
+
+/* Scale: the one plan with a vermilion edge, a lift and a ribbon bookmark. */
+.plan--featured .plan__card {
+  border: 1.5px solid var(--vermilion);
+  box-shadow: var(--shadow-lift);
+}
+
+.plan--featured:hover .plan__card,
+.plan--featured:focus-within .plan__card {
+  border-color: var(--vermilion);
+  box-shadow: 0 1px 0 rgb(13 13 11 / 0.04), 0 34px 60px -30px rgb(13 13 11 / 0.36);
+}
+
+.plan__flag {
+  position: absolute;
+  top: -0.8rem;
+  left: 1.5rem;
+  margin: 0;
+  padding: 0.3rem 0.65rem;
+  border-radius: 2px;
+  background: var(--vermilion-ink);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.plan__bookmark {
+  position: absolute;
+  top: -1px;
+  right: 1.5rem;
+  width: 18px;
+  height: 36px;
+  background: var(--vermilion);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 76%, 0 100%);
+  transition: height 320ms var(--ease-editorial);
+}
+
+.plan--featured:hover .plan__bookmark,
+.plan--featured:focus-within .plan__bookmark {
+  height: 44px;
+}
+
+/* Enterprise: the dark card. */
+.plan--enterprise .plan__card {
+  background: var(--surface-ink);
+  border-color: var(--surface-ink);
+  color: var(--on-ink);
+}
+
+.plan--enterprise:hover .plan__card,
+.plan--enterprise:focus-within .plan__card {
+  border-color: #3a3934;
+}
+
+.plan--enterprise .plan__name,
+.plan--enterprise .plan__per,
+.plan--enterprise .plan__includes-label {
+  color: var(--on-ink-2);
+}
+
+.plan--enterprise .plan__includes {
+  border-top-color: #2e2d29;
+}
+
+.plan--enterprise .plan__tick {
+  color: #f08a73;
+}
+
+.plan--enterprise .plan__cta {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+
+.plan--enterprise .plan__cta:hover {
+  background: #fff;
+}
+
+.plan--enterprise .plan__cta:focus-visible,
+.plan--enterprise :focus-visible {
+  outline-color: var(--paper);
+}
+
+/* Compact: the homepage band. */
+.plans--compact .plan__card {
+  padding: 1.5rem 1.35rem 1.35rem;
+}
+
+.plans--compact .plan__cta {
+  margin-top: auto;
+}
+
+.plans--compact .plan__tagline {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 720px) {
+  .plans {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1180px) {
+  .plans {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    padding-top: 1rem;
+  }
+
+  .plan--featured .plan__card {
+    translate: 0 -14px;
+  }
+
+  .plan--featured:hover .plan__card,
+  .plan--featured:focus-within .plan__card {
+    translate: 0 -18px;
+  }
+}
+
+/* A slightly stronger entrance for the featured plan. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal .plan--featured[data-reveal]:not(.is-in) {
+    translate: 0 32px;
+  }
+
+  .js-reveal .plan--featured[data-reveal] {
+    transition-duration: 850ms;
+  }
+}
+
+/* ── Compare all features ──────────────────────────────────────────────── */
+
+.compare {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.compare__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.9rem;
+  padding: 0 1.15rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color var(--dur-press) var(--ease-ui);
+}
+
+.compare__toggle:hover {
+  background: var(--surface);
+}
+
+.compare__chevron {
+  transition: rotate 280ms var(--ease-editorial);
+}
+
+.compare[data-open='true'] .compare__chevron {
+  rotate: 180deg;
+}
+
+.compare__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 380ms var(--ease-editorial);
+}
+
+.compare[data-open='false'] .compare__panel {
+  grid-template-rows: 0fr;
+}
+
+.compare__inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.compare[data-open='false'] .compare__inner {
+  visibility: hidden;
+  transition: visibility 0s linear 380ms;
+}
+
+.compare__scroll {
+  /* Positioned so screen-reader-only labels inside cells stay in the box. */
+  position: relative;
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  overscroll-behavior-x: contain;
+}
+
+.compare__table {
+  width: 100%;
+  min-width: 46rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.compare__table th,
+.compare__table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.compare__table th[scope='row'] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+  font-weight: 400;
+  background: var(--surface);
+  white-space: nowrap;
+}
+
+.compare__table thead th {
+  padding-block: 1.1rem;
+  vertical-align: bottom;
+}
+
+.compare__plan {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.compare__price {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: var(--ui-xs);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.compare__group th {
+  padding-top: 1.3rem;
+  text-align: left;
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--surface-2);
+}
+
+.compare__table .is-featured {
+  background: rgb(205 57 38 / 0.045);
+}
+
+.compare__table thead .is-featured .compare__plan {
+  color: var(--vermilion-ink);
+}
+
+.compare__yes,
+.compare__no {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.compare__yes {
+  color: var(--ink);
+}
+
+.compare__no {
+  color: var(--line-strong);
+}
+
+.compare__text {
+  font-size: var(--ui-sm);
+  color: var(--ink-2);
+}

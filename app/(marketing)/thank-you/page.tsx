@@ -22,7 +22,7 @@ export const metadata: Metadata = pageMetadata({
  */
 export default async function ThankYouPage() {
   const receipt = (await cookies()).get(receiptCookie)?.value
-  const kind = receipt === 'demo' || receipt === 'contact' ? receipt : null
+  const kind = receipt === 'purchase' ? receipt : null
   const copy = kind ? thankYou[kind] : thankYou.neutral
 
   return (

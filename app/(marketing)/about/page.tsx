@@ -11,6 +11,7 @@ export const metadata: Metadata = pageMetadata({
   path: '/about',
 })
 
+/** A short brand story — why CloseAgain exists — and nothing invented. */
 export default function AboutPage() {
   const { statement, principles, closing } = about
 
@@ -21,24 +22,21 @@ export default function AboutPage() {
       <hr className="rule" />
 
       <WordSplit word={statement.word} heading={statement.title} id="statement" className="word-split--page">
-        <p>{statement.body}</p>
+        {statement.body.map((paragraph) => (
+          <p key={paragraph}>{paragraph}</p>
+        ))}
       </WordSplit>
 
       <section className="section section--flush-top" aria-labelledby="principles-title">
         <div className="wrap">
           <h2 id="principles-title" className="sr-only">
-            Principles
+            What CloseAgain does
           </h2>
           <Trio items={principles} />
         </div>
       </section>
 
-      <ClosingCta
-        id="closing-title"
-        title={closing.title}
-        cta={closing.cta}
-        art={<ClosingRibbon id="about-closing" />}
-      />
+      <ClosingCta id="closing-title" title={closing.title} cta={closing.cta} art={<ClosingRibbon id="about-closing" />} />
     </>
   )
 }

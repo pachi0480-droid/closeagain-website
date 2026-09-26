@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
-import { ClosingCta, NumberedRows, SectionHead, Trio, revealDelay } from '@/components/editorial/blocks'
-import { WordSplit } from '@/components/editorial/WordSplit'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
+import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
+import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
+import { Paths } from '@/components/home/Paths'
+import { Showcase } from '@/components/home/Showcase'
+import { FollowUp, SecondChance, Story } from '@/components/home/Stories'
+import { PlanCards } from '@/components/pricing/Plans'
 import { home } from '@/content/home'
-import { faq } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
-import { TextLink } from '@/components/ui/links'
 
 export const metadata: Metadata = pageMetadata({
   title: home.meta.title,
@@ -15,11 +17,12 @@ export const metadata: Metadata = pageMetadata({
   absoluteTitle: true,
 })
 
+/**
+ * The homepage tells one story with one ribbon: a lead arrives or returns,
+ * gets followed up, replies, and becomes a customer.
+ */
 export default function HomePage() {
-  const { again, revisit, approach, questions, closing } = home
-  const answers = questions.pick
-    .map((q) => faq.items.find((item) => item.q === q))
-    .filter((item) => item !== undefined)
+  const { again, pricing, closing } = home
 
   return (
     <>
@@ -35,42 +38,24 @@ export default function HomePage() {
         </p>
       </WordSplit>
 
-      <section className="section" aria-labelledby="revisit-title">
-        <div className="wrap">
-          <SectionHead id="revisit-title" eyebrow={revisit.eyebrow} title={revisit.title} link={revisit.link} />
-          <Trio items={revisit.items} />
-        </div>
-      </section>
+      <Paths />
+      <Story />
+      <FollowUp />
+      <SecondChance />
+      <Showcase />
 
-      <section className="section" aria-labelledby="approach-title">
+      <section className="section price-band" aria-labelledby="price-band-title">
         <div className="wrap">
-          <SectionHead id="approach-title" eyebrow={approach.eyebrow} title={approach.title} link={approach.link} />
-          <NumberedRows items={approach.steps} className="rows--compact" />
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="questions-title">
-        <div className="wrap">
-          <SectionHead id="questions-title" eyebrow={questions.eyebrow} title={questions.title} />
-          <dl className="qa">
-            {answers.map((item, i) => (
-              <div key={item.q} className="qa__row" data-reveal style={revealDelay(i)}>
-                <dt className="qa__q">{item.q}</dt>
-                <dd className="qa__a">{item.a}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="section__foot">
-            <TextLink href={questions.link.href} arrow>
-              {questions.link.label}
-            </TextLink>
-          </div>
+          <SectionHead id="price-band-title" eyebrow={pricing.eyebrow} title={pricing.title} link={pricing.link} />
+          <p className="price-band__note">{pricing.body}</p>
+          <PlanCards variant="compact" />
         </div>
       </section>
 
       <ClosingCta
         id="closing-title"
         title={closing.title}
+        body={closing.body}
         cta={closing.cta}
         secondary={closing.secondary}
         art={<ClosingRibbon id="home-closing" />}

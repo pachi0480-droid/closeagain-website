@@ -1,1 +1,805 @@
-/* Marketing product previews — built in the saas-evolution work. */
+/*
+ * Product previews on the marketing pages. Each preview is a small window of
+ * the real interface language (product.css) at a readable scale. Layout
+ * adapts to the frame's own width through container queries, so a preview
+ * looks deliberate in a wide column and in a phone column alike.
+ */
+
+.pv {
+  container-type: inline-size;
+  font-size: var(--ui-sm);
+  text-align: left;
+  user-select: none;
+}
+
+.pv__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
+.pv__sample {
+  margin-left: auto;
+  flex: none;
+}
+
+@container (max-width: 360px) {
+  .pv__sample {
+    display: none;
+  }
+}
+
+.pv-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pv-toolbar__meta {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────── */
+
+.pv-list {
+  display: grid;
+}
+
+.pv-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.pv-list > .pv-row:first-child {
+  border-top: 0;
+}
+
+.pv-row--fresh {
+  background: #faf0ea;
+}
+
+.pv-row__main {
+  display: grid;
+  min-width: 0;
+}
+
+.pv-row__title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pv-row__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-row__side {
+  display: grid;
+  justify-items: end;
+  gap: 0.3rem;
+}
+
+.pv-row__time {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-row__dot {
+  width: 6px;
+  height: 6px;
+}
+
+@container (max-width: 380px) {
+  .pv-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .pv-row__side {
+    grid-column: 2;
+    justify-items: start;
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+  }
+}
+
+/* ── Icons ─────────────────────────────────────────────────────────────── */
+
+.pv-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+
+.pv-icon--ink {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.pv-icon--red {
+  background: var(--bubble-blush);
+  border-color: #e9c3b3;
+  color: var(--vermilion-ink);
+}
+
+.pv-icon--positive {
+  background: var(--positive-wash);
+  border-color: #cbd8c4;
+  color: var(--positive);
+}
+
+.pv-icon--cold {
+  background: var(--surface-3);
+  color: var(--ink-3);
+}
+
+/* ── Activity feed, with the ribbon as its rail ────────────────────────── */
+
+.pv-feed {
+  --rw: 10px;
+  --time-col: 4.6rem;
+  position: relative;
+  padding: 1.35rem 1.25rem 1.5rem;
+}
+
+.pv-feed__rail {
+  position: absolute;
+  top: 2rem;
+  bottom: 2.4rem;
+  left: calc(1.25rem + var(--time-col) + 0.9rem + 0.95rem - var(--rw) / 2);
+}
+
+.pv-feed__list {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pv-event {
+  display: grid;
+  grid-template-columns: var(--time-col) auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.9rem;
+}
+
+.pv-event__time {
+  padding-top: 0.45rem;
+  text-align: right;
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.pv-event__node {
+  position: relative;
+  z-index: 1;
+}
+
+.pv-event__body {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.pv-event__title {
+  font-weight: 600;
+}
+
+.pv-event__detail {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-event--red .pv-event__body {
+  background: #faf0ea;
+  border-color: #eccabd;
+}
+
+.pv-event--red .pv-event__title {
+  color: var(--vermilion-ink);
+}
+
+.pv-event--positive .pv-event__body {
+  background: #f1f4ec;
+  border-color: #d3dccb;
+}
+
+@container (max-width: 420px) {
+  .pv-feed {
+    --time-col: 3.6rem;
+    padding-inline: 0.9rem;
+  }
+
+  .pv-feed__rail {
+    left: calc(0.9rem + var(--time-col) + 0.6rem + 0.95rem - var(--rw) / 2);
+  }
+
+  .pv-event {
+    gap: 0.6rem;
+  }
+}
+
+/* ── Sequence ──────────────────────────────────────────────────────────── */
+
+.pv-steps {
+  margin: 0;
+  padding: 0.25rem 1rem 0.75rem;
+  list-style: none;
+}
+
+.pv-step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.pv-step:first-child {
+  border-top: 0;
+}
+
+.pv-step__main {
+  display: grid;
+  min-width: 0;
+}
+
+.pv-step__when {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-step__title {
+  font-weight: 600;
+}
+
+.pv-step--reply {
+  margin-inline: -1rem;
+  padding-inline: 1rem;
+  background: #faf0ea;
+  border-top-color: #eccabd;
+}
+
+.pv-step--reply + .pv-step {
+  border-top-color: #eccabd;
+}
+
+.pv-step--reply .pv-step__title {
+  color: var(--vermilion-ink);
+}
+
+.pv-step--won .pv-step__title {
+  color: var(--positive);
+}
+
+.pv-message {
+  margin: 0 1rem 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+}
+
+.pv-message__label {
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.pv-message__text {
+  margin: 0.3rem 0 0;
+  color: var(--ink-2);
+}
+
+@container (max-width: 380px) {
+  .pv-step {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .pv-step > .ui-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+/* ── Re-engage: status that turns, a track that fills ──────────────────── */
+
+.pv-lead {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem 1.2rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pv-lead__avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: var(--ui-xs);
+}
+
+.pv-lead__main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.pv-lead__name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.1;
+}
+
+.pv-lead__meta {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-status {
+  display: grid;
+  justify-items: end;
+}
+
+.pv-status > * {
+  grid-area: 1 / 1;
+}
+
+/* Resting state (no animation support, reduced motion): the happy ending. */
+.pv-status__cold {
+  opacity: 0;
+}
+
+.pv-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1.1rem 1.2rem;
+  list-style: none;
+}
+
+.pv-track__step {
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.pv-track__label {
+  font-size: var(--ui-xs);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.pv-bubbles {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0 1.2rem 1.25rem;
+}
+
+.pv-bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+  font-size: var(--ui-sm);
+  line-height: 1.4;
+}
+
+.pv-bubble--out {
+  justify-self: start;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+
+.pv-bubble--in {
+  justify-self: end;
+  background: var(--bubble-blush);
+  color: var(--ink);
+}
+
+@container (max-width: 460px) {
+  .pv-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── Thread ────────────────────────────────────────────────────────────── */
+
+.pv-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.pv-msg {
+  max-width: 82%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 14px;
+}
+
+.pv-msg__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--ui-2xs);
+  letter-spacing: 0.02em;
+  color: var(--ink-3);
+}
+
+.pv-msg__text {
+  margin: 0.2rem 0 0;
+  line-height: 1.4;
+}
+
+.pv-msg--lead {
+  align-self: flex-start;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 4px;
+}
+
+.pv-msg--us {
+  align-self: flex-end;
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom-right-radius: 4px;
+}
+
+.pv-msg--us .pv-msg__meta {
+  color: var(--on-ink-2);
+}
+
+.pv-msg--team {
+  align-self: flex-end;
+  background: var(--bubble-blush);
+  border-bottom-right-radius: 4px;
+}
+
+.pv-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  align-self: center;
+  padding: 0.35rem 0.8rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-note strong {
+  color: var(--ink);
+}
+
+/* ── Inbox tabs ────────────────────────────────────────────────────────── */
+
+.pv-tabs {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.65rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+
+.pv-tab {
+  flex: none;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-tab.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.pv-row--unread .pv-row__meta {
+  color: var(--ink-2);
+}
+
+/* ── Booking ───────────────────────────────────────────────────────────── */
+
+.pv-week {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pv-day {
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  min-height: 6.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.pv-day__name {
+  font-size: var(--ui-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.pv-day__date {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.pv-day.is-today {
+  border-color: var(--ink);
+}
+
+.pv-slot {
+  display: block;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 0.6875rem;
+  line-height: 1.25;
+}
+
+.pv-slot--new {
+  background: var(--bubble-blush);
+  border-color: #e9c3b3;
+  color: var(--vermilion-ink);
+  font-weight: 600;
+}
+
+.pv-slot--missed {
+  background: var(--surface-3);
+  color: var(--ink-3);
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-3);
+}
+
+@container (max-width: 420px) {
+  .pv-week {
+    gap: 0.25rem;
+    padding: 0.7rem;
+  }
+
+  .pv-day {
+    min-height: 5.5rem;
+    padding: 0.35rem;
+  }
+
+  .pv-slot {
+    font-size: 0.625rem;
+  }
+}
+
+/* ── Builder ───────────────────────────────────────────────────────────── */
+
+.pv-nodes {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1.1rem 1.1rem 1.25rem;
+  list-style: none;
+}
+
+.pv-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+/* Connector to the next step. */
+.pv-node:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: calc(0.85rem + 0.95rem - 0.5px);
+  top: 100%;
+  width: 1px;
+  height: 0.85rem;
+  background: var(--line-strong);
+}
+
+.pv-node__main {
+  display: grid;
+  min-width: 0;
+}
+
+.pv-node__kind {
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.pv-node__title {
+  font-weight: 600;
+}
+
+.pv-node__detail {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+/* ── Analytics ─────────────────────────────────────────────────────────── */
+
+.pv-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+
+.pv-metric {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+}
+
+.pv-metric + .pv-metric {
+  border-left: 1px solid var(--line);
+}
+
+.pv-metric .ui-metric {
+  font-size: 1.6rem;
+}
+
+.pv-chart {
+  padding: 1rem 1rem 0.9rem;
+}
+
+.pv-chart__svg {
+  display: block;
+  width: 100%;
+  height: 150px;
+  overflow: visible;
+}
+
+.pv-chart__grid {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.pv-chart__area {
+  fill: var(--ink);
+  opacity: 0.05;
+}
+
+.pv-chart__line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.pv-chart__line--red {
+  stroke: var(--vermilion);
+}
+
+.pv-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin-top: 0.7rem;
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.pv-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pv-legend__key {
+  width: 16px;
+  height: 2px;
+  background: var(--ink);
+}
+
+.pv-legend__key--red {
+  background: var(--vermilion);
+}
+
+@container (max-width: 460px) {
+  .pv-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pv-metric:nth-child(3) {
+    border-left: 0;
+  }
+
+  .pv-metric:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* ── Integrations ──────────────────────────────────────────────────────── */
+
+.pv-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.6rem;
+  padding: 1rem;
+}
+
+.pv-tile {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.pv-tile.is-connected {
+  border-color: var(--line-strong);
+}
+
+.pv-tile__name {
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Temporary stand-in for the dashboard showcase. */
+.dashboard-stub {
+  display: grid;
+  place-items: center;
+  width: 1120px;
+  height: 700px;
+  background: var(--surface);
+}

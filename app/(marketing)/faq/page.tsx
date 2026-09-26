@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { Accordion } from '@/components/editorial/Accordion'
 import { faq } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -10,10 +10,6 @@ export const metadata: Metadata = pageMetadata({
   path: '/faq',
 })
 
-/**
- * Native <details> rows: real disclosure semantics, keyboard support, any
- * number open at once, and browser find-in-page can open a closed answer.
- */
 export default function FaqPage() {
   return (
     <>
@@ -21,32 +17,11 @@ export default function FaqPage() {
 
       <section className="section section--flush-top" aria-label="Questions and answers">
         <div className="wrap">
-          <div className="faq">
-            {faq.items.map((item, i) => (
-              <details key={item.q} className="faq__item" open={i === 0}>
-                <summary className="faq__q">
-                  <span className="faq__q-text">{item.q}</span>
-                  <span className="faq__icon" aria-hidden="true" />
-                </summary>
-                <div className="faq__a">
-                  <p>{item.a}</p>
-                  {'links' in item && item.links && (
-                    <p className="faq__links">
-                      {item.links.map((link) => (
-                        <Link key={link.href} href={link.href} className="prose-link">
-                          {link.label}
-                        </Link>
-                      ))}
-                    </p>
-                  )}
-                </div>
-              </details>
-            ))}
-          </div>
+          <Accordion items={faq.items} />
         </div>
       </section>
 
-      <ClosingCta id="closing-title" title={faq.closing.title} cta={faq.closing.cta} />
+      <ClosingCta id="closing-title" title={faq.closing.title} body={faq.closing.body} cta={faq.closing.cta} />
     </>
   )
 }

@@ -6,6 +6,44 @@
   gap: 1.4rem;
 }
 
+.form__grid {
+  display: grid;
+  gap: 1.3rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .field {
+    grid-column: 1 / -1;
+  }
+
+  .field--half {
+    grid-column: auto;
+  }
+}
+
+/* “You selected Growth — $899/month.” */
+.form__plan {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--vermilion);
+  background: #faf0ea;
+  font-size: 1rem;
+  color: var(--ink-2);
+}
+
+.form__plan:empty {
+  display: none;
+}
+
+.form__plan strong {
+  font-weight: 600;
+  color: var(--vermilion-ink);
+}
+
 .field {
   display: grid;
   gap: 0.5rem;

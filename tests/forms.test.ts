@@ -90,7 +90,7 @@ describe('form definition', () => {
       planOptions.map((option) => option.value),
       [unsurePlan, ...plans.map((p) => p.id)],
     )
-    assert.equal(planOptions[0].label, 'I’m not sure yet — help me choose')
+    assert.equal(planOptions[0].label, 'Not sure — help me choose')
   })
 
   it('uses stable slugs for the goal', () => {

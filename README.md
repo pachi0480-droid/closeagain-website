@@ -1,11 +1,12 @@
-# CloseAgain — website and product demo
+# CloseAgain — website and sample demo
 
-CloseAgain captures new leads, follows up automatically, and re-engages old
-opportunities — so more conversations become customers.
+Turn more of the leads you already have into paying customers. CloseAgain
+follows up with new inquiries and re-engages older leads, helping your team
+book more appointments and close more sales.
 
-This repository holds the public website (where people learn about
-CloseAgain and contact the team to buy) and a clickable product demo on
-sample data. It does not contain the CloseAgain service itself.
+This repository holds the public website — where people learn what
+CloseAgain does and send an inquiry — and an optional clickable demo on sample
+data. It does not contain the CloseAgain service itself.
 
 ```bash
 npm install
@@ -14,131 +15,133 @@ npm run build        # production build
 npm start            # serve the build
 npm run lint
 npm run typecheck
-npm test             # form and demo logic (Node's built-in runner)
+npm test             # forms, pricing rules, demo data (Node's built-in runner)
 npm run forms:sink   # local stand-in form destination, for testing only
 ```
 
 Next.js 16 (App Router) · React 19 · TypeScript · lucide-react for interface
 icons · Tailwind v4 for the reset only. Marketing pages are prerendered static
-HTML; the only server-rendered pieces are the form endpoint and the
-confirmation page.
+HTML; the form endpoint and the confirmation page are the only server-rendered
+pieces.
 
 ## Before this goes live
 
-The site is complete, but these are launch blockers:
-
-1. **Form destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
-   endpoint that accepts the JSON in `.env.example`, optionally with
-   `FORMS_WEBHOOK_SECRET`. Until then the “Contact to buy” form tells visitors
-   requests are temporarily unavailable, and nothing is recorded.
+1. **Inquiry destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
+   endpoint that accepts the JSON described in `.env.example`, optionally with
+   `FORMS_WEBHOOK_SECRET`. Until then the form truthfully says requests are
+   temporarily unavailable and nothing is recorded.
 2. **Legal copy.** `/privacy` and `/terms` are marked placeholders, kept out of
    search. Add approved text in `content/legal.ts` and set `status` to
-   `'approved'`. The privacy policy should cover the form data, the webhook
-   destination and the short-lived `ca_receipt` confirmation cookie.
+   `'approved'`.
 3. **Public origin.** Set `NEXT_PUBLIC_SITE_URL` on the production deployment
    only. Without it the site is a preview: noindex everywhere, robots.txt
    disallows crawling, empty sitemap, no canonical URLs.
-4. **Claims to confirm.** “Most popular” on Scale (`content/pricing.ts`) is a
-   statement about customers — keep it only while it is true. The sample
-   product views name channels such as email and text; confirm they match
-   what you support. Enterprise cells marked “Custom” in the comparison are
-   inferred from the Enterprise list.
+4. **Unconfirmed facts.** `docs/open-questions.md` lists everything the site
+   deliberately does not claim yet — channels, usage allowances, users per
+   plan, contract terms, how appointments are booked — and how each is worded
+   meanwhile. Answer them there, then update `content/`.
 
 ## Routes
 
 | Route | What it is |
 | --- | --- |
-| `/` | The approved hero, then Again · New + Old · lead-to-customer timeline · follow-up · old leads · dashboard showcase · pricing · close |
-| `/how-it-works` | Six steps on one continuous ribbon |
-| `/features` | Nine capabilities, each with the product view that delivers it |
-| `/who-its-for` | Eight lead-driven industries; each card opens the buying form pre-filled |
-| `/pricing` | Core $499 · Growth $899 · Scale $1,499 · Enterprise custom, plus a full comparison |
-| `/after-you-buy` | The six setup steps |
-| `/faq`, `/about` | Questions; the short brand story |
-| `/contact` | Contact to buy — the buying form (`?plan=growth`, `?industry=…` pre-fill) |
-| `/thank-you` | Confirmation, shown only after a confirmed submission |
+| `/` | Hero · Again · the two jobs (new inquiries, older leads) · one worked example · four jobs · pricing overview · buying questions · next step |
+| `/how-it-works` | Six steps, each labelled automatic or your team |
+| `/features` | Four buyer jobs: the problem, what CloseAgain does, what you control, limits, and plan availability |
+| `/who-its-for` | Fit and not-fit, then eight lead-driven industries with concrete use cases |
+| `/pricing` | Core · Growth · Scale · Enterprise, what every plan shares, what the proposal confirms, the full comparison and a break-even check |
+| `/getting-started` | Inquiry → fit and scope → approve plan and terms → setup → review → launch |
+| `/faq`, `/about` | Straight answers; the short brand story |
+| `/contact` | Find the right plan — the inquiry form (`?plan=growth`, `?industry=…` pre-fill) |
+| `/thank-you` | Confirmation, shown only after a confirmed submission; neutral otherwise |
 | `/privacy`, `/terms` | Marked placeholders |
-| `/demo`, `/demo/operator` | Product demo on sample data (noindex) |
-| `/book-a-demo` | Permanently redirects to `/contact` |
+| `/demo` | Sample client dashboard (noindex) — optional, linked from the footer and features page |
+| `/demo/operator` | Sample operator views (noindex) — kept working, not linked from the public journey |
+| `/after-you-buy`, `/book-a-demo` | Permanent redirects to `/getting-started` and `/contact` |
 
 ## Where things live
 
 ```
-content/          ALL public copy and data: site/nav, home, pages, pricing,
-                  forms, legal — and demo/ sample data for the product demo
+content/          ALL public copy and data
+  site.ts         brand, navigation, the primary call to action
+  pricing.ts      the ONLY place prices and plan facts live
+  home.ts         homepage copy, including the worked example
+  pages.ts        supporting pages; FAQ (by id, reused on home and pricing)
+  contact.ts      the inquiry page and confirmation copy
+  forms.ts        inquiry fields, options and messages
+  legal.ts        privacy and terms (placeholders)
+  demo/           sample data for the demo
+docs/
+  open-questions.md   unconfirmed product and pricing facts
 app/(marketing)/  public pages (header + footer layout)
-app/(product)/    the product demo (its own app shell)
-app/api/forms/    the submission endpoint (/api/forms/purchase)
+app/(product)/    the sample demo (its own shell; loads styles/dashboard.css)
+app/api/forms/    the submission endpoint (/api/forms/inquiry)
 components/
-  site/           header, mobile menu, footer, page transition, motion
-  home/           hero, New + Old, stories, dashboard showcase
-  previews/       product views used on marketing pages (sample data)
-  pricing/        plan cards and the comparison
-  art/            ribbon renderer, ribbon shapes, trail, bubbles
+  home/           hero, two jobs, worked example, jobs summary
+  pricing/        plan cards, comparison, break-even check
+  previews/       small product views used on marketing pages (sample data)
+  art/            ribbon renderer and shapes, trail, bubbles
   editorial/      intro, rows, trio, accordion, closing CTA, word split
-  forms/          the buying form and its page layout
-  dashboard/      the product demo UI
+  forms/          the inquiry form and its page layout
+  site/           header, mobile menu, footer, page transition, motion
+  dashboard/      the demo UI
 lib/
   ribbon.ts       centreline + width profile → filled ribbon outline
-  forms/          validation, transport, state machine, server decision,
+  breakeven.ts    break-even arithmetic (visitor's numbers only)
+  forms/          validation, transport, state, receipt, server decision,
                   webhook delivery, rate limiting — framework-free and tested
-styles/           tokens, base, chrome, editorial, home, pages, pricing,
-                  forms, product (app primitives), previews, dashboard, motion
 ```
 
-**Edit words and prices in `content/`, not in components.** Prices live only
-in `content/pricing.ts`; the pricing page, homepage band, buying form and the
-demo's billing views all read from it.
+## Rules the code enforces
 
-## Design system
+- **One source for prices.** `tests/pricing.test.ts` fails if a dollar amount
+  or a plan price appears in any content, component or library file other than
+  `content/pricing.ts`. Labels, the starting price, form options, metadata and
+  plan availability on the features page are all derived from it.
+- **Honest plan comparison.** Every plan has a best-for and a step-up sentence;
+  no plan repeats a benefit from the plan below as if it were an upgrade; no
+  popularity claims — a recommendation must state its reason.
+- **Honest forms.** Success is shown only after `POST /api/forms/inquiry`
+  returns HTTP 200 with `{"status":"ok"}`, which happens only after the webhook
+  answered 2xx. The endpoint then sets a short-lived, HttpOnly receipt cookie
+  (`inquiry:<plan>`) scoped to `/thank-you`; without it that page is neutral.
+  Nothing the visitor typed goes in a URL.
 
-The approved homepage image is the reference; the homepage hero still matches
-it at 1513 × 1040. Tokens are in `styles/tokens.css`: paper `#F2EFE7`, ink
-`#0D0D0B`, vermilion `#CD3926` (small red text uses `#B32E1D`), warm hairlines,
-and a product-UI layer (cream surfaces, 10px panels, 3px controls).
+## Design and motion
 
-**Type.** DM Serif Display for display type — the closest openly licensed
-match found for the reference headline, a substitution rather than its exact
-face. Source Serif 4 (400/600) for reading and interface text. Both are
-self-hosted through `next/font` with metric-matched fallbacks.
+The approved homepage is the reference: warm paper, black editorial serif,
+one vermilion ribbon. Tokens live in `styles/tokens.css`. DM Serif Display
+(display) and Source Serif 4 (text) are self-hosted via `next/font`; DM Serif
+Display is the closest openly licensed match for the reference headline, a
+substitution rather than its exact face.
 
-**The ribbon** is the product story: a conversation moving through
-CloseAgain. Every ribbon is a centreline plus a width profile
-(`components/art/ribbons.ts`) turned into one filled outline at build time by
-`lib/ribbon.ts`. Straight runs that must stretch with content are CSS bands
-(`RibbonBand`) that meet the drawn turns exactly.
+Motion decorates finished content and never gates it:
 
-**Motion** is CSS-first:
-
-- Homepage entrance, once per session: navigation, each headline line, the
-  ribbon drawing through, the two bubbles, then copy and calls to action.
-- Scroll-linked reveals and ribbon drawing use native scroll-driven animation
-  where supported, with one IntersectionObserver fallback elsewhere.
-- Page changes use a short masked wipe (View Transitions); the header holds
-  still. Accordion and comparison open to their real height.
+- The hero's headline, explanation and calls to action are there on first
+  paint. Only the ribbon draws and the two bubbles arrive — on the first
+  homepage visit of a session.
+- Selected content rises into place once, as it arrives, and is never hidden
+  again when scrolling back. Scrolling is always the browser's own.
+- Page changes dissolve in 180ms; the header holds still.
 - `prefers-reduced-motion` and no-JavaScript both show the finished page.
 
-## Forms
+## The inquiry form
 
-- One form, “Contact to buy”. Client and server share one validation module;
-  the server's check is the one that counts.
-- Success is shown only after `POST /api/forms/purchase` returns HTTP 200 with
-  `{"status":"ok"}`, which happens only after the webhook answered 2xx. The
-  endpoint then sets a short-lived, HttpOnly `ca_receipt` cookie scoped to
-  `/thank-you`; without it that page shows a neutral invitation. Nothing the
-  visitor typed goes in a URL.
-- Unavailable, rejected, network, timeout and rate-limited states each have a
-  plain message; entered text is kept. Without JavaScript the endpoint accepts
-  a normal form post and redirects with an explanation.
-- Abuse protection: honeypot, per-address rate limit (in-memory, per
-  instance), cross-site refusal, body size cap. Logs record outcomes only.
-- Local testing: `npm run forms:sink`, then run with
-  `FORMS_WEBHOOK_URL=http://127.0.0.1:4455/`. A success there proves the
-  site's behaviour, not a production integration.
+Name, work email, business, main goal and plan (defaulting to "not sure") are
+visible; phone, industry, lead volume, CRM and a message sit in an optional
+section. Client and server share one validation module. Unavailable, rejected,
+network, timeout and rate-limited states each have a plain message and keep
+what was typed; without JavaScript the endpoint accepts a normal form post.
+Protection: honeypot, per-address rate limit (in-memory, per instance),
+cross-site refusal, a streamed body-size cap. Logs record outcomes only.
+
+Local testing: `npm run forms:sink`, then run with
+`FORMS_WEBHOOK_URL=http://127.0.0.1:4455/`. A success there proves the site's
+behaviour, not a production integration.
 
 ## Honesty
 
-No testimonials, logos, customer counts, results or ratings. Product views are
-marked as sample data with fictional people; the operator demo's figures are
-computed from sample accounts, not CloseAgain's business. The industry images
-are generated editorial still lifes, labelled as such on the page.
+No testimonials, logos, customer counts, results or ratings. The worked
+example and product views are labelled illustrative or sample, with fictional
+people and businesses; the demo's figures are computed from sample accounts.
+The industry images are generated editorial stills, labelled on the page.

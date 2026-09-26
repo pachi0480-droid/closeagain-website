@@ -61,8 +61,8 @@ export const leadVolumeOptions = asOptions([
 
 /** Stable slugs: the webhook receives these, so relabel freely but never rename. */
 export const goalOptions: readonly FieldOption[] = [
-  { value: 'new-inquiries', label: 'Respond to new inquiries faster' },
-  { value: 'older-leads', label: 'Revisit older leads that went quiet' },
+  { value: 'new-inquiries', label: 'Answer new inquiries faster' },
+  { value: 'older-leads', label: 'Revisit quiet older leads' },
   { value: 'both', label: 'Both' },
   { value: 'appointments', label: 'Book more appointments' },
   { value: 'other', label: 'Something else' },
@@ -72,7 +72,7 @@ export const goalOptions: readonly FieldOption[] = [
 export const unsurePlan = 'unsure'
 
 export const planOptions: readonly FieldOption[] = [
-  { value: unsurePlan, label: 'I’m not sure yet — help me choose' },
+  { value: unsurePlan, label: 'Not sure — help me choose' },
   ...plans.map((plan) => ({ value: plan.id, label: planSummary(plan) })),
 ]
 
@@ -130,7 +130,7 @@ export const inquiryFields: readonly FieldDefinition[] = [
     max: 20,
     options: planOptions,
     defaultValue: unsurePlan,
-    messages: { invalid: 'Please choose one of the listed plans, or “I’m not sure yet”.' },
+    messages: { invalid: 'Please choose one of the listed plans, or “Not sure”.' },
   },
   {
     name: 'phone',

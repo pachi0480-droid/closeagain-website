@@ -6,8 +6,6 @@ import {
   Clock,
   FileSpreadsheet,
   Globe,
-  Inbox,
-  LayoutGrid,
   Mail,
   MessageCircle,
   MessageSquareReply,
@@ -21,7 +19,6 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
-import { RibbonBand } from '@/components/art/Ribbon'
 
 /**
  * Product previews for the marketing pages: honest slices of CloseAgain's
@@ -32,7 +29,6 @@ import { RibbonBand } from '@/components/art/Ribbon'
  */
 
 export type PreviewKind =
-  | 'activity'
   | 'intake'
   | 'sequence'
   | 'reengage'
@@ -87,42 +83,6 @@ function IconChip({ icon: Icon, tone }: { icon: LucideIcon; tone?: 'red' | 'ink'
     <span className={['pv-icon', tone && `pv-icon--${tone}`].filter(Boolean).join(' ')}>
       <Icon size={15} strokeWidth={1.6} />
     </span>
-  )
-}
-
-/* ── Activity: one lead, from first message to booked ─────────────────── */
-
-export function ActivityPreview({
-  events,
-}: {
-  events: ReadonlyArray<{ time: string; title: string; detail: string; tone: string }>
-}) {
-  const icons: LucideIcon[] = [Inbox, Send, MessageSquareReply, CalendarCheck, LayoutGrid]
-  return (
-    <Frame title="Activity · Jordan Ellis" meta="Sample workflow" className="pv--activity">
-      <div className="pv-feed">
-        <RibbonBand className="pv-feed__rail" />
-        <ol className="pv-feed__list">
-          {events.map((event, i) => (
-            <li
-              key={event.time}
-              className={['pv-event', `pv-event--${event.tone}`].join(' ')}
-              style={stagger(i)}
-              data-scroll="rise"
-            >
-              <span className="pv-event__time">{event.time}</span>
-              <span className="pv-event__node">
-                <IconChip icon={icons[i] ?? Check} tone={event.tone === 'red' ? 'red' : event.tone === 'positive' ? 'positive' : 'ink'} />
-              </span>
-              <span className="pv-event__body">
-                <span className="pv-event__title">{event.title}</span>
-                <span className="pv-event__detail">{event.detail}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </Frame>
   )
 }
 
@@ -538,7 +498,7 @@ function HandoffPreview() {
   )
 }
 
-export function ProductPreview({ kind }: { kind: Exclude<PreviewKind, 'activity' | 'reengage'> }) {
+export function ProductPreview({ kind }: { kind: Exclude<PreviewKind, 'reengage'> }) {
   switch (kind) {
     case 'intake':
       return <IntakePreview />

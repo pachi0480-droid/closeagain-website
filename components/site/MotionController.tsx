@@ -48,7 +48,9 @@ export function MotionController() {
           }
         }
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0 },
+      // Revealed the moment any part is in view: nothing can be stranded at the
+      // bottom edge of a page that cannot scroll any further.
+      { rootMargin: '0px', threshold: 0 },
     )
 
     targets.forEach((target) => observer.observe(target))

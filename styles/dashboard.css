@@ -512,6 +512,14 @@
   gap: 0.75rem;
 }
 
+/* The narrowest phones: long single-word labels (“Appointments”) need the room. */
+@media (max-width: 359px) {
+  .app-grid--metrics .app-metric__label {
+    letter-spacing: 0.04em;
+    font-size: 0.6875rem;
+  }
+}
+
 @media (min-width: 720px) {
   .app-grid--metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));

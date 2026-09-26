@@ -140,8 +140,13 @@
     animation: settle 380ms var(--ease-editorial) 1520ms backwards;
   }
 
-  html:not([data-intro='seen']) .hero__lede {
-    animation: settle 650ms var(--ease-editorial) 720ms both;
+  /* On wide screens the lede joins the staged entrance. On phones it is the
+     largest thing in view, so it is shown at once rather than held back —
+     the page is readable, and measured as painted, as soon as it arrives. */
+  @media (min-width: 960px) {
+    html:not([data-intro='seen']) .hero__lede {
+      animation: settle 650ms var(--ease-editorial) 720ms both;
+    }
   }
 
   html:not([data-intro='seen']) .hero__actions {

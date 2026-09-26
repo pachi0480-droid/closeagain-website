@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 import { RibbonBand } from '@/components/art/Ribbon'
+import { CountUp } from './CountUp'
 
 /**
  * Product previews for the marketing pages: honest slices of CloseAgain's
@@ -438,10 +439,10 @@ function AnalyticsPreview() {
       .map((value, i) => `${i === 0 ? 'M' : 'L'} ${((i / (values.length - 1)) * w).toFixed(1)} ${(h - (value / max) * h).toFixed(1)}`)
       .join(' ')
   const metrics = [
-    { label: 'New leads', value: '1,184' },
-    { label: 'Recovered', value: '336' },
-    { label: 'Response rate', value: '41%' },
-    { label: 'Appointments', value: '212' },
+    { label: 'New leads', value: 1184, suffix: '' },
+    { label: 'Recovered', value: 336, suffix: '' },
+    { label: 'Response rate', value: 41, suffix: '%' },
+    { label: 'Appointments', value: 212, suffix: '' },
   ]
   return (
     <Frame title="Analytics · Last 30 days" className="pv--analytics">
@@ -449,7 +450,9 @@ function AnalyticsPreview() {
         {metrics.map((metric, i) => (
           <div key={metric.label} className="pv-metric" style={stagger(i)} data-scroll="rise">
             <span className="ui-label">{metric.label}</span>
-            <span className="ui-metric">{metric.value}</span>
+            <span className="ui-metric">
+              <CountUp value={metric.value} suffix={metric.suffix} />
+            </span>
           </div>
         ))}
       </div>

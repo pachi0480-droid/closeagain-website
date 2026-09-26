@@ -45,10 +45,33 @@
 }
 
 .plan__price {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 0.35rem;
   margin: 1.1rem 0 0;
+  padding-bottom: 0.9rem;
+}
+
+/* A small vermilion rule — the ribbon, in miniature — that lengthens on hover. */
+.plan__price::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1.5rem;
+  height: 2px;
+  background: var(--vermilion);
+  transition: width 360ms var(--ease-editorial);
+}
+
+.plan:hover .plan__price::after,
+.plan:focus-within .plan__price::after {
+  width: 3.25rem;
+}
+
+.plan--enterprise .plan__price::after {
+  background: #f08a73;
 }
 
 .plan__amount {

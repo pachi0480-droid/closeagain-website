@@ -50,7 +50,13 @@ export function Hero() {
           />
         </div>
 
-        <p className="hero__lede">{lede}</p>
+        <p className="hero__lede">
+          {lede.map((line) => (
+            <span key={line} className="hero__lede-line">
+              {line}{' '}
+            </span>
+          ))}
+        </p>
 
         <div className="hero__actions">
           <ButtonLink href={primary.href} size="lg">

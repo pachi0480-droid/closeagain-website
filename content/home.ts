@@ -15,7 +15,12 @@ export const home = {
   hero: {
     /** Rendered as three spans so small screens can break after “The”. */
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
-    lede: 'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
+    /** Three lines on wide screens, as in the approved composition; wraps naturally elsewhere. */
+    lede: [
+      'CloseAgain captures new leads, follows up automatically,',
+      'and re\u2011engages old opportunities\u00A0—',
+      'so more conversations become customers.',
+    ],
     primary: { label: 'Contact to buy', href: '/contact' },
     secondary: { label: 'See how it works', href: '/how-it-works' },
     terms: ['Plans start at $499/month', 'Monthly billing'],

@@ -192,6 +192,7 @@
 .closing__inner {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
   align-items: end;
 }

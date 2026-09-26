@@ -38,7 +38,7 @@ export function MobileMenu({
 
   // If the window grows past the breakpoint while open, fall back to the header.
   useEffect(() => {
-    const wide = window.matchMedia('(min-width: 960px)')
+    const wide = window.matchMedia('(min-width: 1120px)')
     const onChange = (event: MediaQueryListEvent) => {
       if (event.matches) close()
     }
@@ -65,12 +65,12 @@ export function MobileMenu({
           aria-controls="site-menu"
           onClick={openMenu}
         >
-          Menu
+          <span className="menu-toggle__label">Menu</span>
           <MenuIcon />
         </button>
       ) : (
         <a className="menu-toggle menu-trigger" href="#footer-nav">
-          Menu
+          <span className="menu-toggle__label">Menu</span>
           <MenuIcon />
         </a>
       )}
@@ -115,6 +115,7 @@ export function MobileMenu({
               <span>{cta.label}</span>
               <Arrow />
             </Link>
+            <p className="menu__terms">Plans start at $499/month · Monthly billing</p>
           </div>
 
           <p className="menu__note" aria-hidden="true">

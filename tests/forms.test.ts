@@ -14,10 +14,15 @@ import { sendSubmission } from '../lib/forms/transport.ts'
 
 const validDemo = {
   name: '  Sam   Rivera ',
+  business: 'Rivera & Co',
   email: 'sam@example.com',
-  company: 'Rivera & Co',
-  revisit: 'Older leads',
-  notes: '',
+  phone: '',
+  industry: 'Home services',
+  volume: '50–200 a month',
+  crm: '',
+  plan: 'growth',
+  goal: 'Both new and old leads',
+  message: '',
 }
 
 const json = (status: number, body: unknown): Response =>
@@ -28,42 +33,52 @@ const fetchReturning = (response: Response | (() => Promise<Response>)) =>
 
 describe('validation', () => {
   it('trims and collapses whitespace before checking', () => {
-    const result = validateSubmission('demo', validDemo)
+    const result = validateSubmission('purchase', validDemo)
     assert.equal(result.ok, true)
     assert.equal(result.values.name, 'Sam Rivera')
   })
 
   it('reports every missing required field with its own message', () => {
-    const result = validateSubmission('demo', { name: ' ', email: '', company: '', revisit: '' })
+    const result = validateSubmission('purchase', { name: ' ', business: '', email: '', plan: '', goal: '' })
     assert.equal(result.ok, false)
     if (result.ok) return
-    assert.deepEqual(Object.keys(result.errors).sort(), ['company', 'email', 'name', 'revisit'])
+    assert.deepEqual(Object.keys(result.errors).sort(), ['business', 'email', 'goal', 'name', 'plan'])
     assert.notEqual(result.errors.name, result.errors.email)
   })
 
   it('accepts ordinary addresses from any provider', () => {
     for (const email of ['a@gmail.com', 'first.last+crm@mail.co.uk', 'x@sub.domain.io', 'me@outlook.com']) {
-      const result = validateSubmission('contact', { name: 'A', email, message: 'Hi' })
+      const result = validateSubmission('purchase', { ...validDemo, email })
       assert.equal(result.ok, true, email)
     }
   })
 
   it('rejects addresses that cannot receive mail', () => {
     for (const email of ['plainaddress', 'no-tld@host', 'two@@signs.com', 'spa ce@x.com', 'dots..@x.com']) {
-      const result = validateSubmission('contact', { name: 'A', email, message: 'Hi' })
+      const result = validateSubmission('purchase', { ...validDemo, email })
       assert.equal(result.ok, false, email)
     }
   })
 
-  it('only accepts the listed revisit options', () => {
-    const result = validateSubmission('demo', { ...validDemo, revisit: 'Something else' })
-    assert.equal(result.ok, false)
+  it('only accepts the listed plans and options', () => {
+    assert.equal(validateSubmission('purchase', { ...validDemo, plan: 'platinum' }).ok, false)
+    assert.equal(validateSubmission('purchase', { ...validDemo, industry: 'Mining' }).ok, false)
+    assert.equal(validateSubmission('purchase', { ...validDemo, plan: 'unsure' }).ok, true)
+  })
+
+  it('accepts ordinary phone numbers and leaves the field optional', () => {
+    for (const phone of ['', '(555) 010-2030', '+44 20 7946 0958', '555.010.2030']) {
+      assert.equal(validateSubmission('purchase', { ...validDemo, phone }).ok, true, phone)
+    }
+    for (const phone of ['12345', 'call me', '+1 555 010 2030 999 888']) {
+      assert.equal(validateSubmission('purchase', { ...validDemo, phone }).ok, false, phone)
+    }
   })
 
   it('enforces length limits and ignores unknown fields', () => {
-    const long = validateSubmission('contact', { name: 'A', email: 'a@b.co', message: 'x'.repeat(4001) })
+    const long = validateSubmission('purchase', { ...validDemo, message: 'x'.repeat(3001) })
     assert.equal(long.ok, false)
-    const extra = validateSubmission('contact', { name: 'A', email: 'a@b.co', message: 'Hi', admin: true })
+    const extra = validateSubmission('purchase', { ...validDemo, admin: true })
     assert.equal(extra.ok, true)
     assert.equal('admin' in extra.values, false)
   })
@@ -71,36 +86,36 @@ describe('validation', () => {
 
 describe('browser transport', () => {
   it('reports success only for HTTP 200 with an explicit confirmation', async () => {
-    const ok = await sendSubmission('demo', validDemo, { fetchImpl: fetchReturning(json(200, { status: 'ok' })) })
+    const ok = await sendSubmission('purchase', validDemo, { fetchImpl: fetchReturning(json(200, { status: 'ok' })) })
     assert.deepEqual(ok, { status: 'ok' })
 
-    const bare = await sendSubmission('demo', validDemo, { fetchImpl: fetchReturning(json(200, {})) })
+    const bare = await sendSubmission('purchase', validDemo, { fetchImpl: fetchReturning(json(200, {})) })
     assert.equal(bare.status, 'failed')
 
-    const html = await sendSubmission('demo', validDemo, {
+    const html = await sendSubmission('purchase', validDemo, {
       fetchImpl: fetchReturning(new Response('<html>ok</html>', { status: 200 })),
     })
     assert.equal(html.status, 'failed')
   })
 
   it('maps server answers to explainable outcomes', async () => {
-    const invalid = await sendSubmission('demo', validDemo, {
+    const invalid = await sendSubmission('purchase', validDemo, {
       fetchImpl: fetchReturning(json(422, { status: 'invalid', errors: { email: 'Bad email', secret: 'x' } })),
     })
     assert.deepEqual(invalid, { status: 'invalid', errors: { email: 'Bad email' } })
 
-    const unavailable = await sendSubmission('demo', validDemo, { fetchImpl: fetchReturning(json(503, { status: 'unavailable' })) })
+    const unavailable = await sendSubmission('purchase', validDemo, { fetchImpl: fetchReturning(json(503, { status: 'unavailable' })) })
     assert.equal(unavailable.status, 'unavailable')
 
-    const busy = await sendSubmission('demo', validDemo, { fetchImpl: fetchReturning(json(429, { status: 'busy' })) })
+    const busy = await sendSubmission('purchase', validDemo, { fetchImpl: fetchReturning(json(429, { status: 'busy' })) })
     assert.equal(busy.status, 'busy')
 
-    const broken = await sendSubmission('demo', validDemo, { fetchImpl: fetchReturning(json(500, { stack: 'Error at…' })) })
+    const broken = await sendSubmission('purchase', validDemo, { fetchImpl: fetchReturning(json(500, { stack: 'Error at…' })) })
     assert.deepEqual(broken, { status: 'failed', reason: 'server' })
   })
 
   it('distinguishes a network failure from a timeout', async () => {
-    const offline = await sendSubmission('demo', validDemo, {
+    const offline = await sendSubmission('purchase', validDemo, {
       fetchImpl: (async () => {
         throw new TypeError('Failed to fetch')
       }) as unknown as typeof fetch,
@@ -111,7 +126,7 @@ describe('browser transport', () => {
       new Promise((_resolve, reject) => {
         init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')))
       })
-    const slow = await sendSubmission('demo', validDemo, { fetchImpl: hanging, timeoutMs: 20 })
+    const slow = await sendSubmission('purchase', validDemo, { fetchImpl: hanging, timeoutMs: 20 })
     assert.deepEqual(slow, { status: 'failed', reason: 'timeout' })
   })
 })
@@ -159,15 +174,15 @@ describe('server decision', () => {
   const delivered: Delivery = { deliver: async () => ({ ok: true }) }
 
   it('never reports success without a delivery destination', async () => {
-    const result = await processSubmission('demo', validDemo, null)
+    const result = await processSubmission('purchase', validDemo, null)
     assert.deepEqual(result, { outcome: { status: 'unavailable' }, delivered: false })
   })
 
   it('reports success only when delivery confirms', async () => {
-    const ok = await processSubmission('demo', validDemo, delivered)
+    const ok = await processSubmission('purchase', validDemo, delivered)
     assert.deepEqual(ok, { outcome: { status: 'ok' }, delivered: true })
 
-    const refused = await processSubmission('demo', validDemo, { deliver: async () => ({ ok: false, reason: 'rejected' }) })
+    const refused = await processSubmission('purchase', validDemo, { deliver: async () => ({ ok: false, reason: 'rejected' }) })
     assert.deepEqual(refused, { outcome: { status: 'failed' }, delivered: false })
   })
 
@@ -179,16 +194,16 @@ describe('server decision', () => {
         return { ok: true }
       },
     }
-    const bad = await processSubmission('demo', { ...validDemo, email: 'nope' }, spy)
+    const bad = await processSubmission('purchase', { ...validDemo, email: 'nope' }, spy)
     assert.equal(bad.outcome.status, 'invalid')
     assert.equal(received, null)
 
-    await processSubmission('demo', validDemo, spy)
+    await processSubmission('purchase', validDemo, spy)
     assert.equal(received!.name, 'Sam Rivera')
   })
 
   it('turns away a filled honeypot without pretending to accept it', async () => {
-    const result = await processSubmission('demo', { ...validDemo, ca_hp: 'http://spam' }, delivered)
+    const result = await processSubmission('purchase', { ...validDemo, ca_hp: 'http://spam' }, delivered)
     assert.deepEqual(result, { outcome: { status: 'rejected' }, delivered: false })
   })
 })
@@ -211,14 +226,14 @@ describe('webhook delivery', () => {
         return new Response(null, { status: 204 })
       }) as unknown as typeof fetch,
     )
-    assert.deepEqual(await delivery!.deliver('contact', { name: 'A' }), { ok: true })
+    assert.deepEqual(await delivery!.deliver('purchase', { name: 'A' }), { ok: true })
     assert.equal(auth, 'Bearer s3cret')
 
     const refusing = resolveDelivery(
       { FORMS_WEBHOOK_URL: 'https://hooks.example.com/in' },
       fetchReturning(new Response('nope', { status: 500 })),
     )
-    assert.deepEqual(await refusing!.deliver('contact', { name: 'A' }), { ok: false, reason: 'rejected' })
+    assert.deepEqual(await refusing!.deliver('purchase', { name: 'A' }), { ok: false, reason: 'rejected' })
   })
 
   it('treats a slow destination as a failure, not a success', async () => {
@@ -233,7 +248,7 @@ describe('webhook delivery', () => {
         })
       })) as unknown as typeof fetch
     const delivery = resolveDelivery({ FORMS_WEBHOOK_URL: 'https://hooks.example.com/in' }, hanging, 20)
-    assert.deepEqual(await delivery!.deliver('demo', {}), { ok: false, reason: 'timeout' })
+    assert.deepEqual(await delivery!.deliver('purchase', {}), { ok: false, reason: 'timeout' })
   })
 })
 

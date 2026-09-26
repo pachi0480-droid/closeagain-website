@@ -1,10 +1,11 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useReducer, useRef, useSyncExternalStore, type FormEvent } from 'react'
+import { useEffect, useReducer, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
 import { Arrow } from '@/components/ui/links'
 import type { FieldDefinition } from '@/content/forms'
 import { formMessages } from '@/content/forms'
+import { planById, planSummary } from '@/content/pricing'
 import { endpointFor, honeypotField } from '@/lib/forms/protocol'
 import { normalizeValue, validateField, validateSubmission, type FormKind } from '@/lib/forms/schema'
 import { formReducer, initialFormState } from '@/lib/forms/state'
@@ -13,11 +14,13 @@ import { sendSubmission } from '@/lib/forms/transport'
 const subscribeNoop = () => () => {}
 
 /**
- * The demo request and contact forms.
+ * The “Contact to buy” form.
  *
  * With JavaScript: validates as the visitor goes, submits in the background,
- * and only moves on to the confirmation page after the server confirms that
- * the request was delivered. Entered text is never cleared by a failure.
+ * and only moves on to the confirmation page after the server confirms the
+ * details were delivered. Entered text is never cleared by a failure. A plan
+ * or industry chosen elsewhere on the site (?plan=growth, ?industry=…) is
+ * pre-selected and confirmed in words.
  *
  * Without JavaScript: the same endpoint accepts a normal form post, the
  * browser's own validation applies, and the server redirects to the
@@ -36,6 +39,14 @@ export function LeadForm({
 }) {
   const router = useRouter()
   const [state, dispatch] = useReducer(formReducer, initialFormState)
+  // null until the visitor touches the plan picker; until then the plan comes
+  // from the link that brought them here (?plan=growth).
+  const [plan, setPlan] = useState<string | null>(null)
+  const linkedPlan = useSyncExternalStore(
+    subscribeNoop,
+    () => new URLSearchParams(window.location.search).get('plan') ?? '',
+    () => '',
+  )
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
   const statusRef = useRef<HTMLDivElement>(null)
@@ -45,6 +56,20 @@ export function LeadForm({
 
   const submitting = state.status === 'submitting' || state.status === 'success'
   const id = (name: string) => `${kind}-${name}`
+
+  // Pre-select what the visitor already chose elsewhere on the site.
+  useEffect(() => {
+    const form = formRef.current
+    if (!form) return
+    const params = new URLSearchParams(window.location.search)
+    for (const field of fields) {
+      const wanted = params.get(field.name)
+      if (!wanted || field.kind !== 'choice') continue
+      if (!field.options?.some((option) => option.value === wanted)) continue
+      const control = form.elements.namedItem(field.name)
+      if (control instanceof HTMLSelectElement) control.value = wanted
+    }
+  }, [fields])
 
   const focusFirstInvalid = (errors: Record<string, string>) => {
     const first = fields.find((field) => errors[field.name])
@@ -85,6 +110,7 @@ export function LeadForm({
 
   // Once a field has been flagged, re-check it as the visitor corrects it.
   const recheck = (field: FieldDefinition, value: string) => {
+    if (field.name === 'plan') setPlan(value)
     if (!(field.name in state.errors)) return
     dispatch({ type: 'field-checked', name: field.name, error: validateField(field, normalizeValue(field, value)) })
   }
@@ -95,6 +121,9 @@ export function LeadForm({
       : state.status === 'idle'
         ? 'idle'
         : 'problem'
+
+  const planChoice = plan ?? linkedPlan
+  const chosen = planById(planChoice)
 
   return (
     <form
@@ -124,70 +153,85 @@ export function LeadForm({
         </p>
       </div>
 
-      {fields.map((field) => {
-        const error = state.errors[field.name]
-        const hintId = field.hint ? `${id(field.name)}-hint` : undefined
-        const errorId = error ? `${id(field.name)}-error` : undefined
-        const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
-        const common = {
-          id: id(field.name),
-          name: field.name,
-          required: field.required,
-          'aria-invalid': error ? true : undefined,
-          'aria-describedby': describedBy,
-          className: 'field__control',
-          onBlur: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
-          onChange: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
-        } as const
+      <p className="form__plan" aria-live="polite">
+        {chosen ? (
+          <>
+            You selected <strong>{planSummary(chosen)}</strong>.
+          </>
+        ) : planChoice === 'unsure' ? (
+          <>We’ll recommend the right plan for your business.</>
+        ) : null}
+      </p>
 
-        return (
-          <div key={field.name} className={['field', error && 'field--invalid'].filter(Boolean).join(' ')}>
-            <label className="field__label" htmlFor={id(field.name)}>
-              {field.label}
-              {field.hint && (
-                <span id={hintId} className="field__hint">
-                  {' '}
-                  {field.hint}
-                </span>
+      <div className="form__grid">
+        {fields.map((field) => {
+          const error = state.errors[field.name]
+          const hintId = field.hint ? `${id(field.name)}-hint` : undefined
+          const errorId = error ? `${id(field.name)}-error` : undefined
+          const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+          const common = {
+            id: id(field.name),
+            name: field.name,
+            required: field.required,
+            'aria-invalid': error ? true : undefined,
+            'aria-describedby': describedBy,
+            className: 'field__control',
+            onBlur: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
+            onChange: (e: { currentTarget: { value: string } }) => recheck(field, e.currentTarget.value),
+          } as const
+
+          return (
+            <div
+              key={field.name}
+              className={['field', field.half && 'field--half', error && 'field--invalid'].filter(Boolean).join(' ')}
+            >
+              <label className="field__label" htmlFor={id(field.name)}>
+                {field.label}
+                {field.hint && (
+                  <span id={hintId} className="field__hint">
+                    {' '}
+                    {field.hint}
+                  </span>
+                )}
+              </label>
+
+              {field.kind === 'multiline' ? (
+                <textarea {...common} rows={4} maxLength={field.max} />
+              ) : field.kind === 'choice' ? (
+                <div className="field__select">
+                  <select {...common} defaultValue="">
+                    <option value="">{field.placeholderOption ?? 'Choose one'}</option>
+                    {field.options?.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <input
+                  {...common}
+                  type={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : 'text'}
+                  inputMode={field.kind === 'email' ? 'email' : field.kind === 'tel' ? 'tel' : undefined}
+                  autoComplete={field.autoComplete}
+                  autoCapitalize={field.kind === 'email' ? 'none' : undefined}
+                  spellCheck={field.kind === 'email' ? false : undefined}
+                  maxLength={field.max}
+                />
               )}
-            </label>
 
-            {field.kind === 'multiline' ? (
-              <textarea {...common} rows={field.name === 'message' ? 6 : 4} maxLength={field.max} />
-            ) : field.kind === 'choice' ? (
-              <div className="field__select">
-                <select {...common} defaultValue="">
-                  <option value="">{field.placeholderOption ?? 'Choose one'}</option>
-                  {field.options?.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <input
-                {...common}
-                type={field.kind === 'email' ? 'email' : 'text'}
-                inputMode={field.kind === 'email' ? 'email' : undefined}
-                autoComplete={field.autoComplete}
-                autoCapitalize={field.kind === 'email' ? 'none' : undefined}
-                spellCheck={field.kind === 'email' ? false : undefined}
-                maxLength={field.max}
-              />
-            )}
-
-            {error && (
-              <p id={errorId} className="field__error">
-                <span className="field__error-mark" aria-hidden="true">
-                  !
-                </span>
-                {error}
-              </p>
-            )}
-          </div>
-        )
-      })}
+              {error && (
+                <p id={errorId} className="field__error">
+                  <span className="field__error-mark" aria-hidden="true">
+                    !
+                  </span>
+                  {error}
+                </p>
+              )}
+            </div>
+          )
+        })}
+      </div>
 
       {/* Honeypot: invisible to people, tempting to form-filling bots. */}
       <div className="form__trap" aria-hidden="true">

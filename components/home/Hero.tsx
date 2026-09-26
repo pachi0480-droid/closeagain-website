@@ -11,9 +11,13 @@ import { IntroMark } from './IntroMark'
  * and the bubbles keep the reference's relationships at any width. Small
  * screens get their own art direction: three lines, left-aligned, and a
  * ribbon that threads between the last two lines and lands beside the reply.
+ *
+ * The first visit of a session plays the entrance (motion.css): navigation,
+ * then each line rising, the ribbon drawing through, the two bubbles, and
+ * finally the supporting copy and calls to action settling in.
  */
 export function Hero() {
-  const { headline, lede, primary, secondary, exchange } = home.hero
+  const { headline, lede, primary, secondary, terms, exchange } = home.hero
 
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -28,9 +32,13 @@ export function Hero() {
       <div className="hero__stage wrap">
         <div className="hero__headline">
           <h1 id="hero-title" className="hero__title">
-            <span className="hero__line hero__line--lead">{headline.lead}</span>{' '}
-            <span className="hero__line hero__line--rest">{headline.rest}</span>{' '}
-            <span className="hero__line hero__line--close">{headline.close}</span>
+            <span className="hero__row hero__row--1">
+              <span className="hero__line hero__line--lead">{headline.lead}</span>{' '}
+              <span className="hero__line hero__line--rest">{headline.rest}</span>
+            </span>{' '}
+            <span className="hero__row hero__row--2">
+              <span className="hero__line hero__line--close">{headline.close}</span>
+            </span>
           </h1>
           <Ribbon
             id="hero-compact"
@@ -56,6 +64,19 @@ export function Hero() {
           </ButtonLink>
           <TextLink href={secondary.href}>{secondary.label}</TextLink>
         </div>
+
+        <p className="hero__terms">
+          {terms.map((term, i) => (
+            <span key={term}>
+              {i > 0 && (
+                <span className="hero__terms-sep" aria-hidden="true">
+                  ·
+                </span>
+              )}
+              {term}
+            </span>
+          ))}
+        </p>
 
         <div className="hero__exchange">
           <Bubble tone="ask" className="hero__bubble hero__bubble--ask">

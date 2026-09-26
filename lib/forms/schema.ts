@@ -6,19 +6,19 @@
  * keep the module runnable by Node's built-in test runner.
  */
 
-import {
-  contactFields,
-  demoFields,
-  formMessages,
-  type FieldDefinition,
-} from '../../content/forms.ts'
+import { formMessages, purchaseFields, type FieldDefinition } from '../../content/forms.ts'
 
-export type FormKind = 'demo' | 'contact'
+/** One form today: the buying inquiry. The endpoint is keyed by kind so more can follow. */
+export type FormKind = 'purchase'
 
-export const formKinds: readonly FormKind[] = ['demo', 'contact']
+export const formKinds: readonly FormKind[] = ['purchase']
 
-export const fieldsFor = (kind: FormKind): readonly FieldDefinition[] =>
-  kind === 'demo' ? demoFields : contactFields
+export const fieldsFor = (kind: FormKind): readonly FieldDefinition[] => {
+  switch (kind) {
+    case 'purchase':
+      return purchaseFields
+  }
+}
 
 export type FieldValues = Record<string, string>
 export type FieldErrors = Record<string, string>
@@ -33,6 +33,9 @@ export type ValidationResult =
  * the visitor actually uses.
  */
 const emailPattern = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/
+
+/** Digits with the usual separators; 7–15 digits covers local and international numbers. */
+const phonePattern = /^[+()\d\s.-]+$/
 
 // Control characters other than tab and newline.
 const controlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g
@@ -59,7 +62,13 @@ export function validateField(field: FieldDefinition, value: string): string | n
       return field.messages.invalid ?? 'Please enter a valid email address.'
     }
   }
-  if (field.kind === 'choice' && field.options && !field.options.includes(value)) {
+  if (field.kind === 'tel') {
+    const digits = value.replace(/\D/g, '').length
+    if (!phonePattern.test(value) || digits < 7 || digits > 15) {
+      return field.messages.invalid ?? 'Please enter a valid phone number.'
+    }
+  }
+  if (field.kind === 'choice' && field.options && !field.options.some((option) => option.value === value)) {
     return field.messages.invalid ?? 'Please choose one of the listed options.'
   }
   return null

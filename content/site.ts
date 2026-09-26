@@ -17,8 +17,11 @@ const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/
 export const site = {
   name: 'CloseAgain',
   tagline: 'The conversation isn’t over.',
+  /** The one-sentence explanation. Keep it this short. */
+  promise:
+    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
   description:
-    'CloseAgain helps businesses follow up with missed inquiries and older leads, so the right conversations get a second chance.',
+    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
   origin: configuredOrigin || null,
 } as const
 
@@ -26,27 +29,50 @@ export const isIndexable = Boolean(site.origin)
 
 export type NavLink = { label: string; href: string }
 
-/** Desktop header. Kept to three links on purpose — the reference is sparse. */
+/** Desktop header. */
 export const headerNav: NavLink[] = [
   { label: 'How it works', href: '/how-it-works' },
+  { label: 'Features', href: '/features' },
   { label: 'Who it’s for', href: '/who-its-for' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'FAQ', href: '/faq' },
 ]
 
 /** Mobile menu: every public page, in reading order. */
 export const menuNav: NavLink[] = [
-  { label: 'How it works', href: '/how-it-works' },
-  { label: 'Who it’s for', href: '/who-its-for' },
-  { label: 'Pricing', href: '/pricing' },
+  ...headerNav,
+  { label: 'After you buy', href: '/after-you-buy' },
   { label: 'About', href: '/about' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Contact', href: '/contact' },
 ]
 
-export const footerNav: NavLink[] = [
-  ...menuNav,
-  { label: 'Privacy', href: '/privacy' },
-  { label: 'Terms', href: '/terms' },
+export const footerGroups: Array<{ title: string; links: NavLink[] }> = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'How it works', href: '/how-it-works' },
+      { label: 'Features', href: '/features' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Product demo', href: '/demo' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'Who it’s for', href: '/who-its-for' },
+      { label: 'About', href: '/about' },
+      { label: 'FAQ', href: '/faq' },
+      { label: 'After you buy', href: '/after-you-buy' },
+    ],
+  },
+  {
+    title: 'Get started',
+    links: [
+      { label: 'Contact to buy', href: '/contact' },
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms', href: '/terms' },
+    ],
+  },
 ]
 
-export const demoCta = { label: 'Book a demo', href: '/book-a-demo' } as const
+/** The primary call to action everywhere on the site. */
+export const buyCta = { label: 'Contact to buy', href: '/contact' } as const

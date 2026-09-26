@@ -12,3 +12,6 @@ out
 # local editor and tool state
 .claude/settings.local.json
 .DS_Store
+
+# agent worktrees
+.claude/worktrees/

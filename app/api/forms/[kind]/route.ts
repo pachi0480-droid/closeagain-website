@@ -11,7 +11,7 @@ import { createRateLimiter } from '@/lib/forms/rate-limit'
 import { formKinds, type FormKind } from '@/lib/forms/schema'
 
 /**
- * POST /api/forms/demo and /api/forms/contact
+ * POST /api/forms/purchase — the “Contact to buy” inquiry
  *
  * Accepts JSON from the enhanced forms and ordinary form posts from browsers
  * without JavaScript. Validation here is the one that counts. Success is
@@ -21,7 +21,7 @@ import { formKinds, type FormKind } from '@/lib/forms/schema'
 const allow = createRateLimiter({ limit: 8, windowMs: 10 * 60 * 1000 })
 const maxBodyBytes = 24 * 1024
 
-const formPage: Record<FormKind, string> = { demo: '/book-a-demo', contact: '/contact' }
+const formPage: Record<FormKind, string> = { purchase: '/contact' }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ kind: string }> }) {
   const { kind: rawKind } = await context.params

@@ -1,7 +1,14 @@
 /*
- * Motion. Every effect here decorates content that is already complete:
- * the resting state is the finished composition, and animation only ever
- * plays *into* it. Reduced motion simply never starts these.
+ * Motion. Every effect decorates content that is already complete: the
+ * resting state is the finished composition, and animation only plays *into*
+ * it. Reduced motion never starts any of it.
+ *
+ * Three kinds of motion, one vocabulary (tokens.css):
+ *   1. The homepage entrance — once per session.
+ *   2. Scroll-linked motion — native scroll-driven animation (view timelines)
+ *      where the browser supports it; one-time IntersectionObserver reveals
+ *      where it does not (see MotionController).
+ *   3. State changes — hovers, toggles, page transitions.
  */
 
 @keyframes settle {
@@ -11,37 +18,146 @@
   }
 }
 
+@keyframes header-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+@keyframes rise-line {
+  from {
+    opacity: 0;
+    translate: 0 0.3em;
+  }
+}
+
 @keyframes draw {
   from {
     stroke-dashoffset: 1;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* ── Homepage entrance, first visit per session ─────────────────────── */
+@keyframes band-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
 
-  /* Headline and header are never animated: readable at first paint. */
-  html:not([data-intro='seen']) .hero__lede {
-    animation: settle var(--dur-settle) var(--ease-editorial) both;
+@keyframes scroll-rise {
+  from {
+    opacity: 0;
+    translate: 0 var(--travel);
+  }
+}
+
+@keyframes wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes status-cold {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  62%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes status-open {
+  0%,
+  52% {
+    opacity: 0;
+    scale: 0.92;
+  }
+  70%,
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes page-in {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* The ribbon band is solid vermilion; it scales from its top as it draws. */
+.ribbon-band {
+  position: absolute;
+  display: block;
+  width: var(--rw, 24px);
+  background: var(--vermilion);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transform-origin: 50% 0;
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ── 1. Homepage entrance, first visit per session ──────────────────── */
+
+  html:not([data-intro='seen']) body:has(.hero) .site-header__inner {
+    animation: header-in 600ms var(--ease-editorial) both;
   }
 
-  html:not([data-intro='seen']) .hero__actions {
-    animation: settle var(--dur-settle) var(--ease-editorial) 60ms both;
+  html:not([data-intro='seen']) .hero__row--1 {
+    animation: rise-line 850ms var(--ease-editorial) 120ms both;
+  }
+
+  html:not([data-intro='seen']) .hero__row--2 {
+    animation: rise-line 850ms var(--ease-editorial) 270ms both;
   }
 
   html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
-    animation: draw var(--dur-draw) var(--ease-draw) 140ms backwards;
+    animation: draw 1150ms var(--ease-draw) 480ms backwards;
   }
 
   html:not([data-intro='seen']) .hero__bubble--ask {
-    animation: settle 320ms var(--ease-editorial) 760ms backwards;
+    animation: settle 380ms var(--ease-editorial) 1280ms backwards;
   }
 
   html:not([data-intro='seen']) .hero__bubble--reply {
-    animation: settle 320ms var(--ease-editorial) 980ms backwards;
+    animation: settle 380ms var(--ease-editorial) 1520ms backwards;
   }
 
-  /* ── One-time reveals as content approaches ─────────────────────────── */
+  /* On wide screens the lede joins the staged entrance. On phones it is the
+     largest thing in view, so it is shown at once rather than held back —
+     the page is readable, and measured as painted, as soon as it arrives. */
+  @media (min-width: 960px) {
+    html:not([data-intro='seen']) .hero__lede {
+      animation: settle 650ms var(--ease-editorial) 720ms both;
+    }
+  }
+
+  html:not([data-intro='seen']) .hero__actions {
+    animation: settle 650ms var(--ease-editorial) 840ms both;
+  }
+
+  html:not([data-intro='seen']) .hero__terms {
+    animation: settle 650ms var(--ease-editorial) 940ms both;
+  }
+
+  /* ── One-time reveals (all browsers with IntersectionObserver) ──────── */
 
   .js-reveal [data-reveal] {
     transition:
@@ -64,18 +180,163 @@
 
   /* Timed pieces that follow a scroll-drawn ribbon, like a landing bubble. */
   .js-reveal [data-after-draw] {
-    transition: opacity 320ms var(--ease-editorial) var(--reveal-delay, 700ms),
+    transition:
+      opacity 320ms var(--ease-editorial) var(--reveal-delay, 700ms),
       translate 320ms var(--ease-editorial) var(--reveal-delay, 700ms);
   }
 
-  .js-reveal .is-in [data-after-draw],
-  .js-reveal [data-after-draw].is-in {
-    opacity: 1;
-    translate: 0 0;
-  }
-
-  .js-reveal :not(.is-in) > [data-after-draw]:not(.is-in) {
+  .js-reveal :not(.is-in) > [data-after-draw] {
     opacity: 0;
     translate: 0 8px;
+  }
+}
+
+/* ── 2a. Scroll-linked, where the browser can drive it natively ───────── */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-scroll='rise'] {
+      animation: scroll-rise linear both;
+      animation-timeline: view();
+      animation-range: entry calc(2% + var(--i, 0) * 5%) entry calc(62% + var(--i, 0) * 5%);
+    }
+
+    .ribbon[data-draw='linked'] {
+      view-timeline-name: --ribbon;
+    }
+
+    .ribbon[data-draw='linked'] .ribbon__guide {
+      animation: draw linear both;
+      animation-timeline: --ribbon;
+      animation-range: entry 15% cover 50%;
+    }
+
+    .ribbon[data-draw='linked'] .ribbon__guide--a {
+      animation-range: entry 20% cover 48%;
+    }
+
+    .ribbon[data-draw='linked'] .ribbon__guide--b {
+      animation-range: cover 46% cover 62%;
+    }
+
+    .ribbon-band[data-draw='linked'] {
+      animation: band-grow linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+
+    .pv-chart__svg {
+      view-timeline-name: --chart;
+    }
+
+    [data-scroll='draw'] {
+      animation: wipe-in linear both;
+      animation-timeline: --chart;
+      animation-range: entry 30% cover 50%;
+    }
+
+    .pv-status {
+      view-timeline-name: --status;
+    }
+
+    .pv-status__cold {
+      animation: status-cold linear both;
+      animation-timeline: --status;
+      animation-range: entry 0% cover 55%;
+    }
+
+    .pv-status__open {
+      animation: status-open linear both;
+      animation-timeline: --status;
+      animation-range: entry 0% cover 55%;
+    }
+  }
+}
+
+/* ── 2b. The same moments as one-time reveals elsewhere ───────────────── */
+
+@supports not (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .js-reveal [data-scroll='rise'] {
+      transition:
+        opacity var(--dur-reveal) var(--ease-editorial) calc(var(--i, 0) * 80ms),
+        translate var(--dur-reveal) var(--ease-editorial) calc(var(--i, 0) * 80ms);
+    }
+
+    .js-reveal [data-scroll='rise']:not(.is-in) {
+      opacity: 0;
+      translate: 0 var(--travel);
+    }
+
+    .js-reveal .ribbon[data-draw='linked'] .ribbon__guide {
+      transition: stroke-dashoffset 1100ms var(--ease-draw);
+    }
+
+    .js-reveal .ribbon[data-draw='linked'] .ribbon__guide--b {
+      transition-delay: 800ms;
+    }
+
+    .js-reveal .ribbon[data-draw='linked']:not(.is-in) .ribbon__guide {
+      stroke-dashoffset: 1;
+    }
+
+    .js-reveal .ribbon-band[data-draw='linked'] {
+      transition: transform 1000ms var(--ease-draw);
+    }
+
+    .js-reveal .ribbon-band[data-draw='linked']:not(.is-in) {
+      transform: scaleY(0);
+    }
+
+    .js-reveal [data-scroll='draw'] {
+      transition: clip-path 1200ms var(--ease-draw) 200ms;
+    }
+
+    .js-reveal [data-scroll='draw']:not(.is-in) {
+      clip-path: inset(0 100% 0 0);
+    }
+
+    .js-reveal .pv-status__cold,
+    .js-reveal .pv-status__open {
+      transition:
+        opacity 400ms var(--ease-ui) 900ms,
+        scale 400ms var(--ease-ui) 900ms;
+    }
+
+    .js-reveal .pv-status:not(.is-in) .pv-status__cold {
+      opacity: 1;
+    }
+
+    .js-reveal .pv-status:not(.is-in) .pv-status__open {
+      opacity: 0;
+      scale: 0.92;
+    }
+  }
+}
+
+/* ── 3. Page transitions: a soft diagonal wipe, header held still ─────── */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(.page-exit) {
+  animation: page-out 200ms var(--ease-ui) both;
+}
+
+::view-transition-new(.page-enter) {
+  -webkit-mask-image: linear-gradient(100deg, #000 0 38%, transparent 62%);
+  mask-image: linear-gradient(100deg, #000 0 38%, transparent 62%);
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  animation: page-in 460ms var(--ease-editorial) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

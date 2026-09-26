@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Serif_Display, Source_Serif_4 } from 'next/font/google'
 import { MotionController } from '@/components/site/MotionController'
-import { SiteFooter } from '@/components/site/SiteFooter'
-import { SiteHeader } from '@/components/site/SiteHeader'
 import { home } from '@/content/home'
 import { isIndexable, site } from '@/content/site'
 import './globals.css'
@@ -100,11 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main" tabIndex={-1}>
-          {children}
-        </main>
-        <SiteFooter />
+        {children}
         <MotionController />
         {structuredData && (
           <script

@@ -1,22 +1,25 @@
 /**
- * Normalisation and validation for both forms.
+ * Normalisation and validation for the inquiry form.
  *
  * Pure functions with no framework imports, so the browser, the route handler
  * and the test suite all run exactly the same rules. Relative `.ts` imports
  * keep the module runnable by Node's built-in test runner.
  */
 
-import { formMessages, purchaseFields, type FieldDefinition } from '../../content/forms.ts'
+import { formMessages, inquiryFields, type FieldDefinition } from '../../content/forms.ts'
 
-/** One form today: the buying inquiry. The endpoint is keyed by kind so more can follow. */
-export type FormKind = 'purchase'
+/** One form today: the inquiry. The endpoint is keyed by kind so more can follow. */
+export type FormKind = 'inquiry'
 
-export const formKinds: readonly FormKind[] = ['purchase']
+export const formKinds: readonly FormKind[] = ['inquiry']
+
+export const isFormKind = (value: unknown): value is FormKind =>
+  typeof value === 'string' && (formKinds as readonly string[]).includes(value)
 
 export const fieldsFor = (kind: FormKind): readonly FieldDefinition[] => {
   switch (kind) {
-    case 'purchase':
-      return purchaseFields
+    case 'inquiry':
+      return inquiryFields
   }
 }
 
@@ -40,17 +43,18 @@ const phonePattern = /^[+()\d\s.-]+$/
 // Control characters other than tab and newline.
 const controlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g
 
+/** Cleans one raw value. An empty answer becomes the field's default, if it has one. */
 export function normalizeValue(field: FieldDefinition, raw: unknown): string {
-  if (typeof raw !== 'string') return ''
-  const cleaned = raw.replace(controlChars, '')
-  if (field.kind === 'multiline') {
-    return cleaned
-      .replace(/\r\n?/g, '\n')
-      .replace(/[ \t]+\n/g, '\n')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
-  }
-  return cleaned.replace(/\s+/g, ' ').trim()
+  const cleaned = typeof raw === 'string' ? raw.replace(controlChars, '') : ''
+  const value =
+    field.kind === 'multiline'
+      ? cleaned
+          .replace(/\r\n?/g, '\n')
+          .replace(/[ \t]+\n/g, '\n')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim()
+      : cleaned.replace(/\s+/g, ' ').trim()
+  return value || field.defaultValue || ''
 }
 
 export function validateField(field: FieldDefinition, value: string): string | null {
@@ -83,7 +87,7 @@ export function validateSubmission(
   const errors: FieldErrors = {}
 
   for (const field of fieldsFor(kind)) {
-    const value = normalizeValue(field, raw[field.name])
+    const value = normalizeValue(field, Object.hasOwn(raw, field.name) ? raw[field.name] : undefined)
     values[field.name] = value
     const error = validateField(field, value)
     if (error) errors[field.name] = error

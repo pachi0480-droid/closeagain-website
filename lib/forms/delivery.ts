@@ -9,16 +9,26 @@
  *   FORMS_WEBHOOK_URL     https URL that accepts the JSON below
  *   FORMS_WEBHOOK_SECRET  optional; sent as `Authorization: Bearer <secret>`
  *
+ * The body is always:
+ *
+ *   { "type": "inquiry",
+ *     "submittedAt": "<ISO time>",
+ *     "fields": { "name", "email", "business", "goal", "plan",
+ *                 "phone", "industry", "volume", "crm", "message" } }
+ *
+ * Every field is present, as a string; optional ones may be empty. `goal` is
+ * a stable slug (see content/forms.ts) and `plan` is a plan id or "unsure".
+ *
  * A submission counts as delivered only when that URL answers 2xx. With no URL
  * configured, `resolveDelivery` returns null and the endpoint reports that
  * requests are unavailable — it never pretends a lead was received.
  * ────────────────────────────────────────────────────────────────────────────
  */
 
-import type { FieldValues, FormKind } from './schema.ts'
+import { fieldsFor, type FieldValues, type FormKind } from './schema.ts'
 
 export type DeliveryPayload = {
-  type: 'purchase-inquiry'
+  type: FormKind
   submittedAt: string
   fields: FieldValues
 }
@@ -46,6 +56,16 @@ export function parseWebhookUrl(raw: string | undefined): URL | null {
   }
 }
 
+/** Exactly what the webhook receives: this form's own fields, and nothing else. */
+export function buildPayload(kind: FormKind, fields: FieldValues, now: Date = new Date()): DeliveryPayload {
+  const known: FieldValues = {}
+  for (const field of fieldsFor(kind)) {
+    const value = Object.hasOwn(fields, field.name) ? fields[field.name] : undefined
+    known[field.name] = typeof value === 'string' ? value : (field.defaultValue ?? '')
+  }
+  return { type: kind, submittedAt: now.toISOString(), fields: known }
+}
+
 export function resolveDelivery(
   env: Env = process.env,
   fetchImpl: typeof fetch = fetch,
@@ -57,11 +77,6 @@ export function resolveDelivery(
 
   return {
     async deliver(kind, fields) {
-      const payload: DeliveryPayload = {
-        type: `${kind}-inquiry` as const,
-        submittedAt: new Date().toISOString(),
-        fields,
-      }
       try {
         const response = await fetchImpl(url, {
           method: 'POST',
@@ -69,7 +84,7 @@ export function resolveDelivery(
             'content-type': 'application/json',
             ...(secret ? { authorization: `Bearer ${secret}` } : {}),
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(buildPayload(kind, fields)),
           signal: AbortSignal.timeout(timeoutMs),
           redirect: 'error',
           cache: 'no-store',

@@ -36,7 +36,7 @@
   margin-top: 0.9rem;
 }
 
-/* ── Contact and demo: copy beside the form ────────────────────────────── */
+/* ── Contact: copy beside the form ─────────────────────────────────────── */
 
 .form-page {
   position: relative;
@@ -49,16 +49,30 @@
   gap: clamp(2.25rem, 5vw, 3.5rem);
 }
 
+/* A size container: the title is sized to this column, not to the viewport. */
 .form-page__copy {
   position: relative;
+  min-width: 0;
+  container-type: inline-size;
 }
 
+/*
+ * Between about 960 and 1,200px the copy column is much narrower than the
+ * viewport, so a viewport-sized headline outgrew it and ran into the form.
+ * The size is now capped at 28% of the column (28cqi): any word up to about
+ * 3.5em wide always fits. The current title's longest word, “plan.”, measures
+ * 2.04em, and the cap never shrinks it below --display-l at any width. A
+ * title with longer words needs a smaller cap; `overflow-wrap` is only the
+ * last line of defence.
+ */
 .form-page__title {
   margin: 0;
   max-width: 9.5em;
   font-size: var(--display-l);
+  font-size: min(var(--display-l), 28cqi);
   line-height: 1.02;
   letter-spacing: -0.04em;
+  overflow-wrap: break-word;
 }
 
 .form-page__lede {
@@ -120,12 +134,91 @@
   color: var(--ink-2);
 }
 
+.arrival__next {
+  max-width: 34rem;
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.arrival__next-title {
+  margin: 0 0 1rem;
+  font-size: var(--display-xs);
+}
+
+.arrival__steps {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arrival__steps li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  color: var(--ink-2);
+}
+
+.arrival__num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ink);
+  /* Sit the circle on the first line of text rather than on its baseline. */
+  translate: 0 0.3rem;
+}
+
+.arrival__note {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 34rem;
+  margin: 1.75rem 0 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.arrival__note::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--vermilion);
+}
+
 .arrival__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 2rem;
   margin-top: 2.5rem;
+}
+
+/* Long labels may wrap on the narrowest phones instead of leaving the page. */
+.arrival__actions .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.2;
+  padding-block: 0.7rem;
+}
+
+/* …though with a little less padding they still fit on one line at 320px. */
+@media (max-width: 400px) {
+  .arrival__actions .btn {
+    gap: 0.7em;
+    padding-inline: 1rem;
+  }
 }
 
 .arrival__art {
@@ -947,7 +1040,7 @@
   }
 }
 
-/* ── Contact to buy ────────────────────────────────────────────────────── */
+/* ── Find the right plan: terms and next steps beside the form ─────────── */
 
 .buy-aside {
   display: grid;
@@ -1001,6 +1094,10 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
+}
+
+.buy-next__link {
+  margin-top: 1rem;
 }
 
 .buy-next__num {

@@ -28,6 +28,32 @@
   --error: #a3261a;
   --error-wash: #f3ddd6;
   --notice-wash: #ebe6d9;
+  --positive: #36613f; /* 6.4:1 — success text and dots, used sparingly */
+  --positive-wash: #e2e9dc;
+  --caution: #8a5a0a; /* 5.6:1 */
+  --caution-wash: #f1e4c8;
+
+  /* Product UI — the app surfaces that sit on the paper */
+  --surface: #f7f5ef; /* cards, panels */
+  --surface-2: #efebe2; /* hover rows, sunken areas */
+  --surface-3: #e7e2d6; /* tracks, skeletons */
+  --surface-ink: #121210; /* the one dark card: Enterprise, dark previews */
+  --on-ink: #f2efe7;
+  --on-ink-2: #b9b4a8;
+  --line: #dbd6ca; /* hairlines inside product UI */
+  --line-strong: #bfb9ac;
+  --radius-xs: 3px; /* controls */
+  --radius-sm: 6px; /* chips, inputs inside the app */
+  --radius-md: 10px; /* cards, panels */
+  --radius-lg: 14px; /* framed product previews */
+  --shadow-soft: 0 1px 0 rgb(13 13 11 / 0.03), 0 18px 40px -24px rgb(13 13 11 / 0.22);
+  --shadow-lift: 0 1px 0 rgb(13 13 11 / 0.04), 0 26px 50px -26px rgb(13 13 11 / 0.3);
+
+  /* Product UI type — the app runs smaller than the editorial site */
+  --ui-2xs: 0.75rem; /* 12px: caps labels only */
+  --ui-xs: 0.8125rem; /* 13px: meta */
+  --ui-sm: 0.875rem; /* 14px: rows, controls */
+  --ui-base: 0.9375rem; /* 15px: app body */
 
   /* Type */
   --font-display: var(--font-dm-serif), 'DM Serif Display', 'Times New Roman', serif;

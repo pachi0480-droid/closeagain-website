@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Ribbon } from '@/components/art/Ribbon'
 import { uTurn } from '@/components/art/ribbons'
+import { SiteFooter } from '@/components/site/SiteFooter'
+import { SiteHeader } from '@/components/site/SiteHeader'
 import { ButtonLink, TextLink } from '@/components/ui/links'
 import { notFound } from '@/content/pages'
 
@@ -11,6 +13,9 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
+    <>
+      <SiteHeader />
+      <main id="main" tabIndex={-1}>
     <section className="lost" aria-labelledby="page-title">
       <div className="lost__inner wrap">
         <div className="lost__code-wrap" aria-hidden="true">
@@ -50,5 +55,8 @@ export default function NotFound() {
         </div>
       </div>
     </section>
+      </main>
+      <SiteFooter />
+    </>
   )
 }

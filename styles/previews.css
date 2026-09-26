@@ -794,12 +794,3 @@
   font-weight: 600;
   line-height: 1.25;
 }
-
-/* Temporary stand-in for the dashboard showcase. */
-.dashboard-stub {
-  display: grid;
-  place-items: center;
-  width: 1120px;
-  height: 700px;
-  background: var(--surface);
-}

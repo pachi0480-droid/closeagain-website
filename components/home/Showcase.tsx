@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { DashboardStub as DashboardPreview } from './DashboardStub'
+import { DashboardPreview } from '@/components/dashboard/DashboardPreview'
 import { TextLink } from '@/components/ui/links'
 import { home } from '@/content/home'
 

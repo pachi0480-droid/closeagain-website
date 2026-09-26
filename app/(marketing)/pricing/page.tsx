@@ -31,8 +31,11 @@ export default function PricingPage() {
         </div>
       </header>
 
-      <section className="pricing" aria-label="Plans">
+      <section className="pricing" aria-labelledby="plans-title">
         <div className="wrap">
+          <h2 id="plans-title" className="sr-only">
+            Plans
+          </h2>
           <PlanCards />
           <CompareMatrix openLabel={compare.open} closeLabel={compare.close} />
         </div>

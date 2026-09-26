@@ -222,9 +222,15 @@ describe('webhook delivery', () => {
   })
 
   it('treats a slow destination as a failure, not a success', async () => {
+    // AbortSignal.timeout does not keep Node's event loop alive, so hold it
+    // open with a real timer until the abort fires (as a live server would).
     const hanging = ((_url: unknown, init: RequestInit) =>
       new Promise((_resolve, reject) => {
-        init.signal?.addEventListener('abort', () => reject(init.signal?.reason))
+        const keepAlive = setTimeout(() => {}, 5000)
+        init.signal?.addEventListener('abort', () => {
+          clearTimeout(keepAlive)
+          reject(init.signal?.reason)
+        })
       })) as unknown as typeof fetch
     const delivery = resolveDelivery({ FORMS_WEBHOOK_URL: 'https://hooks.example.com/in' }, hanging, 20)
     assert.deepEqual(await delivery!.deliver('demo', {}), { ok: false, reason: 'timeout' })

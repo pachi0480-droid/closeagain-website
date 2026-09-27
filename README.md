@@ -30,17 +30,18 @@ for current delivery behavior, verification and launch requirements.
 
 ## Before this goes live
 
-1. **Inquiry destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
-   endpoint that accepts the JSON described in `.env.example`, optionally with
-   `FORMS_WEBHOOK_SECRET`. Without it, the buying form hands the visitor's
-   details to their own email app, addressed to **Closeagainhq@gmail.com**. A
-   draft is never reported as a sent inquiry.
-2. **Legal copy.** `/privacy` and `/terms` are marked placeholders, kept out of
-   search. Add approved text in `content/legal.ts` and set `status` to
-   `'approved'`.
-3. **Public origin.** Set `NEXT_PUBLIC_SITE_URL` on the production deployment
-   only. Without it the site is a preview: noindex everywhere, robots.txt
-   disallows crawling, empty sitemap, no canonical URLs.
+1. **Where inquiries go — the one required step.** Set `RESEND_API_KEY` (email
+   to the business through Resend) and/or `FORMS_WEBHOOK_URL` (a CRM or
+   automation webhook) on the production deployment. `.env.example` explains
+   both. With neither, the buying form can only open a pre-filled email in the
+   visitor's own email app — a draft is never reported as a sent inquiry.
+   After deploying, send one test inquiry and check it arrives.
+2. **Public origin.** Nothing to do on Vercel: a production build uses the
+   project's production domain (custom domain once added, else `.vercel.app`),
+   and previews stay noindex. Set `NEXT_PUBLIC_SITE_URL` only to override it.
+3. **Legal copy.** `/privacy` and `/terms` describe what this site actually
+   does (`content/legal.ts`). Have them reviewed, and update them if the site
+   starts collecting more (for example analytics).
 4. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
    confirmed and what is still open — Core's channel, usage allowances and
    fees, the Scale badge, how appointments are booked — and how each is worded
@@ -158,8 +159,9 @@ email, phone, industry, monthly lead volume, current CRM, preferred plan
 message. Only name, business, email and goal are required. Client and server
 share one validation module.
 
-- **With `FORMS_WEBHOOK_URL`:** the form submits in the background and moves
-  on only after the server confirms delivery. Unavailable, rejected, network,
+- **With a destination (`RESEND_API_KEY` and/or `FORMS_WEBHOOK_URL`):** the
+  form submits in the background and moves on only after the server confirms
+  delivery. Unavailable, rejected, network,
   timeout and rate-limited states each have a plain message and keep what was
   typed; without JavaScript the endpoint accepts a normal form post.
 - **Without it:** a valid form opens the visitor's email app with every detail

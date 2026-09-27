@@ -15,16 +15,19 @@ For a production server, run `npm run build` followed by `npm start`. The contac
 
 The confirmed business address is **Closeagainhq@gmail.com**, defined once in `content/site.ts`. It appears on the contact page, in the shared footer, and in the contact sections of the unfinished legal pages.
 
-When no valid `FORMS_WEBHOOK_URL` is configured, `/contact` shows a direct-email card. Its button opens an editable draft addressed to the business. The visitor must send the draft from their own email app; the website never claims that opening a draft sends an inquiry. The visible address also supports copying into webmail. Valid plan and industry choices from the site are included in that draft.
+`/contact` always shows the buying form. What its button does depends on the server's configuration, decided at request time:
 
-When a valid webhook is configured, `/contact` renders the inquiry form and keeps a direct-email alternative. The choice is made on the server at request time. The form endpoint validates the submission and reports success only after the destination returns a successful response. No existing email delivery account has been connected or verified.
+- **No valid `FORMS_WEBHOOK_URL`:** the button reads "Email my details". After the form validates, it opens a pre-filled draft in the visitor's email app, addressed to the business, with every answer (including the chosen plan) as `Label: value` lines. The visitor sends the draft themselves. The page says the email app should now open and that nothing has been sent yet; it never shows a success message. The draft is built by `lib/forms/email.ts`, which has unit tests.
+- **A valid webhook:** the form posts to `/api/forms/inquiry`, which validates the submission and reports success only after the destination returns a successful response.
+
+In both modes the address is also shown under the form for anyone who prefers to write directly. No existing email delivery account has been connected or verified.
 
 ## Environment variables
 
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Set to the verified public origin only when publishing. Rebuild after changing it. With no value, pages remain `noindex`, robots disallow crawling, canonical links are omitted, and the sitemap is empty. |
-| `FORMS_WEBHOOK_URL` | Optional server-only destination for submitted inquiry JSON. HTTPS is required outside local testing. Leave empty to use direct email contact. |
+| `FORMS_WEBHOOK_URL` | Optional server-only destination for submitted inquiry JSON. HTTPS is required outside local testing. Leave empty and the form opens a pre-filled email draft instead. |
 | `FORMS_WEBHOOK_SECRET` | Optional server-only bearer secret sent to the webhook. Never use a `NEXT_PUBLIC_` prefix for this secret. |
 
 The webhook payload and timeout behavior are documented in `lib/forms/delivery.ts`. A successful webhook response confirms receipt by that destination; the owner should verify its downstream inbox/CRM behavior before relying on it. `npm run forms:sink` is a local testing sink, not a production delivery service.

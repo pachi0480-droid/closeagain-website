@@ -9,7 +9,7 @@ The supplied archive is preserved as the initial local Git commit. This working 
 - A concise interactive conversation shows a new inquiry or quiet lead moving toward a team handoff. Examples remain labeled illustrative.
 - Replace repeated homepage feature explanations with concrete control: approved wording, schedules, stop on reply, and human handoff.
 - Preserve the four plan prices and existing capability boundaries. Make differences scannable with three aligned tiers, an Enterprise band, and a use-case selector. No invented popularity, discounts, allowances, trial, or conversion figures.
-- Show the confirmed business email, with a direct email contact route when server form delivery is unconfigured.
+- Show the confirmed business email. When server form delivery is unconfigured, the buying form hands the visitor's details to their own email app as a pre-filled draft, and never claims anything was sent.
 
 ## Research used
 

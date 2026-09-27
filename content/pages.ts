@@ -30,7 +30,7 @@ export const howItWorks = {
   },
   eyebrow: 'How it works',
   title: 'One path from first message to customer.',
-  lede: 'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities — so more conversations become customers.',
+  lede: 'CloseAgain captures new leads, follows up automatically, and re‑engages old opportunities — so more conversations become customers.',
   steps: [
     {
       number: '01',

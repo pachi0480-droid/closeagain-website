@@ -26,9 +26,21 @@
   flex: none;
 }
 
-@container (max-width: 360px) {
-  .pv__sample {
+.pv__title-short {
+  display: none;
+}
+
+/* Phone-width frames: the window dots give way and long titles shorten, so
+   the title and the “Sample” label both fit on one line. */
+@container (max-width: 400px) {
+  .pv__sample-more,
+  .pv__title-long,
+  .pv .ui-frame__dots {
     display: none;
+  }
+
+  .pv__title-short {
+    display: inline;
   }
 }
 
@@ -502,9 +514,20 @@
   font-weight: 600;
 }
 
+.pv-slot > span {
+  display: block;
+}
+
+.pv-slot__time {
+  font-variant-numeric: tabular-nums;
+}
+
 .pv-slot--missed {
   background: var(--surface-3);
   color: var(--ink-3);
+}
+
+.pv-slot--missed .pv-slot__time {
   text-decoration: line-through;
   text-decoration-color: var(--ink-3);
 }
@@ -521,7 +544,14 @@
   }
 
   .pv-slot {
+    padding-inline: 0.25rem;
     font-size: 0.625rem;
+  }
+
+  /* Day columns are too narrow for names here; the list below the week
+     carries them. The time stays: highlighted when booked, struck when missed. */
+  .pv-slot .pv-slot__who {
+    display: none;
   }
 }
 

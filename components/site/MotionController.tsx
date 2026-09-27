@@ -7,7 +7,10 @@ declare global {
   interface Window { __caMotion?: boolean }
 }
 
-const revealTargets = '[data-reveal], [data-scroll], [data-draw="scroll"], .pv-status'
+const revealTargets = '[data-reveal], [data-scroll], [data-draw="scroll"], [data-draw="scrub"], .pv-status'
+
+/** Pages with a scroll-driven ribbon story load the timeline library; others never do. */
+const storySelector = '[data-flow], [data-flow-steps], [data-draw="scrub"], .trail'
 
 /** Native scrolling, readable content, and scoped timelines with full route cleanup. */
 export function MotionController() {
@@ -48,7 +51,7 @@ export function MotionController() {
   }, [pathname])
 
   useEffect(() => {
-    if (!document.querySelector('[data-flow], .trail')) return
+    if (!document.querySelector(storySelector)) return
     let disposed = false
     let cleanup: (() => void) | undefined
 
@@ -90,12 +93,66 @@ export function MotionController() {
             scrollTrigger: { trigger: rail.parentElement, start: 'top 76%', end: 'bottom 58%', scrub: 0.3 },
           })
         })
+        // Ribbons that draw in step with reading: the weave, the loop.
+        const scrubbed = Array.from(document.querySelectorAll<SVGSVGElement>('.ribbon[data-draw="scrub"]'))
+        scrubbed.forEach((ribbon) => {
+          ribbon.classList.add('is-in')
+          ribbon.dataset.progress = ''
+          gsap.fromTo(ribbon.querySelectorAll('.ribbon__guide'), { strokeDashoffset: 1 }, {
+            strokeDashoffset: 0, ease: 'none',
+            scrollTrigger: { trigger: ribbon.parentElement ?? ribbon, start: 'top 80%', end: 'center 45%', scrub: 0.5 },
+          })
+        })
+
+        // From lead to customer: events complete in order as the card scrolls
+        // through, the rail follows, and the status keeps up.
+        const stories = Array.from(document.querySelectorAll<HTMLElement>('[data-flow-steps]'))
+        stories.forEach((story) => {
+          const statuses = (story.dataset.flowSteps ?? '').split('|')
+          const events = Array.from(story.querySelectorAll<HTMLElement>('[data-flow-step]'))
+          const rail = story.querySelector<HTMLElement>('.ribbon-band')
+          const status = story.querySelector<HTMLElement>('[data-flow-status]')
+          const tones = events.map((event) => (event.className.match(/flow__event--(\w+)/)?.[1] ?? 'ink'))
+          let shown = -1
+          const show = (count: number) => {
+            if (count === shown) return
+            shown = count
+            events.forEach((event, i) => event.toggleAttribute('data-pending', i >= count))
+            if (status) {
+              const index = Math.max(0, count - 1)
+              status.textContent = statuses[index] ?? ''
+              status.dataset.tone = tones[index]
+            }
+          }
+          if (rail) rail.dataset.progress = ''
+          ScrollTrigger.create({
+            trigger: story,
+            start: 'top 72%',
+            end: 'bottom 62%',
+            scrub: 0.3,
+            onUpdate: (self) => {
+              show(Math.min(events.length, Math.floor(self.progress * events.length + 0.6)))
+              if (rail) rail.style.transform = `scaleY(${self.progress})`
+            },
+            onRefresh: (self) => {
+              show(Math.min(events.length, Math.floor(self.progress * events.length + 0.6)))
+              if (rail) rail.style.transform = `scaleY(${self.progress})`
+            },
+          })
+        })
+
         let active = true
         document.fonts.ready.then(() => { if (active) ScrollTrigger.refresh() })
         return () => {
           active = false
           flows.forEach((flow) => flow.classList.remove('flow-ready'))
           rails.forEach((rail) => { delete rail.dataset.progress })
+          scrubbed.forEach((ribbon) => { delete ribbon.dataset.progress })
+          stories.forEach((story) => {
+            story.querySelectorAll('[data-flow-step]').forEach((event) => event.removeAttribute('data-pending'))
+            const rail = story.querySelector<HTMLElement>('.ribbon-band')
+            if (rail) { rail.style.transform = ''; delete rail.dataset.progress }
+          })
         }
       })
       cleanup = () => media.revert()

@@ -2,14 +2,7 @@
 
 import { useId, useState } from 'react'
 import { Arrow } from '@/components/ui/links'
-import { plans, type PlanId } from '@/content/pricing'
-
-const priorities: Array<{ plan: PlanId; label: string; reason: string }> = [
-  { plan: 'core', label: 'Consistent follow-up', reason: 'New inquiry capture, automated follow-up and older lead re-engagement are all included in Core.' },
-  { plan: 'growth', label: 'Booking appointments', reason: 'Growth adds appointment workflows and custom follow-up sequences to everything in Core.' },
-  { plan: 'scale', label: 'Working as a team', reason: 'Scale adds multi-user collaboration, custom workflows and pipeline customization.' },
-  { plan: 'enterprise', label: 'Multiple locations', reason: 'Enterprise includes multi-location support, advanced permissions and custom integrations.' },
-]
+import { planFinder as priorities, plans, type PlanId } from '@/content/pricing'
 
 /** Native radios retain arrow-key selection and expose the active choice without custom keyboard code. */
 export function PlanFinder() {

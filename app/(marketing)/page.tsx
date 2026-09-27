@@ -1,16 +1,13 @@
 import type { Metadata } from 'next'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
-import { Accordion } from '@/components/editorial/Accordion'
 import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
-import { Control } from '@/components/home/Control'
+import { LeadFlow } from '@/components/home/LeadFlow'
 import { Paths } from '@/components/home/Paths'
-import { ConversationDemo } from '@/components/home/ConversationDemo'
+import { Automation, SecondChance } from '@/components/home/Stories'
 import { PlanCards } from '@/components/pricing/Plans'
-import { TextLink } from '@/components/ui/links'
 import { home } from '@/content/home'
-import { faqByIds } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = pageMetadata({
@@ -21,13 +18,12 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * The homepage answers a buyer's questions in order: what CloseAgain is (the
- * hero), why it matters (Again.), the two jobs it does, one worked example of
- * how, what each feature is for, what it costs, the questions people ask
- * before buying, and the next step. One ribbon runs through the story.
+ * The homepage tells one story with one ribbon: a lead arrives or returns,
+ * gets followed up, replies, books, and reaches the team — then the product
+ * that runs it, what it costs, and the next step.
  */
 export default function HomePage() {
-  const { again, pricing, questions, closing } = home
+  const { again, pricing, closing } = home
 
   return (
     <>
@@ -44,30 +40,15 @@ export default function HomePage() {
       </WordSplit>
 
       <Paths />
-      <ConversationDemo />
-
-      <Control />
+      <LeadFlow />
+      <Automation />
+      <SecondChance />
 
       <section className="section price-band" aria-labelledby="price-band-title">
         <div className="wrap">
           <SectionHead id="price-band-title" eyebrow={pricing.eyebrow} title={pricing.title} link={pricing.link} />
           <p className="price-band__note">{pricing.body}</p>
           <PlanCards variant="compact" />
-        </div>
-      </section>
-
-      <section className="section home-questions" aria-labelledby="questions-title">
-        <div className="wrap home-questions__inner">
-          <div className="home-questions__head">
-            <p className="eyebrow">{questions.eyebrow}</p>
-            <h2 id="questions-title" className="section__title">
-              {questions.title}
-            </h2>
-            <TextLink href={questions.link.href} arrow>
-              {questions.link.label}
-            </TextLink>
-          </div>
-          <Accordion items={faqByIds(questions.ids)} headingLevel="h3" />
         </div>
       </section>
 

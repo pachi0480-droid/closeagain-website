@@ -81,15 +81,15 @@
   }
 
   /* A ribbon draws along its curve. Multi-part drawings go in stages. */
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide {
     transition: stroke-dashoffset var(--dur-draw) var(--ease-draw) var(--reveal-delay, 0ms);
   }
 
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide--b {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide--b {
     transition-delay: calc(var(--dur-draw) * 0.7);
   }
 
-  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__guide {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__guide {
     stroke-dashoffset: 1;
   }
 
@@ -161,7 +161,8 @@
 
 /* Timelines own the ribbon pieces as one sequence. CSS is the resilient fallback. */
 .flow-ready :is(.ribbon__guide, .ribbon-band, [data-reveal]) { transition: none !important; }
-.ribbon-band[data-progress] { transition: none !important; }
+.ribbon-band[data-progress],
+.ribbon[data-progress] .ribbon__guide { transition: none !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
   .arrow, .btn, .text-link { transition: none; }

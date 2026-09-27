@@ -14,38 +14,19 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Who CloseAgain suits — and who it doesn't — then eight kinds of
- * lead-driven business, each with the inquiries it typically gets and what
- * CloseAgain follows up on for new and older leads. Each card opens the
- * inquiry form with that industry already chosen.
+ * Eight kinds of lead-driven business, each with one line on what CloseAgain
+ * does for it. The whole card is the target and opens the buying form with
+ * that industry already chosen.
  */
 export default function WhoItsForPage() {
-  const { fit, industries, labels, closing } = whoItsFor
+  const { industries, closing } = whoItsFor
 
   return (
     <>
       <PageIntro eyebrow={whoItsFor.eyebrow} title={whoItsFor.title} lede={whoItsFor.lede} />
 
-      <section className="fit" aria-label="Is CloseAgain a fit?">
-        <div className="wrap fit__grid">
-          {[fit.good, fit.not].map((list, i) => (
-            <div key={list.title} className={['fit__col', i === 1 && 'fit__col--not'].filter(Boolean).join(' ')}>
-              <h2 className="fit__title">{list.title}</h2>
-              <ul className="fit__list">
-                {list.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="industries" aria-labelledby="industries-title">
+      <section className="industries" aria-label="Industries">
         <div className="wrap">
-          <h2 id="industries-title" className="industries__title">
-            What CloseAgain follows up on, by industry
-          </h2>
           <ul className="industries__grid">
             {industries.map((industry, i) => (
               <li
@@ -66,21 +47,8 @@ export default function WhoItsForPage() {
                   />
                 </span>
                 <div className="industry__text">
-                  <h3 className="industry__name">{industry.name}</h3>
-                  <dl className="industry__facts">
-                    <div>
-                      <dt>{labels.leads}</dt>
-                      <dd>{industry.leads}</dd>
-                    </div>
-                    <div>
-                      <dt>{labels.fresh}</dt>
-                      <dd>{industry.fresh}</dd>
-                    </div>
-                    <div>
-                      <dt>{labels.older}</dt>
-                      <dd>{industry.older}</dd>
-                    </div>
-                  </dl>
+                  <h2 className="industry__name">{industry.name}</h2>
+                  <p className="industry__outcome">{industry.outcome}</p>
                   <Link href={`/contact?industry=${encodeURIComponent(industry.formValue)}`} className="industry__go">
                     <span>
                       Talk to us<span className="sr-only"> about {industry.name.toLowerCase()}</span>

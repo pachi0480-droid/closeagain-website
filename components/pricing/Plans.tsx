@@ -2,31 +2,18 @@ import { Check, Minus } from 'lucide-react'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { Arrow } from '@/components/ui/links'
-import { comparison, plans, priceLabel, type Plan, type PlanId } from '@/content/pricing'
+import { billingNote, commitmentNote, comparison, plans, priceLabel, type Plan } from '@/content/pricing'
 import { CompareToggle } from './CompareToggle'
 
 const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }) as CSSProperties
 
-const introductions: Record<PlanId, { audience: string; description: string }> = {
-  core: {
-    audience: 'For consistent follow-up',
-    description: 'Give new inquiries and quiet leads a clear path back to a conversation.',
-  },
-  growth: {
-    audience: 'For appointment-led businesses',
-    description: 'Build follow-up around your process, with appointment workflows and custom sequences.',
-  },
-  scale: {
-    audience: 'For teams working leads together',
-    description: 'Bring your team, workflows and pipeline together as your operation grows.',
-  },
-  enterprise: {
-    audience: 'For more complex operations',
-    description: 'Multiple locations, custom integrations and permissions. A plan shaped around your business.',
-  },
-}
-
-/** Prices and feature lists are deliberately sourced from the shared pricing module. */
+/**
+ * The four plans, every word from content/pricing.ts. Core, Growth and Scale
+ * sit side by side with prices and buttons aligned; Enterprise is the dark
+ * band beneath. Each card leads with who it is for and its headline facts
+ * (users, locations, the defining extra) before the full feature list.
+ * Scale carries the emphasis: a vermilion edge, a lift, and the ribbon.
+ */
 export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
   return (
     <ol className={['plans', `plans--${variant}`].join(' ')}>
@@ -47,20 +34,33 @@ export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }
 
 function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }) {
   const headingId = `plan-${plan.id}-${variant}`
-  const introduction = introductions[plan.id]
   const enterprise = plan.id === 'enterprise'
   const features = variant === 'full' ? plan.features : plan.features.slice(0, 3)
 
   return (
     <article className="plan__card" aria-labelledby={headingId}>
-      {plan.recommendation && <p className="plan__flag">{plan.recommendation.label}</p>}
+      {plan.recommendation && (
+        <p className="plan__flag">
+          {plan.recommendation.label}
+          <svg className="plan__flag-tail" viewBox="0 0 28 12" aria-hidden="true" focusable="false">
+            <path d="M0 6h20M15 1.5 21 6l-6 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          </svg>
+        </p>
+      )}
       <div className="plan__intro">
-        <p className="plan__audience">{introduction.audience}</p>
+        <p className="plan__audience">{plan.audience}</p>
         <div className="plan__heading">
-          <h3 id={headingId} className="plan__name">{plan.name}</h3>
-          <span className="plan__mark" aria-hidden="true"><i /><i /><i /></span>
+          <h3 id={headingId} className="plan__name">
+            {plan.name}
+          </h3>
+          <span className="plan__mark" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
         </div>
-        <p className="plan__description">{introduction.description}</p>
+        <p className="plan__tagline">{plan.tagline}</p>
+        <p className="plan__description">{plan.bestFor}</p>
       </div>
 
       <div className="plan__purchase">
@@ -68,9 +68,14 @@ function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }
           <span className="plan__amount">{priceLabel(plan)}</span>
           {plan.monthly !== null && <span className="plan__per">/ month</span>}
         </p>
-        <p className="plan__billing">{enterprise ? 'Scope and pricing agreed together' : 'USD · billed monthly'}</p>
+        <p className="plan__billing">{enterprise ? 'Scope and pricing agreed together' : `${billingNote} · ${commitmentNote}`}</p>
+        <ul className="plan__highlights">
+          {plan.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
+          ))}
+        </ul>
         <Link href={plan.cta.href} className="plan__cta">
-          <span>{enterprise ? 'Let’s talk about your business' : `Explore ${plan.name}`}</span>
+          <span>{plan.cta.label}</span>
           <Arrow />
         </Link>
       </div>
@@ -85,9 +90,10 @@ function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }
             </li>
           ))}
         </ul>
-        {variant === 'full' && plan.recommendation && (
-          <p className="plan__reason">{plan.recommendation.basis}</p>
+        {variant === 'compact' && plan.features.length > features.length && (
+          <p className="plan__more">+ {plan.features.length - features.length} more</p>
         )}
+        {variant === 'full' && plan.recommendation && <p className="plan__reason">{plan.recommendation.basis}</p>}
       </div>
     </article>
   )

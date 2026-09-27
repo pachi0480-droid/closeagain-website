@@ -14,6 +14,7 @@ import {
   formatPrice,
   planById,
   planSummary,
+  planTerms,
   plans,
   priceLabel,
   startingMonthly,
@@ -68,10 +69,10 @@ describe('one source for prices', () => {
 })
 
 describe('plans are compared honestly', () => {
-  it('gives every plan an audience and a reason to step up', () => {
+  it('gives every plan an audience and the facts that set it apart', () => {
     for (const plan of plans) {
       assert.ok(plan.bestFor.length > 20, `${plan.name} needs a best-for sentence`)
-      assert.ok(plan.step.length > 20, `${plan.name} needs a step-up sentence`)
+      assert.ok(plan.highlights.length >= 3, `${plan.name} needs its headline facts`)
     }
   })
 
@@ -99,17 +100,16 @@ describe('plans are compared honestly', () => {
   })
 
   it('derives plan availability from the comparison', () => {
-    assert.equal(availability('New inquiry capture').summary, 'Every plan')
+    assert.equal(availability('New lead capture').summary, 'Every plan')
     assert.equal(availability('Appointment workflows').summary, 'Growth and up')
-    assert.equal(availability('Multi-user collaboration').summary, 'Scale and up')
-    assert.equal(availability('Multi-location support').summary, 'Enterprise')
-    assert.deepEqual(availability('Reporting level').levels, [
-      'Core: basic',
-      'Growth: advanced analytics',
-      'Scale: advanced reporting',
-      'Enterprise: custom reporting',
-    ])
+    assert.equal(availability('Team collaboration').summary, 'Scale and up')
+    assert.equal(availability('Custom dashboards').summary, 'Enterprise')
+    assert.deepEqual(availability('Users').levels, ['Core: 1', 'Growth: 3–5', 'Scale: 10+', 'Enterprise: custom'])
     assert.throws(() => availability('No such row'))
+  })
+
+  it('states the owner’s commercial terms', () => {
+    assert.deepEqual([...planTerms], [startingPriceText, 'Monthly billing', 'No annual commitment', 'Setup assistance included'])
   })
 })
 

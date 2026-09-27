@@ -16,11 +16,10 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Four plans, compared honestly. What every plan shares is said once; each
- * card leads with who it suits and what it adds; the details that depend on
- * the business are named as part of the proposal rather than invented; and
- * a break-even check lets visitors weigh the price against their own numbers.
- * Every price comes from content/pricing.ts.
+ * Four plans, easy to tell apart. What every plan shares is said once; each
+ * card leads with who it is for and its headline facts; the full comparison
+ * opens in place; and a break-even check lets visitors weigh the price
+ * against their own numbers. Every price comes from content/pricing.ts.
  */
 export default function PricingPage() {
   const { title, lede, common, proposal, compare, value, questions, closing } = pricingPage
@@ -63,19 +62,9 @@ export default function PricingPage() {
 
           <PlanCards />
 
-          <p className="pricing__decision-note">Choose a starting point. We’ll confirm the right plan, scope and terms with you before you commit.</p>
+          <p className="pricing__decision-note">{proposal}</p>
 
           <CompareMatrix openLabel={compare.open} closeLabel={compare.close} />
-
-          <div className="pricing__proposal">
-            <h3 className="pricing__proposal-title">{proposal.title}</h3>
-            <p className="pricing__proposal-body">{proposal.body}</p>
-            <ul className="pricing__proposal-list">
-              {proposal.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
 
         </div>
       </section>

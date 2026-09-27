@@ -2,31 +2,31 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 import { RibbonBand } from '@/components/art/Ribbon'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
-import { gettingStarted } from '@/content/pages'
+import { afterYouBuy } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = pageMetadata({
-  title: gettingStarted.meta.title,
-  description: gettingStarted.meta.description,
-  path: '/getting-started',
+  title: afterYouBuy.meta.title,
+  description: afterYouBuy.meta.description,
+  path: '/after-you-buy',
 })
 
 /**
- * The real sequence, in order: inquiry, fit and scope, approval of plan and
- * terms, setup, review, launch. Nothing here suggests a purchase has already
- * happened, and nothing promises a timeline.
+ * Six plain steps from choosing a plan to going live. Setup assistance is
+ * included, nothing goes live before the customer reviews it, and no
+ * timeline is promised.
  */
-export default function GettingStartedPage() {
-  const { steps, included, timing, needs, closing } = gettingStarted
+export default function AfterYouBuyPage() {
+  const { steps, included, timing, needs, closing } = afterYouBuy
 
   return (
     <>
-      <PageIntro eyebrow={gettingStarted.eyebrow} title={gettingStarted.title} lede={gettingStarted.lede} />
+      <PageIntro eyebrow={afterYouBuy.eyebrow} title={afterYouBuy.title} lede={afterYouBuy.lede} />
 
       <section className="onboarding" aria-labelledby="onboarding-title">
         <div className="wrap">
           <h2 id="onboarding-title" className="sr-only">
-            From inquiry to launch
+            Setup steps
           </h2>
           <div className="onboarding__track">
             <RibbonBand className="onboarding__band" />

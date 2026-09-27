@@ -625,506 +625,328 @@
   }
 }
 
-/* ── The worked example: one lead, one thread ──────────────────────────── */
+/* ── From lead to customer: one lead's morning, in the product ─────────── */
 
-.example {
+.flow {
   padding-block: var(--section-y);
   border-top: 1px solid var(--rule);
 }
 
-.example__head {
-  max-width: 46rem;
-  margin-bottom: clamp(2.25rem, 5vw, 3.75rem);
+.flow__inner {
+  display: grid;
+  gap: clamp(2.25rem, 5vw, 3.5rem);
 }
 
-.example__title {
+.flow__title,
+.followup__title,
+.second__title {
   margin: 0;
+  max-width: 12em;
   font-size: var(--display-m);
-  line-height: 1.02;
+  line-height: 1.04;
   letter-spacing: -0.035em;
 }
 
-.example__lede {
-  max-width: 36rem;
+.flow__body,
+.followup__body,
+.second__body {
+  max-width: 30rem;
   margin: 1.25rem 0 0;
   font-size: var(--text-lede);
   line-height: 1.45;
   color: var(--ink-2);
 }
 
-/* Wide screens: the explanation sits beside the title, as in the two jobs. */
-@media (min-width: 1100px) {
-  .example__head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
-    column-gap: clamp(3rem, 6vw, 6rem);
-    align-items: end;
-    max-width: none;
-  }
-
-  .example__head .eyebrow {
-    grid-column: 1 / -1;
-  }
-
-  .example__title {
-    grid-row: 2 / span 2;
-  }
-
-  .example__lede {
-    margin: 0;
-  }
-}
-
-.example__disclaimer {
+.flow__note {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.35rem 0.65rem;
   margin: 1rem 0 0;
   font-size: var(--text-xs);
-  line-height: 1.45;
   color: var(--ink-3);
 }
 
-/* The board: notes on the paper, the thread in a product card. On small
-   screens it is one column with the ribbon down the left; from 1024px the
-   notes sit beside the thread they explain. */
-.example__board {
+.flow__card {
   --rw: 8px;
-  --rail-x: 1rem; /* centre of the ribbon, from the start of the thread */
-  position: relative;
+  --time-w: 4.6rem;
 }
 
-.example__lead {
-  position: sticky;
-  top: calc(var(--header-h) + 0.5rem);
-  z-index: 3;
+.flow__bar-title {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.flow__lead {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.7rem 0.9rem;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.example__avatar {
-  flex: none;
-}
-
-.example__lead-text {
+.flow__lead-text {
   display: grid;
   min-width: 0;
 }
 
-.example__lead-name {
+.flow__lead-name {
   font-weight: 600;
-  font-size: 1rem;
   line-height: 1.25;
 }
 
-.example__lead-context {
+.flow__lead-context {
   font-size: var(--ui-xs);
-  line-height: 1.35;
   color: var(--ink-3);
 }
 
-.example__chip {
-  display: none;
+.flow__status {
   flex: none;
   margin-left: auto;
-}
-
-.example__chip[data-ready] {
-  display: inline-flex;
-}
-
-.example__chip-text {
   padding: 0.3rem 0.7rem;
   border-radius: var(--radius-pill);
-  background: var(--bubble-blush);
-  color: var(--vermilion-ink);
-  font-size: var(--ui-xs);
-  font-weight: 600;
-  line-height: 1.2;
-  white-space: nowrap;
-  animation: chip-in var(--dur-state) var(--ease-ui);
-}
-
-.example__chip-text[data-final] {
   background: var(--positive-wash);
   color: var(--positive);
-}
-
-@keyframes chip-in {
-  from {
-    opacity: 0;
-    translate: 0 3px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .example__chip-text {
-    animation: none;
-  }
-}
-
-.example__thread {
-  position: relative;
-}
-
-.example__steps {
-  position: relative;
-  display: grid;
-  gap: clamp(1.4rem, 3vw, 1.75rem);
-  margin: 0;
-  padding: 1.5rem 0 0.5rem;
-  list-style: none;
-}
-
-.example__rail {
-  z-index: 1;
-  top: 2.2rem;
-  bottom: 1rem;
-  left: calc(var(--rail-x) - var(--rw) / 2);
-}
-
-.example__step {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 0.65rem;
-  padding-left: calc(var(--rail-x) * 2 + 0.9rem);
-}
-
-.example__node {
-  position: absolute;
-  top: 0;
-  left: calc(var(--rail-x) - 0.95rem);
-  display: inline-grid;
-  place-items: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  border-radius: 50%;
-  background: var(--surface);
-  border: 1px solid var(--line-strong);
-  color: var(--ink-2);
-}
-
-.example__step--auto .example__node {
-  background: var(--vermilion);
-  border-color: var(--vermilion);
-  color: #fff;
-}
-
-.example__step--gap .example__node {
-  background: var(--surface-3);
-  color: var(--ink-3);
-}
-
-.example__step--team .example__node {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
-}
-
-.example__who {
-  margin: 0 0 0.2rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.example__step--auto .example__who {
-  color: var(--vermilion-ink);
-}
-
-.example__step--team .example__who {
-  color: var(--ink);
-}
-
-.example__step-title {
-  margin: 0;
-  font-size: clamp(1.2rem, 1.1rem + 0.35vw, 1.35rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-}
-
-.example__step-body {
-  max-width: 34rem;
-  margin: 0.3rem 0 0;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-
-.example__event {
-  display: grid;
-  justify-items: start;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.example__msg {
-  width: min(100%, 34rem);
-  padding: 0.7rem 0.95rem 0.8rem;
-  border-radius: 14px;
-  background: var(--bubble);
-}
-
-.example__msg--in {
-  background: var(--bubble-blush);
-}
-
-.example__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.6rem;
-  margin: 0 0 0.3rem;
   font-size: var(--ui-xs);
-  line-height: 1.35;
-  color: var(--ink-3);
-}
-
-.example__step--auto .example__tag {
-  color: var(--vermilion-ink);
   font-weight: 600;
-}
-
-.example__text {
-  margin: 0;
-  font-size: 1.0625rem;
-  line-height: 1.45;
-  color: var(--ink);
-}
-
-/* The lead's status after this step, in words — the static record. */
-.example__status {
-  margin-left: auto;
-  padding: 0.1rem 0.5rem;
-  border: 1px solid var(--ink-hairline);
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.35;
   white-space: nowrap;
+  transition:
+    background-color var(--dur-state) var(--ease-ui),
+    color var(--dur-state) var(--ease-ui);
+}
+
+.flow__status[data-tone='ink'] {
+  background: var(--surface-2);
   color: var(--ink-2);
 }
 
-.example__gap {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: min(100%, 34rem);
-  margin: 0.3rem 0 0;
+.flow__status[data-tone='red'] {
+  background: var(--bubble-blush);
+  color: var(--vermilion-ink);
 }
 
-.example__gap-text {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: var(--ui-sm);
-  font-style: italic;
-  color: var(--ink-3);
+.flow__timeline {
+  position: relative;
+  padding: 1.35rem 1.25rem 0.75rem;
 }
 
-.example__gap-text::after {
-  content: '';
-  flex: 1;
-  min-width: 1.5rem;
-  border-top: 1px dashed var(--line-strong);
+.flow__rail {
+  top: 2rem;
+  bottom: 2.6rem;
+  left: calc(1.25rem + var(--time-w) + 0.9rem + 0.95rem - var(--rw) / 2);
 }
 
-.example__gap .example__status {
-  margin-left: 0;
-}
-
-.example__card {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.3rem 0.75rem;
-  width: min(100%, 34rem);
-  margin: 0;
-  padding: 0.7rem 0.95rem;
-  border: 1px solid var(--positive-line);
-  border-radius: var(--radius-md);
-  background: var(--positive-wash);
-  color: var(--positive);
-  font-size: 1rem;
-}
-
-.example__card-text {
-  font-weight: 600;
-}
-
-.example__card .example__when {
-  font-size: var(--ui-xs);
-}
-
-.example__card .example__status {
-  border-color: color-mix(in srgb, var(--positive) 35%, transparent);
-  color: var(--positive);
-}
-
-.example__card--team {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.example__card--team .example__status {
-  border-color: color-mix(in srgb, var(--paper) 35%, transparent);
-  color: var(--paper);
-}
-
-.example__outcome {
+.flow__events {
+  position: relative;
   display: grid;
-  gap: 0.85rem;
-  max-width: 46rem;
-  margin: clamp(2.5rem, 5vw, 3.75rem) auto 0;
-  text-align: center;
-}
-
-.example__outcome-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.4rem + 1.3vw, 2.5rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-.example__outcome-body {
-  max-width: 40rem;
-  margin: 0 auto;
-  font-size: var(--text-lede);
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-
-@media (min-width: 1024px) {
-  .example__board {
-    --note: 21rem;
-    --gap: clamp(2.5rem, 4vw, 4rem);
-    --thread-x: calc(var(--note) + var(--gap));
-    --rail-x: 2.1rem;
-  }
-
-  .example__lead {
-    margin-left: var(--thread-x);
-    padding: 0.9rem 1.5rem;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    box-shadow: none;
-  }
-
-  /* The thread card: one surface behind every event. */
-  .example__thread::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 0 var(--thread-x);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-top: 0;
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-    box-shadow: var(--shadow-soft);
-  }
-
-  .example__steps {
-    gap: 1.6rem;
-    padding: 1.75rem 0 2rem;
-  }
-
-  .example__rail {
-    top: 2.6rem;
-    bottom: 2.5rem;
-    left: calc(var(--thread-x) + var(--rail-x) - var(--rw) / 2);
-    z-index: 1;
-  }
-
-  .example__step {
-    grid-template-columns: var(--note) minmax(0, 1fr);
-    column-gap: var(--gap);
-    align-items: start;
-    padding-left: 0;
-  }
-
-  .example__note {
-    text-align: right;
-  }
-
-  .example__step-body {
-    margin-left: auto;
-  }
-
-  .example__event {
-    position: relative;
-    padding: 0 2rem 0 calc(var(--rail-x) * 2 + 1rem);
-  }
-}
-
-/* ── Four jobs, one line each ──────────────────────────────────────────── */
-
-.jobs {
-  display: grid;
-  gap: 2.25rem;
+  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.jobs__item {
+.flow__event {
   display: grid;
-  align-content: start;
-  justify-items: start;
-  gap: 0.6rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--rule-strong);
+  grid-template-columns: var(--time-w) auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.9rem;
+  transition: opacity var(--dur-state) var(--ease-ui);
 }
 
-.jobs__num {
-  font-size: var(--text-xs);
+.flow__time {
+  padding-top: 0.55rem;
+  text-align: right;
+  font-size: var(--ui-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.flow__node {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-2);
+  transition:
+    background-color var(--dur-state) var(--ease-ui),
+    border-color var(--dur-state) var(--ease-ui),
+    color var(--dur-state) var(--ease-ui);
+}
+
+.flow__event-body {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.flow__event-title {
+  font-size: var(--ui-base);
   font-weight: 600;
-  letter-spacing: 0.14em;
+}
+
+.flow__event-detail {
+  font-size: var(--ui-sm);
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.flow__event--red .flow__node {
+  border-color: var(--vermilion);
+  background: var(--vermilion);
+  color: #fff;
+}
+
+.flow__event--red .flow__event-body {
+  border-color: var(--blush-line);
+  background: var(--blush-surface);
+}
+
+.flow__event--red .flow__event-title {
   color: var(--vermilion-ink);
 }
 
-.jobs__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--display-xs);
-  line-height: 1.1;
-  letter-spacing: var(--tracking-display);
-  color: var(--ink);
+.flow__event--positive .flow__node {
+  border-color: var(--positive-line);
+  background: var(--positive-wash);
+  color: var(--positive);
 }
 
-.jobs__body {
+.flow__event--positive .flow__event-body {
+  border-color: var(--positive-line);
+  background: var(--positive-wash);
+}
+
+/* While the scroll story plays, events not reached yet wait quietly. */
+.flow__event[data-pending] {
+  opacity: 0.32;
+}
+
+.flow__event[data-pending] .flow__node {
+  border-color: var(--line);
+  background: var(--surface-3);
+  color: var(--ink-3);
+}
+
+.flow__handoff {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.55;
+  padding: 0.95rem 1.25rem 1.1rem;
+  border-top: 1px solid var(--line);
+  font-size: var(--ui-sm);
   color: var(--ink-2);
 }
 
-.jobs__link {
-  font-size: 1rem;
-}
+@media (max-width: 479px) {
+  .flow__card {
+    --time-w: 3.4rem;
+  }
 
-@media (min-width: 720px) {
-  .jobs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3rem 2.5rem;
+  .flow__timeline {
+    padding-inline: 0.85rem;
+  }
+
+  .flow__rail {
+    left: calc(0.85rem + var(--time-w) + 0.6rem + 0.95rem - var(--rw) / 2);
+  }
+
+  .flow__event {
+    gap: 0.6rem;
   }
 }
 
-@media (min-width: 1180px) {
-  .jobs {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 2rem;
+@media (min-width: 960px) {
+  .flow__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+    column-gap: clamp(3rem, 6vw, 6rem);
+  }
+}
+
+/* ── Follow up without living in your inbox ────────────────────────────── */
+
+.followup {
+  position: relative;
+  overflow: clip;
+  padding-block: var(--section-y);
+}
+
+.followup__ribbon {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+
+.followup__inner {
+  display: grid;
+  gap: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+.followup__copy {
+  order: -1;
+}
+
+@media (min-width: 960px) {
+  .followup__ribbon {
+    display: block;
+  }
+
+  .followup__inner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    column-gap: clamp(3rem, 7vw, 7rem);
+  }
+
+  .followup__copy {
+    order: 0;
+  }
+}
+
+/* ── Some conversations just need another chance ───────────────────────── */
+
+.second {
+  overflow-x: clip;
+  padding-block: var(--section-y);
+  border-top: 1px solid var(--rule);
+}
+
+.second__inner {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+}
+
+.second__ui {
+  position: relative;
+  margin-inline: clamp(0rem, 4vw, 2rem) 0;
+}
+
+.second__ribbon {
+  position: absolute;
+  z-index: -1;
+  left: -40%;
+  top: 50%;
+  width: 150%;
+  height: auto;
+  aspect-ratio: 1000 / 600;
+  translate: 0 -50%;
+}
+
+@media (min-width: 960px) {
+  .second__inner {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    column-gap: clamp(3rem, 7vw, 7rem);
   }
 }
 
@@ -1181,7 +1003,7 @@
 .control__foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.3rem; }
 .control__foot p { display: flex; gap: .6rem; align-items: center; font-size: .9375rem; color: var(--ink-3); margin: 0; }
 .paths__stage { margin-top: clamp(2rem, 4vw, 3.5rem); }
-.paths__outcome { font-size: clamp(2.25rem, 4vw, 3.75rem); }
+.paths__outcome { font-size: var(--display-l); }
 .paths__outcome span { display: inline; }
 .paths__outcome span + span::before { content: ' '; }
 @media (max-width: 759px) {

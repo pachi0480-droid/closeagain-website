@@ -1,9 +1,9 @@
 /**
  * Copy for the inquiry (/contact) and its confirmation (/thank-you).
  *
- * /contact starts a conversation, not a checkout. The real sequence is:
- * inquiry → fit and scope discussion → the customer approves the plan and
- * terms → setup → review → launch. Say only what is true at each point: never
+ * /contact is the buying inquiry: plan and details now, then setup confirmed
+ * with the customer, tools connected, review, launch. Nothing is charged on
+ * the site. Say only what is true at each point: never
  * claim a meeting was booked, a payment was taken, an email was sent, or a
  * response time. Prices come from content/pricing.ts and nowhere else.
  */
@@ -13,23 +13,18 @@ import { primaryCta, site } from './site.ts'
 
 export const contact = {
   meta: {
-    title: 'Let’s talk about your leads',
-    description: `Tell us about your business and how leads reach you. We’ll talk through fit, scope and which plan makes sense. ${startingPriceText}.`,
+    title: 'Contact to buy',
+    description: `Choose a plan and tell us about your business. ${startingPriceText}, monthly billing, no annual commitment, setup assistance included.`,
   },
-  eyebrow: 'A conversation, not a commitment',
-  title: 'Let’s talk about your leads.',
-  lede: 'New inquiries slipping through? Older leads going quiet? Tell us where follow-up gets stuck. We’ll help you explore the right next step for your business.',
+  eyebrow: 'Contact to buy',
+  title: 'Ready to close more conversations?',
+  lede: 'Tell us about your business and the plan you want. We’ll confirm the right setup and get CloseAgain running for you.',
   terms: planTerms,
   next: {
     title: 'What happens next',
-    steps: [
-      'You send a few details',
-      'We talk through fit and scope',
-      'You review the plan and terms',
-      'We set up CloseAgain with you',
-    ],
+    steps: ['Send your information', 'We confirm the setup', 'Connect your tools', 'Launch CloseAgain'],
   },
-  process: { label: 'See the full getting-started process', href: '/getting-started' },
+  process: { label: 'What happens after you buy', href: '/after-you-buy' },
   form: {
     submit: 'Send my details',
     guidance: 'No payment is taken here. Please don’t include sensitive information.',
@@ -66,22 +61,22 @@ export const thankYou = {
       title: 'What happens next',
       steps: [
         'We review what you sent.',
-        'We contact you at the email you gave to talk through fit, scope and setup.',
-        'If CloseAgain is a fit, you review the plan and terms before anything starts.',
+        'We contact you at the email you gave to confirm your plan and setup.',
+        'You review everything before CloseAgain goes live.',
       ],
     },
     payment: 'No payment has been taken.',
     actions: {
-      primary: { label: 'How getting started works', href: '/getting-started' },
+      primary: { label: 'What happens after you buy', href: '/after-you-buy' },
       secondary: { label: 'Back to home', href: '/' },
     },
   },
   /** A direct visit, or an expired or unreadable receipt. Claims nothing. */
   neutral: {
-    meta: { title: 'Find the right plan' },
+    meta: { title: 'Contact to buy' },
     eyebrow: 'CloseAgain',
-    title: 'Let’s find the right plan.',
-    body: 'Tell us about your business and we’ll talk through fit, scope and pricing.',
+    title: 'Ready to close more conversations?',
+    body: 'Choose a plan and tell us about your business. We’ll confirm the right setup.',
     actions: {
       primary: primaryCta,
       secondary: { label: 'See pricing', href: '/pricing' },

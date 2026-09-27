@@ -10,7 +10,7 @@ const routes: Array<{ path: string; priority: number }> = [
   { path: '/features', priority: 0.9 },
   { path: '/who-its-for', priority: 0.8 },
   { path: '/contact', priority: 0.8 },
-  { path: '/getting-started', priority: 0.6 },
+  { path: '/after-you-buy', priority: 0.6 },
   { path: '/faq', priority: 0.6 },
   { path: '/about', priority: 0.5 },
   ...(privacy.status === 'approved' ? [{ path: '/privacy', priority: 0.2 }] : []),

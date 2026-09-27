@@ -32,7 +32,7 @@ export default function FeaturesPage() {
         </nav>
       </PageIntro>
 
-      <section className="trail-section" aria-label="Features, job by job">
+      <section className="trail-section trail-section--features" aria-label="Features, job by job">
         <div className="wrap">
           <Trail
             id="features"

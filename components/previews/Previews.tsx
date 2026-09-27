@@ -125,10 +125,9 @@ function IntakePreview() {
 /* ── Sequence: scheduled follow-ups, a reply, and what happens next ────── */
 
 function SequencePreview() {
-  const steps = [
-    { when: 'Instantly', title: 'Welcome message', state: 'Sent · 9:13 AM', icon: Send, tone: 'ink' as const },
-    { when: 'Day 1 · 9:00 AM', title: 'Follow-up #1', state: 'Sent', icon: Send, tone: 'ink' as const },
-    { when: 'Day 3 · 10:00 AM', title: 'Follow-up #2', state: 'Scheduled', icon: Clock, tone: 'cold' as const },
+  const sent = [
+    { when: 'Instantly', title: 'Welcome message', state: 'Sent · 9:13 AM' },
+    { when: 'Day 1 · 9:00 AM', title: 'Follow-up #1', state: 'Sent' },
   ]
   return (
     <Frame title="Automation · New lead follow-up" className="pv--sequence">
@@ -137,25 +136,31 @@ function SequencePreview() {
         <span className="pv-toolbar__meta">3 steps · stops when the lead replies</span>
       </div>
       <ol className="pv-steps">
-        {steps.map((step, i) => (
+        {sent.map((step, i) => (
           <li key={step.title} className="pv-step" style={stagger(i)} data-scroll="rise">
-            <IconChip icon={step.icon} tone={step.tone} />
+            <IconChip icon={Send} tone="ink" />
             <span className="pv-step__main">
               <span className="pv-step__when">{step.when}</span>
               <span className="pv-step__title">{step.title}</span>
             </span>
-            <span className={['ui-badge', step.tone === 'cold' ? 'ui-badge--cold' : 'ui-badge--plain'].join(' ')}>
-              {step.state}
-            </span>
+            <span className="ui-badge ui-badge--plain">{step.state}</span>
           </li>
         ))}
-        <li className="pv-step pv-step--reply" style={stagger(3)} data-scroll="rise">
+        <li className="pv-step pv-step--reply" style={stagger(2)} data-scroll="rise">
           <IconChip icon={MessageSquareReply} tone="red" />
           <span className="pv-step__main">
             <span className="pv-step__when">Day 2 · 4:41 PM</span>
-            <span className="pv-step__title">Reply detected — sequence paused</span>
+            <span className="pv-step__title">Reply detected — sequence stopped</span>
           </span>
           <span className="ui-badge ui-badge--red">Reply</span>
+        </li>
+        <li className="pv-step" style={stagger(3)} data-scroll="rise">
+          <IconChip icon={Clock} tone="cold" />
+          <span className="pv-step__main">
+            <span className="pv-step__when">Day 3 · 10:00 AM</span>
+            <span className="pv-step__title">Follow-up #2</span>
+          </span>
+          <span className="ui-badge ui-badge--cold">Not needed</span>
         </li>
         <li className="pv-step" style={stagger(4)} data-scroll="rise">
           <IconChip icon={ArrowRight} tone="ink" />
@@ -174,10 +179,8 @@ function SequencePreview() {
         </li>
       </ol>
       <div className="pv-message" data-scroll="rise" style={stagger(2)}>
-        <span className="pv-message__label">Sent message</span>
-        <p className="pv-message__text">
-          “Hi Jordan — just checking in. Would a quick call this week help you decide?”
-        </p>
+        <span className="pv-message__label">Sent message · Follow-up #1</span>
+        <p className="pv-message__text">“Hi Jordan — just checking in. Would a quick call this week help you decide?”</p>
       </div>
     </Frame>
   )

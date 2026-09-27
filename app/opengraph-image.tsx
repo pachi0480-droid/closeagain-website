@@ -6,7 +6,7 @@ import { join } from 'node:path'
  * bubbles — rendered once from the site's own fonts and ribbon geometry and
  * stored as og-card.jpg. Re-render it if the hero changes.
  */
-export const alt = 'CloseAgain — The conversation isn’t over.'
+export const alt = 'CloseAgain — The conversation isn’t over. Turn more of the leads you already have into paying customers.'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/jpeg'
 

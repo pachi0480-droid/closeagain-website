@@ -39,6 +39,7 @@ export function LeadForm({
   guidance,
   initialPlan,
   initialIndustry,
+  emailTo,
 }: {
   kind: FormKind
   fields: readonly FieldDefinition[]
@@ -46,6 +47,11 @@ export function LeadForm({
   guidance: string
   initialPlan?: string
   initialIndustry?: string
+  /**
+   * Set while no delivery destination is connected: a valid form opens the
+   * visitor's email app with the details filled in, addressed here.
+   */
+  emailTo?: string
 }) {
   const router = useRouter()
   const [state, dispatch] = useReducer(formReducer, initialFormState)
@@ -57,6 +63,7 @@ export function LeadForm({
     () => new URLSearchParams(window.location.search).get('plan') ?? initialPlan ?? '',
     () => initialPlan ?? '',
   )
+  const [emailOpened, setEmailOpened] = useState(false)
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
   const detailsRef = useRef<HTMLDetailsElement>(null)
@@ -117,6 +124,25 @@ export function LeadForm({
     if (!checked.ok) {
       flushSync(() => dispatch({ type: 'client-invalid', errors: checked.errors }))
       focusFirstInvalid(checked.errors)
+      return
+    }
+
+    if (emailTo) {
+      // Hand the details to the visitor's own email app. Nothing is sent by
+      // the site, and nothing is claimed: they review the draft and send it.
+      const lines = fields.map((field) => {
+        const value = checked.values[field.name]
+        const shown = field.options?.find((option) => option.value === value)?.label ?? value
+        return `${field.label}: ${shown || '—'}`
+      })
+      const chosenPlan = planById(checked.values.plan)
+      const subject = `CloseAgain — ${chosenPlan ? `${chosenPlan.name} ` : ''}inquiry from ${checked.values.business}`
+      window.location.href = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+        `Hi CloseAgain,\n\n${lines.join('\n')}\n`,
+      )}`
+      flushSync(() => dispatch({ type: 'reset' }))
+      setEmailOpened(true)
+      statusRef.current?.focus()
       return
     }
 
@@ -250,7 +276,7 @@ export function LeadForm({
           {formMessages.returned.invalid}
         </p>
         <p id={fallbackIds.unavailable} className="form-note form-note--problem">
-          {formMessages.unavailable}
+          {emailTo ? formMessages.email.returned(emailTo) : formMessages.unavailable}
         </p>
         <p id={fallbackIds.failed} className="form-note form-note--problem">
           {formMessages.returned.failed}
@@ -302,6 +328,9 @@ export function LeadForm({
         aria-live="polite"
         tabIndex={-1}
       >
+        {emailOpened && state.status === 'idle' && emailTo && (
+          <p className="form-status__message">{formMessages.email.opened(emailTo)}</p>
+        )}
         {state.message && state.status !== 'idle' && (
           <p className="form-status__message">
             {tone === 'problem' && (

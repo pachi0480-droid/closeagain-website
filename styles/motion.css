@@ -22,6 +22,26 @@
   }
 }
 
+@keyframes header-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+@keyframes rise-line {
+  from {
+    opacity: 0;
+    translate: 0 0.22em;
+  }
+}
+
+@keyframes settle-in {
+  from {
+    translate: 0 10px;
+  }
+}
+
 @keyframes draw {
   from {
     stroke-dashoffset: 1;
@@ -47,19 +67,46 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* ── 1. Homepage: the decoration arrives, the content is already there ── */
+  /* ── 1. The homepage opening, once per session ───────────────────────── */
 
-  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
-    animation: draw 1700ms cubic-bezier(0.3, 0.05, 0.18, 1) 100ms backwards;
+  /* Navigation and the headline arrive first, line by line. */
+  html:not([data-intro='seen']) body:has(.hero) .site-header__inner {
+    animation: header-in 520ms var(--ease-editorial) both;
   }
 
-  /* The bubbles follow the ribbon to the end of its run. */
+  html:not([data-intro='seen']) .hero__row--1 {
+    animation: rise-line 760ms var(--ease-editorial) 80ms both;
+  }
+
+  html:not([data-intro='seen']) .hero__row--2 {
+    animation: rise-line 760ms var(--ease-editorial) 220ms both;
+  }
+
+  /* Then the ribbon draws across and reaches the conversation. */
+  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
+    animation: draw 1500ms cubic-bezier(0.3, 0.05, 0.18, 1) 320ms backwards;
+  }
+
   html:not([data-intro='seen']) .hero__bubble--ask {
-    animation: settle 400ms var(--ease-editorial) 1050ms backwards;
+    animation: settle 420ms var(--ease-editorial) 1180ms backwards;
   }
 
   html:not([data-intro='seen']) .hero__bubble--reply {
-    animation: settle 450ms var(--ease-editorial) 1480ms backwards;
+    animation: settle 460ms var(--ease-editorial) 1480ms backwards;
+  }
+
+  /* The explanation and the calls to action settle into place — moved, never
+     hidden, so they are readable and clickable from the first frame. */
+  html:not([data-intro='seen']) :is(.hero__category, .hero__lede, .hero__actions, .hero__terms) {
+    animation: settle-in 820ms var(--ease-editorial) 360ms backwards;
+  }
+
+  html:not([data-intro='seen']) .hero__actions {
+    animation-delay: 440ms;
+  }
+
+  html:not([data-intro='seen']) .hero__terms {
+    animation-delay: 520ms;
   }
 
   /* ── 2. One-time reveals ─────────────────────────────────────────────── */

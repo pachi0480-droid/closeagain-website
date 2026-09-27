@@ -199,7 +199,7 @@ export const planTerms = [startingPriceText, billingNote, commitmentNote, setupN
  * What a proposal still settles before anything is billed — the only plan
  * facts not published yet (docs/open-questions.md).
  */
-export const proposalCovers = ['Your exact usage allowance, and what happens above it', 'Any messaging or usage fees'] as const
+export const proposalCovers = ['your exact usage allowance', 'what happens above it', 'any messaging or usage fees'] as const
 
 /**
  * The comparison, row by row, in the owner's own terms. `true` = included,

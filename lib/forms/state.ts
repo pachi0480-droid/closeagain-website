@@ -25,11 +25,15 @@ export type FormAction =
   | { type: 'client-invalid'; errors: FieldErrors }
   | { type: 'outcome'; outcome: SubmitOutcome }
   | { type: 'field-checked'; name: string; error: string | null }
+  /** Back to a clean slate — used once the details were handed to an email draft. */
+  | { type: 'reset' }
 
 export const initialFormState: FormState = { status: 'idle', errors: {}, message: null }
 
 export function formReducer(state: FormState, action: FormAction): FormState {
   switch (action.type) {
+    case 'reset':
+      return initialFormState
     case 'submit':
       if (state.status === 'submitting' || state.status === 'success') return state
       return { status: 'submitting', errors: {}, message: formMessages.submitting }

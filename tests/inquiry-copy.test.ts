@@ -8,6 +8,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
 import { contact, thankYou } from '../content/contact.ts'
+import { formMessages } from '../content/forms.ts'
 import { planById, planSummary, planTerms, startingPriceText } from '../content/pricing.ts'
 import { primaryCta, site } from '../content/site.ts'
 
@@ -17,7 +18,6 @@ const ownedFiles = [
   'content/forms.ts',
   'components/forms/FormPage.tsx',
   'components/forms/LeadForm.tsx',
-  'components/forms/DirectEmailCard.tsx',
   'app/(marketing)/contact/page.tsx',
   'app/(marketing)/thank-you/page.tsx',
   'app/api/forms/[kind]/route.ts',
@@ -54,23 +54,29 @@ describe('prices', () => {
 })
 
 describe('contact page copy', () => {
-  it('names one honest next step: an inquiry, not a checkout', () => {
-    assert.match(contact.meta.title, /talk about your leads/i)
-    assert.match(contact.eyebrow, /conversation, not a commitment/i)
-    assert.match(contact.title, /talk about your leads/i)
-    assert.match(contact.lede, /follow-up/i)
+  it('reads as buying, and says plainly that nothing is charged here', () => {
+    assert.equal(contact.meta.title, 'Contact to buy')
+    assert.equal(contact.eyebrow, 'Contact to buy')
+    assert.equal(contact.title, 'Ready to close more conversations?')
     assert.deepEqual(contact.next.steps, [
-      'You send a few details',
-      'We talk through fit and scope',
-      'You review the plan and terms',
-      'We set up CloseAgain with you',
+      'Send your information',
+      'We confirm the setup',
+      'Connect your tools',
+      'Launch CloseAgain',
     ])
-    assert.deepEqual(contact.process, { label: 'See the full getting-started process', href: '/getting-started' })
+    assert.deepEqual(contact.process, { label: 'What happens after you buy', href: '/after-you-buy' })
     assert.equal(contact.form.submit, 'Send my details')
-    assert.equal(contact.form.guidance, 'No payment is taken here. Please don’t include sensitive information.')
+    assert.match(contact.form.guidance, /No payment is taken here/)
     assert.equal(contact.email.address, site.email)
-    assert.match(contact.email.note, /Opens a draft in your email app/)
-    assert.match(contact.email.note, /press send/)
+  })
+
+  it('hands details to an email draft without claiming anything was sent', () => {
+    assert.match(formMessages.email.guidance, /you press send/)
+    assert.match(formMessages.email.guidance, /No payment is taken here/)
+    for (const text of [formMessages.email.opened(site.email), formMessages.email.returned(site.email)]) {
+      assert.ok(text.includes(site.email), text)
+      assert.doesNotMatch(text, /\b(we (have )?(sent|received)|we’ve (sent|received)|thank you|thanks)\b/i, text)
+    }
   })
 })
 
@@ -97,8 +103,8 @@ describe('confirmation copy', () => {
 
   it('stays neutral without a receipt', () => {
     const neutral = thankYou.neutral
-    assert.equal(neutral.title, 'Let’s find the right plan.')
-    assert.equal(neutral.body, 'Tell us about your business and we’ll talk through fit, scope and pricing.')
+    assert.equal(neutral.title, 'Ready to close more conversations?')
+    assert.equal(neutral.body, 'Choose a plan and tell us about your business. We’ll confirm the right setup.')
     assert.deepEqual(neutral.actions.primary, primaryCta)
     assert.deepEqual(neutral.actions.secondary, { label: 'See pricing', href: '/pricing' })
     for (const text of strings(neutral)) {

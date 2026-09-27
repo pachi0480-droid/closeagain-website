@@ -392,23 +392,6 @@
   color: var(--ink-2);
 }
 
-/* Wide screens: the explanation sits beside the three-line title. */
-@media (min-width: 1100px) {
-  .paths__head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
-    column-gap: clamp(3rem, 6vw, 6rem);
-    align-items: end;
-  }
-
-  .paths__head .eyebrow {
-    grid-column: 1 / -1;
-  }
-
-  .paths__lede {
-    margin: 0 0 0.5rem;
-  }
-}
 
 .paths__stage {
   container-type: inline-size;
@@ -991,6 +974,7 @@
 .control { border-top: 1px solid var(--rule); }
 .control__head { display: grid; grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3.5rem; }
 .control__lede { color: var(--ink-3); max-width: 23rem; margin: 0 0 .4rem; font-size: var(--text-lede); }
+.control__line { display: block; }
 .control__grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .control__item { padding: 2.5rem 2.5rem 2.8rem; }
 .control__item:first-child { padding-left: 0; }

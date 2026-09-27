@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { Control } from '@/components/home/Control'
 import { ProductPreview } from '@/components/previews/Previews'
 import { howItWorks } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
@@ -51,6 +52,8 @@ export default function HowItWorksPage() {
           />
         </div>
       </section>
+
+      <Control />
 
       <ClosingCta
         id="closing-title"

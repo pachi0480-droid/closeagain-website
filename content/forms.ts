@@ -76,16 +76,31 @@ export const planOptions: readonly FieldOption[] = [
   ...plans.map((plan) => ({ value: plan.id, label: planSummary(plan) })),
 ]
 
+/**
+ * The buying form, in reading order: who you are, how to reach you, your
+ * business, your plan and goal. Only name, business, email and goal are
+ * required; the plan defaults to “not sure”.
+ */
 export const inquiryFields: readonly FieldDefinition[] = [
   {
     name: 'name',
-    label: 'Your name',
+    label: 'Full name',
     kind: 'text',
     required: true,
     max: 120,
     autoComplete: 'name',
     half: true,
     messages: { required: 'Please enter your name.' },
+  },
+  {
+    name: 'business',
+    label: 'Business name',
+    kind: 'text',
+    required: true,
+    max: 160,
+    autoComplete: 'organization',
+    half: true,
+    messages: { required: 'Please enter your business name.' },
   },
   {
     name: 'email',
@@ -101,13 +116,60 @@ export const inquiryFields: readonly FieldDefinition[] = [
     },
   },
   {
-    name: 'business',
-    label: 'Business name or website',
+    name: 'phone',
+    label: 'Phone',
+    kind: 'tel',
+    required: false,
+    max: 32,
+    autoComplete: 'tel',
+    hint: 'Optional',
+    half: true,
+    messages: { invalid: 'Please enter a phone number using digits, spaces, +, - or brackets.' },
+  },
+  {
+    name: 'industry',
+    label: 'Industry',
+    kind: 'choice',
+    required: false,
+    max: 60,
+    options: industryOptions,
+    placeholderOption: 'Choose one',
+    hint: 'Optional',
+    half: true,
+    messages: { invalid: 'Please choose one of the listed industries.' },
+  },
+  {
+    name: 'volume',
+    label: 'Monthly lead volume',
+    kind: 'choice',
+    required: false,
+    max: 60,
+    options: leadVolumeOptions,
+    placeholderOption: 'Choose one',
+    hint: 'Optional',
+    half: true,
+    messages: { invalid: 'Please choose one of the listed ranges.' },
+  },
+  {
+    name: 'crm',
+    label: 'Current CRM',
     kind: 'text',
-    required: true,
-    max: 160,
-    autoComplete: 'organization',
-    messages: { required: 'Please enter your business name or website.' },
+    required: false,
+    max: 120,
+    hint: 'Optional',
+    half: true,
+    messages: {},
+  },
+  {
+    name: 'plan',
+    label: 'Preferred plan',
+    kind: 'choice',
+    required: false,
+    max: 20,
+    options: planOptions,
+    defaultValue: unsurePlan,
+    half: true,
+    messages: { invalid: 'Please choose one of the listed plans, or “Not sure”.' },
   },
   {
     name: 'goal',
@@ -123,63 +185,12 @@ export const inquiryFields: readonly FieldDefinition[] = [
     },
   },
   {
-    name: 'plan',
-    label: 'Plan you’re considering',
-    kind: 'choice',
-    required: false,
-    max: 20,
-    options: planOptions,
-    defaultValue: unsurePlan,
-    messages: { invalid: 'Please choose one of the listed plans, or “Not sure”.' },
-  },
-  {
-    name: 'phone',
-    label: 'Phone',
-    kind: 'tel',
-    required: false,
-    max: 32,
-    autoComplete: 'tel',
-    group: 'details',
-    messages: { invalid: 'Please enter a phone number using digits, spaces, +, - or brackets.' },
-  },
-  {
-    name: 'industry',
-    label: 'Industry',
-    kind: 'choice',
-    required: false,
-    max: 60,
-    options: industryOptions,
-    placeholderOption: 'Choose one',
-    group: 'details',
-    messages: { invalid: 'Please choose one of the listed industries.' },
-  },
-  {
-    name: 'volume',
-    label: 'Monthly lead volume',
-    kind: 'choice',
-    required: false,
-    max: 60,
-    options: leadVolumeOptions,
-    placeholderOption: 'Choose one',
-    group: 'details',
-    messages: { invalid: 'Please choose one of the listed ranges.' },
-  },
-  {
-    name: 'crm',
-    label: 'Current CRM',
-    kind: 'text',
-    required: false,
-    max: 120,
-    group: 'details',
-    messages: {},
-  },
-  {
     name: 'message',
-    label: 'Anything else we should know?',
+    label: 'Message',
     kind: 'multiline',
     required: false,
     max: 3000,
-    group: 'details',
+    hint: 'Optional',
     messages: {},
   },
 ]
@@ -203,6 +214,17 @@ export const formMessages = {
   timeout: 'We did not get a confirmation in time, so we cannot be sure your details arrived. Everything you entered is still here — please try again in a moment.',
   network: 'We could not reach the server. Check your connection and try again. Everything you entered is still here.',
   unavailable: 'Requests are temporarily unavailable. Please try again later.',
+  /**
+   * Before a delivery destination is connected, the form hands the details to
+   * the visitor's own email app instead. It never claims anything was sent.
+   */
+  email: {
+    submit: 'Email my details',
+    guidance: 'Opens your email app with these details filled in — you press send. No payment is taken here.',
+    opened: (address: string) =>
+      `Your email app should now open with your details filled in. Press send to reach us. If nothing opened, email ${address}.`,
+    returned: (address: string) => `Online requests aren’t switched on yet. Please email ${address} with your details.`,
+  },
   busy: 'Too many attempts in a short time. Please wait a few minutes and try again.',
   /** Shown after a no-JavaScript post is sent back to the form. */
   returned: {

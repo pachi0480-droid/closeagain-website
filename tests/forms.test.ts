@@ -66,19 +66,20 @@ describe('form definition', () => {
     assert.equal(fieldsFor('inquiry'), inquiryFields)
   })
 
-  it('asks for name, email, business, goal and plan up front and keeps the rest optional', () => {
-    const visible = inquiryFields.filter((field) => field.group !== 'details').map((field) => field.name)
-    const details = inquiryFields.filter((field) => field.group === 'details').map((field) => field.name)
-    assert.deepEqual(visible, ['name', 'email', 'business', 'goal', 'plan'])
-    assert.deepEqual(details, ['phone', 'industry', 'volume', 'crm', 'message'])
+  it('shows every buying field in reading order, nothing hidden', () => {
+    assert.deepEqual(
+      inquiryFields.map((field) => field.name),
+      ['name', 'business', 'email', 'phone', 'industry', 'volume', 'crm', 'plan', 'goal', 'message'],
+    )
+    for (const field of inquiryFields) assert.equal(field.group, undefined, field.name)
   })
 
-  it('never requires a field that is hidden inside the disclosure', () => {
-    for (const field of inquiryFields) {
-      if (field.group === 'details') assert.equal(field.required, false, field.name)
-    }
+  it('requires only name, business, email and goal, and marks the rest optional', () => {
     const required = inquiryFields.filter((field) => field.required).map((field) => field.name)
-    assert.deepEqual(required, ['name', 'email', 'business', 'goal'])
+    assert.deepEqual(required, ['name', 'business', 'email', 'goal'])
+    for (const field of inquiryFields) {
+      if (!field.required && field.name !== 'plan') assert.equal(field.hint, 'Optional', field.name)
+    }
   })
 
   it('never forces a plan: it defaults to “not sure yet” and offers every plan', () => {

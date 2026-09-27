@@ -75,6 +75,18 @@ export const howItWorks = {
       preview: 'analytics',
     },
   ],
+  control: {
+    eyebrow: 'Automatic follow-up. Personal conversations.',
+    title: ['More follow-through.', 'Still entirely you.'],
+    lede: 'Put the repetitive part on autopilot. Keep the human part in your hands.',
+    items: [
+      { title: 'Your words.', body: 'Messages use wording you approve, so every follow-up still sounds like your business.' },
+      { title: 'Your timing.', body: 'Choose when to follow up and when to check back. Sequences stop when a lead replies.' },
+      { title: 'Your relationships.', body: 'Replies come back to your team. You take care of the conversation, the quote and the sale.' },
+    ],
+    foot: `${setupNote} on every plan.`,
+    link: { label: 'Explore the features', href: '/features' },
+  },
   closing: {
     title: 'Ready to close more conversations?',
     body: terms,
@@ -272,7 +284,7 @@ export const pricingPage = {
     title: 'Every plan includes',
     items: ['New lead capture and automated follow-up', 'Old lead re-engagement', 'A unified conversation inbox', setupNote],
   },
-  proposal: `${proposalCovers.join(' and ')} are confirmed in writing before anything is billed.`,
+  proposal: `${proposalCovers[0].charAt(0).toUpperCase()}${proposalCovers[0].slice(1)}, ${proposalCovers[1]} and ${proposalCovers[2]} are confirmed in writing before anything is billed.`,
   compare: { open: 'Compare all features', close: 'Hide comparison' },
   value: {
     eyebrow: 'Is it worth it?',
@@ -411,7 +423,7 @@ export const faq = {
     {
       id: 'annual-contract',
       q: 'Is there an annual contract?',
-      a: `No. Plans are billed monthly, with no annual commitment. ${proposalCovers[0].charAt(0).toUpperCase() + proposalCovers[0].slice(1)} is confirmed before you start.`,
+      a: `No. Plans are billed monthly, with no annual commitment. ${proposalCovers[0].charAt(0).toUpperCase() + proposalCovers[0].slice(1)} and ${proposalCovers[2]} are confirmed before you start.`,
     },
     {
       id: 'which-plan',

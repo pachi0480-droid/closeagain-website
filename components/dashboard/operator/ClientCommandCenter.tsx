@@ -3,6 +3,7 @@
 import { ArrowUpRight, CircleAlert, LoaderCircle, Pause, Play, Rocket, TriangleAlert, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState, type CSSProperties, type FormEvent } from 'react'
+import { integrationBlocked, seatLimit, usersLabel } from '@/content/demo/billing'
 import { canDeploy, datasets, tickets as baseTickets, upsellOpportunities } from '@/content/demo/operator'
 import { automationStats, dailySeries, windowFor, within } from '@/content/demo/metrics'
 import { fmtAgo, fmtCurrency, fmtDate, fmtDateYear, fmtNumber, fmtPercent, fmtWeekdayDate } from '@/content/demo/format'
@@ -10,7 +11,7 @@ import { kits } from '@/content/demo/kits'
 import { FEATURED_CLIENT_ID } from '@/content/demo/clients'
 import { attentionNotes, integrationCatalog } from '@/content/demo/workspace'
 import type { IntegrationId, IntegrationStatus, Person } from '@/content/demo/types'
-import { planById, priceLabel } from '@/content/pricing'
+import { planById, plans, priceLabel, type PlanId } from '@/content/pricing'
 import { TimeChart } from '../charts'
 import { Dialog } from '../Dialog'
 import { integrationIcon } from '../integrationIcons'
@@ -64,7 +65,7 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
 
   const deploy = (templateId: string) => {
     const template = templates.find((item) => item.id === templateId)
-    const check = canDeploy(templateId, client)
+    const check = canDeploy(template ?? templateId, client)
     if (!check.ok) {
       notify({ title: `Couldn’t deploy ${template?.name ?? 'template'}`, detail: check.reason, tone: 'error' })
       return
@@ -111,7 +112,7 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
     })
   }
   const deployed = deployments[clientId] ?? []
-  const missing = templates.find((template) => !deployed.includes(template.id) && canDeploy(template.id, client).ok)
+  const missing = templates.find((template) => !deployed.includes(template.id) && canDeploy(template, client).ok)
   if (missing) {
     recommendations.push({
       id: `deploy-${missing.id}`,
@@ -142,14 +143,6 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
     .sort((a, b) => b.message.at - a.message.at)
     .slice(0, 8)
 
-  const channels: Array<{ label: string; id: IntegrationId }> = [
-    { label: 'Text messages', id: 'phone-text' },
-    { label: 'Email', id: 'email-inbox' },
-    { label: 'Website forms', id: 'web-forms' },
-    { label: 'Calendar', id: 'calendar' },
-    { label: 'CRM sync', id: 'crm' },
-  ]
-
   const sequences = automations.filter((automation) => automation.type === 'sequence')
   const campaigns = automations.filter((automation) => automation.type === 'campaign')
   const running = automations.filter((automation) => automation.enabled).length
@@ -161,7 +154,6 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
   const clientTickets = baseTickets.filter((ticket) => ticket.clientId === clientId)
   const openTickets = clientTickets.filter((ticket) => (state.tickets[ticket.id] ?? ticket.status) !== 'resolved').length
   const invites = state.clientInvites[clientId] ?? []
-  const multiUser = client.plan === 'scale' || client.plan === 'enterprise'
 
   return (
     <>
@@ -243,6 +235,37 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
                     )}
                   </section>
 
+                  <section className="op-section" aria-labelledby="automation-title">
+                    <div className="op-section__head">
+                      <h2 id="automation-title" className="op-section__title">
+                        Automation status
+                      </h2>
+                      <button type="button" className="app-textlink" onClick={() => setTab('automations')}>
+                        {running} of {automations.length} running
+                      </button>
+                    </div>
+                    <ul className="ui-list op-autolist">
+                      {automations.map((automation) => {
+                        const s = stats.get(automation.id)
+                        return (
+                          <li key={automation.id} className="ui-row op-autorow">
+                            <span className={cx('app-status-dot', automation.enabled ? 'is-on' : 'is-off')} aria-hidden="true" />
+                            <span className="op-autorow__text">
+                              <span className="app-cell-title">{automation.name}</span>
+                              <span className="app-cell-sub">
+                                {automation.type === 'campaign' ? 'Campaign' : 'Sequence'} · {automation.enabled ? 'Running' : paused ? 'Stopped while paused' : 'Off'}
+                              </span>
+                            </span>
+                            <span className="op-autorow__stat">
+                              {s?.enrolled ? fmtPercent(s.replyRate) : '—'}
+                              <span className="app-cell-sub">{s?.enrolled ? `${fmtNumber(s.enrolled)} enrolled` : 'No enrollments'}</span>
+                            </span>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </section>
+
                   <section className="op-section" aria-labelledby="activity-title">
                     <h2 id="activity-title" className="op-section__title">
                       Recent activity
@@ -277,6 +300,34 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
                 </div>
 
                 <div className="op-command__side">
+                  <section className="op-section" aria-labelledby="profile-title">
+                    <h2 id="profile-title" className="op-section__title">
+                      Account
+                    </h2>
+                    <dl className="app-facts op-profile">
+                      <div>
+                        <dt>Industry</dt>
+                        <dd>{client.industry}</dd>
+                      </div>
+                      <div>
+                        <dt>Plan</dt>
+                        <dd>
+                          {plan?.name} · {client.plan === 'enterprise' ? `${fmtCurrency(client.contractMonthly ?? 0)}/mo sample contract` : `${plan ? priceLabel(plan) : ''}/mo`}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>Location</dt>
+                        <dd>{client.location}</dd>
+                      </div>
+                      <div>
+                        <dt>Users</dt>
+                        <dd>
+                          {client.team.length + invites.length} of {usersLabel(client.plan)}
+                        </dd>
+                      </div>
+                    </dl>
+                  </section>
+
                   <section className="op-section" aria-labelledby="alerts-title">
                     <h2 id="alerts-title" className="op-section__title">
                       Alerts
@@ -300,14 +351,14 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
 
                   <section className="op-section" aria-labelledby="channels-title">
                     <h2 id="channels-title" className="op-section__title">
-                      Channel health
+                      Integration health
                     </h2>
                     <ul className="op-channels">
-                      {channels.map((channel) => {
-                        const status = client.integrations[channel.id]
+                      {integrationCatalog.map((item) => {
+                        const status = client.integrations[item.id]
                         return (
-                          <li key={channel.id}>
-                            <span>{channel.label}</span>
+                          <li key={item.id}>
+                            <span>{item.name}</span>
                             <Badge tone={paused && status === 'connected' ? 'cold' : integrationTone[status]}>
                               {paused && status === 'connected' ? 'Paused' : status === 'connected' ? 'Healthy' : status === 'available' ? 'Not connected' : 'Needs attention'}
                             </Badge>
@@ -406,7 +457,7 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
             {tab === 'campaigns' && (
               <div className="op-campaigns">
                 {campaigns.length === 0 ? (
-                  <EmptyState title="No campaigns yet">Deploy Old Lead Reactivation or Customer Win-Back from Templates to start one.</EmptyState>
+                  <EmptyState title="No campaigns yet">Deploy Old Lead Reactivation or Win-Back Campaign from Templates to start one.</EmptyState>
                 ) : (
                   campaigns.map((campaign) => {
                     const s = stats.get(campaign.id)
@@ -486,27 +537,33 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
                   const status = client.integrations[item.id]
                   const Icon = integrationIcon[item.id]
                   const pending = busy(`int-${item.id}`)
+                  const blocked = status === 'available' ? integrationBlocked(item.id, client.plan) : undefined
                   return (
-                    <li key={item.id} className="ui-row op-introw">
+                    <li key={item.id} className={cx('ui-row op-introw', blocked && 'is-blocked')}>
                       <span className="app-integration__icon" aria-hidden="true">
                         <Icon size={17} />
                       </span>
                       <span className="op-introw__text">
                         <span className="app-cell-title">{item.name}</span>
                         <span className={cx('app-cell-sub', status === 'attention' && 'app-num-red')}>
-                          {status === 'attention' ? attentionNotes[`${client.id}.${item.id}`] ?? 'Needs attention' : item.description}
+                          {status === 'attention' ? (attentionNotes[`${client.id}.${item.id}`] ?? 'Needs attention') : (blocked ?? item.description)}
                         </span>
                       </span>
-                      <Badge tone={integrationTone[status]}>{integrationStatusLabel[status]}</Badge>
+                      {blocked ? (
+                        <Badge tone="cold">Not on {plan?.name}</Badge>
+                      ) : (
+                        <Badge tone={integrationTone[status]}>{integrationStatusLabel[status]}</Badge>
+                      )}
                       <button
                         type="button"
-                        className={cx('ui-btn', status !== 'available' && status !== 'attention' && 'ui-btn--quiet')}
-                        disabled={pending}
+                        className={cx('ui-btn', (status === 'connected' || blocked) && 'ui-btn--quiet')}
+                        disabled={pending || Boolean(blocked)}
                         aria-busy={pending}
                         onClick={() => setIntegration(item.id, status === 'connected' ? 'available' : 'connected', item.name)}
                       >
                         {pending && <LoaderCircle className="app-spin" aria-hidden="true" />}
                         {status === 'connected' ? 'Disconnect' : status === 'attention' ? 'Reconnect' : 'Connect'}
+                        <span className="app-sr"> {item.name}</span>
                       </button>
                     </li>
                   )
@@ -557,14 +614,14 @@ export function ClientCommandCenter({ clientId }: { clientId: string }) {
             {tab === 'users' && (
               <UsersTab
                 clientName={client.short}
+                planId={client.plan}
                 team={client.team}
                 invites={invites}
-                multiUser={multiUser}
-                planName={plan?.name ?? client.plan}
                 onInvite={(person) => {
                   dispatch({ type: 'inviteClientUser', clientId, person })
                   notify({ title: `Invite added for ${person.name}`, detail: `${client.short} · no email was sent.` })
                 }}
+                upsellTo={upsell && !state.upsells[clientId] ? upsell.to : undefined}
                 onUpsell={
                   upsell && !state.upsells[clientId]
                     ? () =>
@@ -701,26 +758,34 @@ function SupportTab({ clientId }: { clientId: string }) {
 
 function UsersTab({
   clientName,
+  planId,
   team,
   invites,
-  multiUser,
-  planName,
   onInvite,
   onUpsell,
+  upsellTo,
 }: {
   clientName: string
+  planId: PlanId
   team: Person[]
   invites: Person[]
-  multiUser: boolean
-  planName: string
   onInvite: (person: Person) => void
   onUpsell?: () => void
+  upsellTo?: string
 }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('Agent')
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({})
   const everyone = [...team, ...invites]
+  const plan = planById(planId)
+  const limit = seatLimit(planId)
+  const full = limit !== null && everyone.length >= limit
+  // The next plan that includes more people, from the plan facts in content/pricing.ts.
+  const roomier = plans.slice(plans.findIndex((item) => item.id === planId) + 1).find((item) => {
+    const next = seatLimit(item.id)
+    return next === null || next > everyone.length
+  })
 
   const submit = (event: FormEvent) => {
     event.preventDefault()
@@ -753,14 +818,17 @@ function UsersTab({
         <h2 id="client-invite-title" className="app-form__title">
           Add a user
         </h2>
-        {multiUser ? (
-          <p className="ui-meta">Multi-user collaboration is included on {planName}.</p>
-        ) : (
+        {full ? (
           <p className="op-gate" role="note">
-            Multi-user collaboration is included from Scale. {clientName} is on {planName}, so it has one login.
+            {plan?.name} includes {usersLabel(planId)}, and {clientName} is using {limit === 1 ? 'it' : 'every seat'}.
+            {roomier ? ` ${roomier.name} includes ${usersLabel(roomier.id)}.` : ''}
+          </p>
+        ) : (
+          <p className="ui-meta">
+            {plan?.name} includes {usersLabel(planId)} · {everyone.length} in use.
           </p>
         )}
-        <fieldset className="app-fieldset" disabled={!multiUser}>
+        <fieldset className="app-fieldset" disabled={full}>
           <legend className="app-sr">New user details</legend>
           <TextField label="Name" value={name} onChange={setName} error={errors.name} required autoComplete="off" />
           <TextField label="Email" type="email" value={email} onChange={setEmail} error={errors.email} required autoComplete="off" />
@@ -775,9 +843,9 @@ function UsersTab({
             Add user
           </button>
         </fieldset>
-        {!multiUser && onUpsell && (
+        {full && onUpsell && roomier && upsellTo === roomier.name && (
           <button type="button" className="ui-btn ui-btn--quiet" onClick={onUpsell}>
-            Draft a Scale proposal
+            Draft a {roomier.name} proposal
           </button>
         )}
       </form>

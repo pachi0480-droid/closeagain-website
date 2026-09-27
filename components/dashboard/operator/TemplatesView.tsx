@@ -4,10 +4,10 @@ import { Check, CircleAlert, Copy, LoaderCircle, Mail, MessageSquare, Minus, Pen
 import { useState, type CSSProperties, type FormEvent } from 'react'
 import { planAllows, type Template } from '@/content/demo/automations'
 import { fmtDate } from '@/content/demo/format'
-import { canDeploy } from '@/content/demo/operator'
+import { canDeploy, isPlural } from '@/content/demo/operator'
 import { DEMO_NOW } from '@/content/demo/time'
 import type { Client, Step } from '@/content/demo/types'
-import { planById } from '@/content/pricing'
+import { planById, plans } from '@/content/pricing'
 import { AutomationBuilder } from '../AutomationBuilder'
 import { Dialog } from '../Dialog'
 import { useToast, usePending } from '../Toasts'
@@ -31,11 +31,17 @@ function channelsOf(template: Template) {
   return [...set]
 }
 
-export function eligibility(templateId: string, client: Client, deployed: string[]): { tone: 'ok' | 'already' | 'blocked'; text: string } {
-  if (deployed.includes(templateId)) return { tone: 'already', text: 'Already running' }
-  const check = canDeploy(templateId, client)
-  if (!check.ok) return { tone: 'blocked', text: client.status === 'paused' ? 'Account paused' : `Needs ${check.reason.includes('Growth') ? 'Growth' : 'a higher plan'}` }
+export function eligibility(template: Template, client: Client, deployed: string[]): { tone: 'ok' | 'already' | 'blocked'; text: string } {
+  if (deployed.includes(template.id)) return { tone: 'already', text: 'Already running' }
+  const check = canDeploy(template, client)
+  if (!check.ok) return { tone: 'blocked', text: client.status === 'paused' ? 'Account paused' : `Needs ${planById(template.minPlan)?.name ?? 'a higher plan'}` }
   return { tone: 'ok', text: 'Ready' }
+}
+
+/** “Core and Growth”: the plans below a template's minimum plan. */
+function plansBelow(minPlan: Template['minPlan']) {
+  const names = plans.slice(0, plans.findIndex((plan) => plan.id === minPlan)).map((plan) => plan.name)
+  return names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
 }
 
 export function TemplatesView() {
@@ -118,18 +124,24 @@ export function TemplatesView() {
                   <button type="button" className="ui-btn ui-btn--quiet" onClick={() => setEditing(template.id)}>
                     <Pencil aria-hidden="true" size={15} />
                     Edit
+                    <span className="app-sr"> {template.name}</span>
                   </button>
                   <button type="button" className="ui-btn ui-btn--quiet" onClick={() => duplicate(template)}>
                     <Copy aria-hidden="true" size={15} />
                     Duplicate
+                    <span className="app-sr"> {template.name}</span>
                   </button>
+                </div>
+                <div className="op-template__deploy">
                   <button type="button" className="ui-btn ui-btn--quiet" onClick={() => setSingle(template.id)}>
                     <Send aria-hidden="true" size={15} />
-                    Deploy
+                    Deploy to client
+                    <span className="app-sr">: {template.name}</span>
                   </button>
                   <button type="button" className="ui-btn" onClick={() => setMulti(template.id)}>
                     <Rocket aria-hidden="true" size={15} />
-                    Deploy to many
+                    Deploy to multiple clients
+                    <span className="app-sr">: {template.name}</span>
                   </button>
                 </div>
               </li>
@@ -275,7 +287,7 @@ function CreateDialog({
       category,
       description: description.trim() || (source ? source.description : 'A custom follow-up sequence.'),
       minPlan: source?.minPlan ?? 'growth',
-      planFeature: source?.planFeature ?? 'Custom follow-up sequences',
+      planFeature: source?.planFeature ?? 'Advanced follow-up sequences',
       type: source?.type ?? 'sequence',
       steps: source ? source.steps.map((step, index) => ({ ...step, id: `${id}.${index + 1}` })) : starterSteps(id),
       updatedAt: DEMO_NOW,
@@ -312,14 +324,14 @@ function CreateDialog({
         <SelectField label="Category" value={category} onChange={setCategory} options={CATEGORIES.map((value) => ({ value, label: value }))} />
         <SelectField label="Start from" value={from} onChange={setFrom} options={[{ value: 'blank', label: 'A blank sequence' }, ...templates.map((template) => ({ value: template.id, label: `Copy of ${template.name}` }))]} />
         <TextField label="Description" value={description} onChange={setDescription} multiline hint="Optional. Shown on the template card." />
-        <p className="ui-meta">Custom sequences are included from Growth, per the plan feature list.</p>
+        <p className="ui-meta">A blank template is an advanced follow-up sequence, included from {planById('growth')?.name}. A copy keeps its source’s plan.</p>
       </form>
     </Dialog>
   )
 }
 
-function ClientChoice({ client, deployed, templateId }: { client: Client; deployed: string[]; templateId: string }) {
-  const state = eligibility(templateId, client, deployed)
+function ClientChoice({ client, deployed, template }: { client: Client; deployed: string[]; template: Template }) {
+  const state = eligibility(template, client, deployed)
   return (
     <span className="op-choice__text">
       <span className="app-cell-title">{client.name}</span>
@@ -347,7 +359,7 @@ function SingleDeploy({
   onFailed: (client: Client, reason: string) => void
 }) {
   const { run, busy } = usePending()
-  const [choice, setChoice] = useState<string>(clients.find((client) => eligibility(template.id, client, deployments[client.id] ?? []).tone === 'ok')?.id ?? clients[0].id)
+  const [choice, setChoice] = useState<string>(clients.find((client) => eligibility(template, client, deployments[client.id] ?? []).tone === 'ok')?.id ?? clients[0].id)
   const [result, setResult] = useState<{ tone: 'error' | 'info'; text: string } | null>(null)
 
   const deploy = () => {
@@ -359,7 +371,7 @@ function SingleDeploy({
         setResult({ tone: 'info', text: `${template.name} is already running for ${client.short}. Nothing changed.` })
         return
       }
-      const check = canDeploy(template.id, client)
+      const check = canDeploy(template, client)
       if (!check.ok) {
         setResult({ tone: 'error', text: check.reason })
         onFailed(client, check.reason)
@@ -402,7 +414,7 @@ function SingleDeploy({
                 setResult(null)
               }}
             />
-            <ClientChoice client={client} deployed={deployments[client.id] ?? []} templateId={template.id} />
+            <ClientChoice client={client} deployed={deployments[client.id] ?? []} template={template} />
           </label>
         ))}
       </fieldset>
@@ -434,7 +446,7 @@ function MultiDeploy({
   const { run, busy } = usePending()
   const [selected, setSelected] = useState<string[]>([])
   const [results, setResults] = useState<DeployResult[] | null>(null)
-  const eligible = clients.filter((client) => eligibility(template.id, client, deployments[client.id] ?? []).tone === 'ok').map((client) => client.id)
+  const eligible = clients.filter((client) => eligibility(template, client, deployments[client.id] ?? []).tone === 'ok').map((client) => client.id)
 
   const toggle = (id: string) => setSelected((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]))
 
@@ -446,7 +458,7 @@ function MultiDeploy({
           const client = clients.find((item) => item.id === clientId)
           if (!client) return { clientId, outcome: 'failed', reason: 'Unknown client.' }
           if ((deployments[clientId] ?? []).includes(template.id)) return { clientId, outcome: 'already' }
-          const check = canDeploy(template.id, client)
+          const check = canDeploy(template, client)
           return check.ok ? { clientId, outcome: 'deployed' } : { clientId, outcome: 'failed', reason: check.reason }
         })
         const ok = out.filter((result) => result.outcome === 'deployed').map((result) => result.clientId)
@@ -518,13 +530,14 @@ function MultiDeploy({
             {clients.map((client) => (
               <label key={client.id} className={cx('op-choice', selected.includes(client.id) && 'is-checked')}>
                 <input type="checkbox" checked={selected.includes(client.id)} onChange={() => toggle(client.id)} />
-                <ClientChoice client={client} deployed={deployments[client.id] ?? []} templateId={template.id} />
+                <ClientChoice client={client} deployed={deployments[client.id] ?? []} template={template} />
               </label>
             ))}
           </fieldset>
           {!planAllows('core', template.minPlan) && (
             <p className="ui-meta">
-              {template.planFeature} {template.planFeature ? 'are' : 'is'} part of {planById(template.minPlan)?.name} and above, so Core clients can’t run this template.
+              {template.planFeature ?? template.name} {isPlural(template.planFeature ?? template.name) ? 'are' : 'is'} included from {planById(template.minPlan)?.name}, so clients on{' '}
+              {plansBelow(template.minPlan)} can’t run this template.
             </p>
           )}
         </>

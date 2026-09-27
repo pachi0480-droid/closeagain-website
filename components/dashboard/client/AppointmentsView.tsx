@@ -2,15 +2,18 @@
 
 import { ArrowRight, BellRing, MapPin, UserRound } from 'lucide-react'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
-import { fmtAgo, fmtDayTime, fmtDuration, fmtNumber, fmtPercent, fmtTime, fmtUntil } from '@/content/demo/format'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { todaysAppointments } from '@/content/demo/attention'
+import { fmtAgo, fmtDayTime, fmtDuration, fmtNumber, fmtPercent, fmtTime, fmtUntil, fmtWeekdayDate } from '@/content/demo/format'
 import { windowFor, within } from '@/content/demo/metrics'
 import { DAY, DEMO_NOW, MINUTE, TODAY, dayIndex } from '@/content/demo/time'
 import type { Appointment, AppointmentStatus } from '@/content/demo/types'
+import { workspaceAppointments } from '@/content/demo/workspace'
 import { CalendarToolbar, MonthGrid, WeekGrid, type CalendarMode } from '../Calendar'
 import { appointmentStatusLabel } from '../labels'
+import { QueryParams } from '../query'
 import { useToast, usePending } from '../Toasts'
-import { Badge, EmptyState, Metric, PageHeader, Panel, Switch, type BadgeTone } from '../ui'
+import { Badge, EmptyState, Metric, PageHeader, Panel, Switch, cx, type BadgeTone } from '../ui'
 import { useAppointments, useAutomations, useClientDemo, useLeads } from './state'
 
 export const statusTone: Record<AppointmentStatus, BadgeTone> = {
@@ -31,6 +34,28 @@ export function AppointmentsView() {
   const [mode, setMode] = useState<CalendarMode>('month')
   const [cursor, setCursor] = useState(TODAY)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [focus, setFocus] = useState<'today' | 'no-shows' | null>(null)
+  const todayRef = useRef<HTMLDivElement>(null)
+  const noShowRef = useRef<HTMLDivElement>(null)
+
+  // Linkable views: ?day=today opens this week on today; ?show=no-shows jumps to the misses.
+  const onQuery = useCallback((params: URLSearchParams) => {
+    if (params.get('day') === 'today') {
+      setMode('week')
+      setCursor(TODAY)
+      setSelectedId(todaysAppointments(workspaceAppointments).find((item) => item.start > DEMO_NOW)?.id ?? todaysAppointments(workspaceAppointments)[0]?.id ?? null)
+      setFocus('today')
+    } else if (params.get('show') === 'no-shows') {
+      setFocus('no-shows')
+    } else {
+      setFocus(null)
+    }
+  }, [])
+
+  useEffect(() => {
+    const target = focus === 'today' ? todayRef.current : focus === 'no-shows' ? noShowRef.current : null
+    target?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  }, [focus])
 
   const leadById = useMemo(() => new Map(leads.map((lead) => [lead.id, lead])), [leads])
   const reminderAutomation = automations.find((automation) => automation.templateId === 'tpl-reminder')
@@ -50,6 +75,7 @@ export function AppointmentsView() {
     .sort((a, b) => b.start - a.start)
 
   const selected = appointments.find((appointment) => appointment.id === selectedId) ?? null
+  const today = todaysAppointments(appointments)
 
   const followUpSent = (appointment: Appointment) => {
     if (state.followUps[appointment.id]) return true
@@ -85,6 +111,7 @@ export function AppointmentsView() {
 
   return (
     <>
+      <QueryParams onChange={onQuery} />
       <PageHeader title="Appointments" description="Showings and consultations booked through follow-up · all times Eastern">
         <Link href="/demo/automations" className="ui-btn ui-btn--quiet">
           <BellRing aria-hidden="true" />
@@ -128,7 +155,38 @@ export function AppointmentsView() {
           </Panel>
 
           <div className="app-stack-col">
-            <Panel index={2} title={selected ? selected.type : 'Appointment details'} meta={selected ? fmtDayTime(selected.start) : 'Choose an appointment on the calendar'}>
+            <div ref={todayRef} className={cx('app-focus', focus === 'today' && 'is-focused')}>
+              <Panel index={2} title="Today" meta={`${fmtWeekdayDate(DEMO_NOW)} · ${today.length === 1 ? '1 appointment' : `${today.length} appointments`}`} flush>
+                {today.length === 0 ? (
+                  <p className="app-panel-note">No appointments today.</p>
+                ) : (
+                  <ul className="ui-list">
+                    {today.map((appointment) => (
+                      <li key={appointment.id}>
+                        <button
+                          type="button"
+                          className="ui-row ui-row--interactive app-apptrow app-apptrow--today"
+                          onClick={() => select(appointment.id)}
+                          aria-pressed={appointment.id === selectedId}
+                        >
+                          <span className="app-apptrow__time">{fmtTime(appointment.start)}</span>
+                          <span className="app-apptrow__text">
+                            <span className="app-apptrow__top">
+                              <span className="app-cell-title">{appointment.leadName}</span>
+                              <Badge tone={statusTone[appointment.status]}>{appointmentStatusLabel[appointment.status]}</Badge>
+                            </span>
+                            <span className="app-cell-sub">
+                              {appointment.type} · {appointment.location} · {appointment.host.split(' ')[0]}
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Panel>
+            </div>
+            <Panel index={3} title={selected ? selected.type : 'Appointment details'} meta={selected ? fmtDayTime(selected.start) : 'Choose an appointment on the calendar'}>
               {selected ? (
                 <div className="app-apptdetail">
                   <div className="app-apptdetail__status">
@@ -180,7 +238,7 @@ export function AppointmentsView() {
               )}
             </Panel>
 
-            <Panel index={3} title="Upcoming" meta="Next 7 days" flush>
+            <Panel index={4} title="Upcoming" meta="Next 7 days" flush>
               {nextWeek.length === 0 ? (
                 <p className="app-panel-note">Nothing booked for the next 7 days.</p>
               ) : (
@@ -207,7 +265,8 @@ export function AppointmentsView() {
         </div>
 
         <div className="app-grid app-grid--halves">
-          <Panel index={4} title="No-shows" meta={`Last 30 days · ${noShowAutomation?.enabled ? `${noShowAutomation.name} is on` : 'No-show follow-up is paused'}`} flush>
+          <div ref={noShowRef} className={cx('app-focus', focus === 'no-shows' && 'is-focused')}>
+          <Panel index={5} title="No-shows" meta={`Last 30 days · ${noShowAutomation?.enabled ? `${noShowAutomation.name} is on` : 'No-show follow-up is paused'}`} flush>
             {noShows.length === 0 ? (
               <EmptyState title="No missed appointments">Every appointment in the last 30 days was held or rescheduled.</EmptyState>
             ) : (
@@ -246,9 +305,10 @@ export function AppointmentsView() {
               </ul>
             )}
           </Panel>
+          </div>
 
           <Panel
-            index={5}
+            index={6}
             title="Follow-up reminders"
             meta={remindersOn ? 'Sent the day before each appointment' : `${reminderAutomation?.name ?? 'Reminders'} is paused`}
             flush

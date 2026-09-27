@@ -6,13 +6,14 @@ import { integrationCatalog, workspaceClient } from '@/content/demo/workspace'
 import { planById } from '@/content/pricing'
 import { AppShell, type NavItem } from '../Shell'
 import { useToast } from '../Toasts'
-import { useClientDemo, useUnreadCount } from './state'
+import { useAttention, useClientDemo, useUnreadCount } from './state'
 
 export function ClientShell({ children }: { children: ReactNode }) {
   const { state, reset } = useClientDemo()
   const notify = useToast()
   const unread = useUnreadCount()
-  const attention = integrationCatalog.some(
+  const attention = useAttention()
+  const integrationAlert = integrationCatalog.some(
     (item) => (state.integrations[item.id] ?? workspaceClient.integrations[item.id]) === 'attention',
   )
 
@@ -20,10 +21,10 @@ export function ClientShell({ children }: { children: ReactNode }) {
     { href: '/demo', label: 'Overview', icon: LayoutDashboard },
     { href: '/demo/conversations', label: 'Conversations', icon: MessagesSquare, count: unread },
     { href: '/demo/leads', label: 'Leads', icon: Users },
-    { href: '/demo/automations', label: 'Automations', icon: Workflow },
     { href: '/demo/appointments', label: 'Appointments', icon: CalendarDays },
+    { href: '/demo/automations', label: 'Automations', icon: Workflow, alert: attention.some((item) => item.id === 'automations') },
     { href: '/demo/analytics', label: 'Analytics', icon: ChartLine },
-    { href: '/demo/integrations', label: 'Integrations', icon: Plug, alert: attention },
+    { href: '/demo/integrations', label: 'Integrations', icon: Plug, alert: integrationAlert },
     { href: '/demo/settings', label: 'Settings', icon: Settings },
   ]
 

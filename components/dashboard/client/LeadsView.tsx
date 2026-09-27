@@ -2,7 +2,7 @@
 
 import { ArrowRight, CalendarDays } from 'lucide-react'
 import Link from 'next/link'
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useCallback, useMemo, useState, type CSSProperties } from 'react'
 import { fmtAgo, fmtDateYear, fmtDayTime, fmtNumber, fmtUntil } from '@/content/demo/format'
 import { kits } from '@/content/demo/kits'
 import { STAGES, windowFor } from '@/content/demo/metrics'
@@ -10,8 +10,9 @@ import type { SourceId, StageId } from '@/content/demo/types'
 import { workspaceAutomations, workspaceClient } from '@/content/demo/workspace'
 import { LeadFacts, LeadTags, Thread } from '../conversation'
 import { Dialog } from '../Dialog'
-import { appointmentStatusLabel, sourceLabel, stageLabel } from '../labels'
-import { Avatar, Badge, EmptyState, PageHeader, Pager, Panel, Score, SearchField, SelectField, SortHeader, StageBadge, type SortState } from '../ui'
+import { appointmentStatusLabel, sourceLabel, stageShort } from '../labels'
+import { QueryParams, useReplaceQuery } from '../query'
+import { Avatar, Badge, EmptyState, PageHeader, Pager, Panel, Score, SearchField, Segmented, SelectField, SortHeader, StageBadge, type SortState } from '../ui'
 import { matchesQuery } from './ConversationsView'
 import { HandledButton, StageSelect } from './StageControls'
 import { useAppointments, useClientDemo, useLeads, type LiveLead } from './state'
@@ -33,6 +34,22 @@ export function LeadsView() {
   const [sort, setSort] = useState<SortState<SortKey>>({ key: 'last', dir: 'desc' })
   const [page, setPage] = useState(0)
   const [openId, setOpenId] = useState<string | null>(null)
+  const [recoveredOnly, setRecoveredOnly] = useState(false)
+  const replaceQuery = useReplaceQuery()
+
+  // Linkable filters: ?show=recovered, ?status=appointment, ?source=phone, ?score=hot, ?lead=<id>.
+  const onQuery = useCallback((params: URLSearchParams) => {
+    const status = params.get('status') as StageId | null
+    const from = params.get('source') as SourceId | null
+    const band = params.get('score') as ScoreBand | null
+    setRecoveredOnly(params.get('show') === 'recovered')
+    setStage(status && STAGES.includes(status) ? status : 'all')
+    setSource(from && from in sourceLabel ? from : 'all')
+    setScore(band && ['hot', 'warm', 'cold'].includes(band) ? band : 'all')
+    setPage(0)
+    const lead = params.get('lead')
+    if (lead) setOpenId(lead)
+  }, [])
 
   const filtered = useMemo(() => {
     const since = created === 'all' ? -Infinity : windowFor(Number(created)).start
@@ -41,6 +58,7 @@ export function LeadsView() {
         (source === 'all' || lead.source === source) &&
         (stage === 'all' || lead.stage === stage) &&
         (score === 'all' || (score === 'hot' ? lead.score >= 80 : score === 'warm' ? lead.score >= 50 && lead.score < 80 : lead.score < 50)) &&
+        (!recoveredOnly || lead.recoveredAt !== undefined) &&
         lead.createdAt >= since &&
         matchesQuery(lead, query),
     )
@@ -57,12 +75,12 @@ export function LeadsView() {
           return (a.lastContactAt - b.lastContactAt) * dir
       }
     })
-  }, [leads, source, stage, score, created, query, sort])
+  }, [leads, source, stage, score, created, query, sort, recoveredOnly])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const current = Math.min(page, pageCount - 1)
   const rows = filtered.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE)
-  const filtersOn = query.trim() !== '' || source !== 'all' || stage !== 'all' || score !== 'all' || created !== 'all'
+  const filtersOn = query.trim() !== '' || source !== 'all' || stage !== 'all' || score !== 'all' || created !== 'all' || recoveredOnly
   const withReset =
     <T,>(set: (value: T) => void) =>
     (value: T) => {
@@ -75,14 +93,18 @@ export function LeadsView() {
     setStage('all')
     setScore('all')
     setCreated('all')
+    setRecoveredOnly(false)
     setPage(0)
+    replaceQuery({ show: null, status: null, source: null, score: null, lead: null })
   }
+  const recoveredCount = leads.filter((lead) => lead.recoveredAt !== undefined).length
 
   const newThisMonth = leads.filter((lead) => lead.createdAt >= windowFor(30).start).length
   const open = leads.find((lead) => lead.id === openId) ?? null
 
   return (
     <>
+      <QueryParams onChange={onQuery} />
       <PageHeader
         title="Leads"
         description={`${fmtNumber(leads.length)} leads · ${fmtNumber(newThisMonth)} new in the last 30 days · includes older leads imported for re-engagement`}
@@ -103,7 +125,7 @@ export function LeadsView() {
             hideLabel
             value={stage}
             onChange={withReset(setStage)}
-            options={[{ value: 'all', label: 'All statuses' }, ...STAGES.map((id) => ({ value: id, label: stageLabel[id] }))]}
+            options={[{ value: 'all', label: 'All statuses' }, ...STAGES.map((id) => ({ value: id, label: stageShort[id] }))]}
           />
           <SelectField
             label="Lead score"
@@ -129,11 +151,28 @@ export function LeadsView() {
               { value: '90', label: 'Last 90 days' },
             ]}
           />
+          <Segmented
+            label="Show"
+            size="sm"
+            value={recoveredOnly ? 'recovered' : 'all'}
+            onChange={(value) => {
+              setRecoveredOnly(value === 'recovered')
+              setPage(0)
+              replaceQuery({ show: value === 'recovered' ? 'recovered' : null })
+            }}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'recovered', label: 'Recovered', count: recoveredCount },
+            ]}
+          />
           {filtersOn && (
             <button type="button" className="ui-btn ui-btn--ghost" onClick={clearFilters}>
               Clear filters
             </button>
           )}
+          <p className="ui-meta app-filters__count" aria-live="polite">
+            {filtered.length === leads.length ? `${fmtNumber(leads.length)} leads` : `${fmtNumber(filtered.length)} of ${fmtNumber(leads.length)}`}
+          </p>
         </div>
 
         <Panel index={1} flush>
@@ -190,7 +229,7 @@ export function LeadsView() {
                           <Score value={lead.score} />
                         </td>
                         <td data-label="Status">
-                          <StageBadge stage={lead.stage} outcome={lead.outcome} />
+                          <StageBadge stage={lead.stage} outcome={lead.outcome} short />
                         </td>
                         <td data-label="Last contact">{fmtAgo(lead.lastContactAt)}</td>
                         <td data-label="Next action" className="app-wrap app-nextcell">

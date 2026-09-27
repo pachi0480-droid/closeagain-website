@@ -2,24 +2,40 @@
 
 import { ArrowUpRight, Check, CreditCard, LoaderCircle, Minus, UserPlus } from 'lucide-react'
 import Link from 'next/link'
-import { useState, type FormEvent } from 'react'
-import { invoicesFor, monthlyPrice, nextRenewal } from '@/content/demo/billing'
+import { useCallback, useState, type FormEvent } from 'react'
+import { invoicesFor, monthlyPrice, nextRenewal, usersLabel } from '@/content/demo/billing'
 import { fmtAgo, fmtCurrency, fmtDateYear } from '@/content/demo/format'
 import { workspaceAccount, workspaceClient, workspaceNotifications, workspaceTeam } from '@/content/demo/workspace'
-import { billingNote, planById, planSummary, priceLabel, setupNote } from '@/content/pricing'
+import { billingNote, commitmentNote, planById, priceLabel, setupNote } from '@/content/pricing'
+import { QueryParams, useReplaceQuery } from '../query'
 import { useToast, usePending } from '../Toasts'
 import { Avatar, Badge, PageHeader, SelectField, Switch, TabPanel, Tabs, TextField } from '../ui'
 import { useClientDemo, type InvitedMember } from './state'
 
 type Tab = 'account' | 'team' | 'billing' | 'notifications' | 'permissions'
 
+const TABS: Tab[] = ['account', 'team', 'billing', 'notifications', 'permissions']
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+/** What the workspace's plan includes for people, from content/pricing.ts. */
+function teamAllowance() {
+  const plan = planById(workspaceClient.plan)
+  if (!plan) return ''
+  const collaboration = plan.features.includes('Team collaboration') ? ' and team collaboration' : ''
+  return `${plan.name} includes ${usersLabel(plan.id)}${collaboration}.`
+}
 
 export function SettingsView() {
   const [tab, setTab] = useState<Tab>('account')
   const { state } = useClientDemo()
+  const replaceQuery = useReplaceQuery()
+  const onQuery = useCallback((params: URLSearchParams) => {
+    const requested = params.get('tab') as Tab | null
+    if (requested && TABS.includes(requested)) setTab(requested)
+  }, [])
   return (
     <>
+      <QueryParams onChange={onQuery} />
       <PageHeader title="Settings" description="Workspace, team, billing and notifications for Juniper Row Realty" />
       <div className="app-page">
         <div className="ui-panel app-rise app-settings">
@@ -27,7 +43,10 @@ export function SettingsView() {
             idBase="settings"
             label="Settings sections"
             value={tab}
-            onChange={setTab}
+            onChange={(next) => {
+              setTab(next)
+              replaceQuery({ tab: next === 'account' ? null : next })
+            }}
             tabs={[
               { id: 'account', label: 'Account' },
               { id: 'team', label: 'Team', count: workspaceTeam.length + state.invites.length },
@@ -173,7 +192,7 @@ function TeamTab() {
         <h2 id="invite-title" className="app-form__title">
           Invite a teammate
         </h2>
-        <p className="ui-meta">Multi-user collaboration is included on the {planById(workspaceClient.plan)?.name} plan.</p>
+        <p className="ui-meta">{teamAllowance()}</p>
         <TextField label="Name" value={name} onChange={setName} error={errors.name} required autoComplete="off" />
         <TextField label="Email" type="email" value={email} onChange={setEmail} error={errors.email} required autoComplete="off" />
         <SelectField
@@ -197,21 +216,27 @@ function TeamTab() {
 
 function BillingTab() {
   const plan = planById(workspaceClient.plan)
+  const enterprise = planById('enterprise')
   const invoices = invoicesFor(workspaceClient)
   const renewal = nextRenewal(workspaceClient)
   if (!plan) return null
   return (
     <div className="app-settings__split">
       <section className="app-plan" aria-labelledby="plan-title">
-        <p className="ui-label">Current plan</p>
+        <p className="ui-label">Current plan · {plan.audience}</p>
         <h2 id="plan-title" className="app-plan__name">
           {plan.name}
         </h2>
         <p className="app-plan__price">
           <span className="app-plan__amount">{priceLabel(plan)}</span>
-          <span className="ui-meta">/month · {billingNote.toLowerCase()}</span>
+          {plan.monthly !== null && <span className="ui-meta">per month</span>}
         </p>
-        <p className="ui-meta">{planSummary(plan)} · {setupNote}</p>
+        <p className="ui-meta app-plan__terms">{[billingNote, commitmentNote, setupNote].join(' · ')}</p>
+        <ul className="app-plan__highlights" aria-label="Plan highlights">
+          {plan.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
+          ))}
+        </ul>
         <p className="app-plan__includes ui-label">{plan.includesLabel}</p>
         <ul className="app-plan__features">
           {plan.features.map((feature) => (
@@ -223,12 +248,14 @@ function BillingTab() {
         </ul>
         <div className="app-plan__actions">
           <Link href="/pricing" className="ui-btn">
-            Change plan
+            Compare plans
             <ArrowUpRight aria-hidden="true" />
           </Link>
-          <Link href="/contact" className="app-textlink">
-            Talk to us about Enterprise
-          </Link>
+          {enterprise && plan.id !== 'enterprise' && (
+            <Link href={enterprise.cta.href} className="app-textlink">
+              Talk to us about {enterprise.name}
+            </Link>
+          )}
         </div>
       </section>
       <div className="app-billing-side">

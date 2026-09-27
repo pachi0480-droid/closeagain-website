@@ -1,7 +1,7 @@
 'use client'
 
 import { LoaderCircle } from 'lucide-react'
-import { useMemo, useState, type CSSProperties } from 'react'
+import { useCallback, useMemo, useState, type CSSProperties } from 'react'
 import { fmtAgo, fmtNumber, fmtUntil } from '@/content/demo/format'
 import { DAY, DEMO_NOW, MINUTE } from '@/content/demo/time'
 import type { IntegrationId, IntegrationStatus } from '@/content/demo/types'
@@ -9,6 +9,7 @@ import { attentionNotes, integrationCatalog, workspaceClient } from '@/content/d
 import { Dialog } from '../Dialog'
 import { integrationIcon } from '../integrationIcons'
 import { integrationStatusLabel } from '../labels'
+import { QueryParams, useReplaceQuery } from '../query'
 import { useToast, usePending } from '../Toasts'
 import { Badge, EmptyState, PageHeader, Segmented, cx, type BadgeTone } from '../ui'
 import { useAppointments, useClientDemo, useLeads } from './state'
@@ -29,6 +30,13 @@ export function IntegrationsView() {
   const { run, busy } = usePending()
   const [filter, setFilter] = useState<Filter>('all')
   const [confirming, setConfirming] = useState<IntegrationId | null>(null)
+  const replaceQuery = useReplaceQuery()
+
+  // Linkable: ?show=attention (from “Needs attention”), ?show=connected, ?show=available.
+  const onQuery = useCallback((params: URLSearchParams) => {
+    const requested = params.get('show')
+    setFilter(requested === 'attention' || requested === 'connected' || requested === 'available' ? requested : 'all')
+  }, [])
 
   const statusOf = (id: IntegrationId): IntegrationStatus => state.integrations[id] ?? workspaceClient.integrations[id]
 
@@ -55,7 +63,10 @@ export function IntegrationsView() {
 
   const counts = { connected: 0, available: 0, attention: 0 }
   for (const item of integrationCatalog) counts[statusOf(item.id)]++
-  const visible = integrationCatalog.filter((item) => filter === 'all' || statusOf(item.id) === filter)
+  const order: Record<IntegrationStatus, number> = { attention: 0, connected: 1, available: 2 }
+  const visible = integrationCatalog
+    .filter((item) => filter === 'all' || statusOf(item.id) === filter)
+    .sort((a, b) => order[statusOf(a.id)] - order[statusOf(b.id)])
   const confirmItem = integrationCatalog.find((item) => item.id === confirming)
 
   const connect = (id: IntegrationId, name: string, verb: 'Connected' | 'Reconnected') =>
@@ -74,6 +85,7 @@ export function IntegrationsView() {
 
   return (
     <>
+      <QueryParams onChange={onQuery} />
       <PageHeader
         title="Integrations"
         description={`${counts.connected} connected · ${counts.attention} ${counts.attention === 1 ? 'needs' : 'need'} attention · ${counts.available} available`}
@@ -81,7 +93,10 @@ export function IntegrationsView() {
         <Segmented
           label="Show integrations"
           value={filter}
-          onChange={setFilter}
+          onChange={(next) => {
+            setFilter(next)
+            replaceQuery({ show: next === 'all' ? null : next })
+          }}
           options={[
             { value: 'all', label: 'All', count: integrationCatalog.length },
             { value: 'connected', label: 'Connected', count: counts.connected },
@@ -97,7 +112,14 @@ export function IntegrationsView() {
             <EmptyState
               title="Nothing in this group"
               action={
-                <button type="button" className="ui-btn ui-btn--quiet" onClick={() => setFilter('all')}>
+                <button
+                  type="button"
+                  className="ui-btn ui-btn--quiet"
+                  onClick={() => {
+                    setFilter('all')
+                    replaceQuery({ show: null })
+                  }}
+                >
                   Show all integrations
                 </button>
               }

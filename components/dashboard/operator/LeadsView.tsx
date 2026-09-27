@@ -164,7 +164,7 @@ export function OperatorLeads() {
                           <Score value={lead.score} />
                         </td>
                         <td data-label="Status">
-                          <StageBadge stage={lead.stage} outcome={lead.outcome} />
+                          <StageBadge stage={lead.stage} outcome={lead.outcome} short />
                         </td>
                         <td data-label="Created">{fmtAgo(lead.createdAt)}</td>
                         <td data-label="Last contact">{fmtAgo(lead.lastContactAt)}</td>

@@ -72,7 +72,7 @@ export const goalOptions: readonly FieldOption[] = [
 export const unsurePlan = 'unsure'
 
 export const planOptions: readonly FieldOption[] = [
-  { value: unsurePlan, label: 'Not sure — help me choose' },
+  { value: unsurePlan, label: 'Not sure yet' },
   ...plans.map((plan) => ({ value: plan.id, label: planSummary(plan) })),
 ]
 

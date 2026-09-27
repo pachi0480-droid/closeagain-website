@@ -253,6 +253,8 @@
 .plan-finder__choices { margin: 0; padding: 0; border: 0; min-width: 0; }
 .plan-finder__choices legend { margin-bottom: 1rem; padding: 0; font-size: 1.25rem; font-weight: 600; }
 .plan-finder__options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+/* The narrowest phones: one choice per row, so every label fits. */
+@media (max-width: 359px) { .plan-finder__options { grid-template-columns: minmax(0, 1fr); } }
 .plan-finder__option { position: relative; min-width: 0; cursor: pointer; }
 .plan-finder__option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .plan-finder__option > span {

@@ -57,19 +57,16 @@
 }
 
 /*
- * Between about 960 and 1,200px the copy column is much narrower than the
- * viewport, so a viewport-sized headline outgrew it and ran into the form.
- * The size is now capped at 28% of the column (28cqi): any word up to about
- * 3.5em wide always fits. The current title's longest word, “plan.”, measures
- * 2.04em, and the cap never shrinks it below --display-l at any width. A
- * title with longer words needs a smaller cap; `overflow-wrap` is only the
- * last line of defence.
+ * The title is sized to its own column (15.5cqi), so its longest word always
+ * fits: “conversations?” measures about 5.9em, and 15.5% of the column leaves
+ * room for it at every width from 320 to 1920. A title with a longer word
+ * needs a smaller cap; `overflow-wrap` is only the last resort.
  */
 .form-page__title {
   margin: 0;
   max-width: 9.5em;
   font-size: var(--display-l);
-  font-size: min(var(--display-l), 28cqi);
+  font-size: min(var(--display-l), 15.5cqi);
   line-height: 1.02;
   letter-spacing: -0.04em;
   overflow-wrap: break-word;

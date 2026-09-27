@@ -170,6 +170,24 @@ export function conversionTrend(leads: readonly Lead[], appointments: readonly A
   return out
 }
 
+export type Recovered<T extends Lead> = {
+  /** Newest first. */
+  leads: T[]
+  /** Estimated value of the recovered leads that are still open or won. */
+  value: number
+  booked: number
+}
+
+/** Older or quiet leads that replied again in the window — the “recovered” count, as a list. */
+export function recoveredOpportunities<T extends Lead>(leads: readonly T[], window: Window): Recovered<T> {
+  const list = leads.filter((lead) => within(lead.recoveredAt, window)).sort((a, b) => (b.recoveredAt ?? 0) - (a.recoveredAt ?? 0))
+  return {
+    leads: list,
+    value: list.filter((lead) => lead.outcome !== 'lost').reduce((sum, lead) => sum + lead.value, 0),
+    booked: list.filter((lead) => lead.appointmentId !== undefined).length,
+  }
+}
+
 export const STAGES: StageId[] = ['new', 'active', 'qualified', 'appointment', 'closed', 'reengage']
 
 export function stageCounts(leads: readonly Lead[]): Record<StageId, number> {

@@ -195,3 +195,49 @@ export type Invoice = {
 }
 
 export type PlanChange = { id: string; clientId: string; from: PlanId; to: PlanId; at: number }
+
+// ── Homepage showcase ─────────────────────────────────────────────────────
+
+/** The six areas the homepage showcase can point at. */
+export type ShowcaseArea = 'overview' | 'conversations' | 'leads' | 'automations' | 'appointments' | 'analytics'
+
+/** Badge tones the showcase uses, matching the demo's stage and status badges. */
+export type ShowcaseTone = 'default' | 'ink' | 'outline' | 'positive' | 'cold' | 'red'
+
+/**
+ * Display-ready numbers for the homepage showcase, taken from the sample
+ * workspace. content/demo/showcase.ts builds them; showcase-data.ts is the
+ * committed copy the homepage renders, so it never runs the generator.
+ */
+export type ShowcaseData = {
+  workspace: { name: string; mark: string; meta: string; date: string; user: string; role: string }
+  kpis: Array<{
+    id: 'new' | 'active' | 'recovered' | 'appointments' | 'pipeline'
+    label: string
+    value: number
+    format: 'number' | 'currency'
+    /** Change on the prior 30 days, e.g. “+24%”; empty when not compared. */
+    delta: string
+    up: boolean
+    note: string
+  }>
+  unread: number
+  conversations: Array<{
+    id: string
+    name: string
+    initials: string
+    stage: string
+    tone: ShowcaseTone
+    prefix: string
+    text: string
+    time: string
+    unread: boolean
+    recovered: boolean
+  }>
+  leads: Array<{ id: string; name: string; initials: string; interest: string; source: string; status: string; tone: ShowcaseTone; score: number; next: string }>
+  automations: Array<{ id: string; name: string; type: string; enabled: boolean; replyRate: string; next: string }>
+  /** Across all of the workspace's automations, not only the ones listed. */
+  running: { on: number; of: number }
+  appointments: Array<{ id: string; name: string; type: string; weekday: string; date: string; time: string; when: string; status: string; tone: ShowcaseTone }>
+  trend: { labels: string[]; newLeads: number[]; recovered: number[]; newTotal: number; recoveredTotal: number; top: number }
+}

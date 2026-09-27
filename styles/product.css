@@ -165,7 +165,7 @@
 
 .ui-badge--red {
   background: var(--bubble-blush);
-  border-color: #e9c3b3;
+  border-color: var(--blush-line-2);
   color: var(--vermilion-ink);
 }
 
@@ -177,13 +177,13 @@
 
 .ui-badge--positive {
   background: var(--positive-wash);
-  border-color: #cbd8c4;
+  border-color: var(--positive-line);
   color: var(--positive);
 }
 
 .ui-badge--caution {
   background: var(--caution-wash);
-  border-color: #e5d2a8;
+  border-color: var(--caution-line);
   color: var(--caution);
 }
 
@@ -226,7 +226,7 @@
 
 .ui-avatar--red {
   background: var(--bubble-blush);
-  border-color: #e9c3b3;
+  border-color: var(--blush-line-2);
   color: var(--vermilion-ink);
 }
 
@@ -321,7 +321,7 @@
 }
 
 .ui-btn:hover {
-  background: #2c2b27;
+  background: var(--btn-hover);
 }
 
 .ui-btn--quiet {

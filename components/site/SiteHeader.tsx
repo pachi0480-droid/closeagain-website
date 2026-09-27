@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Arrow, Wordmark } from '@/components/ui/links'
 import { headerNav, menuNav, primaryCta } from '@/content/site'
 import { MobileMenu } from './MobileMenu'
+import { ThemeToggle } from './ThemeToggle'
 import { NavLink } from './NavLink'
 
 export function SiteHeader() {
@@ -23,6 +24,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="site-header__actions">
+          <ThemeToggle className="site-header__theme" />
           <Link href={primaryCta.href} className="btn site-header__cta">
             <span>{primaryCta.label}</span>
             <Arrow />

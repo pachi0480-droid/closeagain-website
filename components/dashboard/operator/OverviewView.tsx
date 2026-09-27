@@ -11,13 +11,15 @@ import { BarList } from '../charts'
 import { priorLabel, rangeLabel, rangeOptions, useRange, type RangeDays } from '../hooks'
 import { QuickFind } from '../QuickFind'
 import { Metric, PageHeader, Panel, Segmented, SortHeader, cx, deltaOf, type SortState } from '../ui'
-import { ClientStatusBadge, HealthMeter, PlanBadge } from './shared'
+import { clientStatusLabel } from '../labels'
+import { HealthMeter, PlanBadge } from './shared'
 import { useAlerts, useClientRows, useOperator } from './state'
 
 type Measure = 'leads' | 'recovered' | 'appointments' | 'response'
-type SortKey = 'name' | 'mrr' | 'leads' | 'conversations' | 'appointments' | 'recovered' | 'health' | 'activity'
+type SortKey = 'name' | 'plan' | 'mrr' | 'leads' | 'recovered' | 'appointments' | 'usage' | 'health' | 'activity'
 
 const sum = (list: Summary[], key: keyof Summary) => list.reduce((total, item) => total + (item[key] as number), 0)
+const planRank = (plan: string) => ['core', 'growth', 'scale', 'enterprise'].indexOf(plan)
 
 export function useRangeSummaries(rows: ClientRow[], range: RangeDays) {
   return useMemo(() => {
@@ -74,16 +76,18 @@ export function OperatorOverview() {
       switch (sort.key) {
         case 'name':
           return row.client.name
+        case 'plan':
+          return planRank(row.client.plan)
         case 'mrr':
           return row.mrr
         case 'leads':
           return s?.newLeads ?? 0
-        case 'conversations':
-          return s?.conversations ?? 0
-        case 'appointments':
-          return s?.appointments ?? 0
         case 'recovered':
           return s?.recovered ?? 0
+        case 'appointments':
+          return s?.appointments ?? 0
+        case 'usage':
+          return s?.messagesSent ?? 0
         case 'health':
           return row.health.score
         default:
@@ -114,29 +118,49 @@ export function OperatorOverview() {
       </PageHeader>
 
       <div className="app-page" aria-busy={loading}>
-        <div className="app-grid app-grid--metrics op-kpis">
-          <Metric index={0} label="MRR" value={fmtCurrency(mrr)} note={`${billing.length} billing accounts · plan prices`} loading={loading} />
-          <Metric
-            index={1}
-            label="Active clients"
-            value={`${billing.length} of ${rows.length}`}
-            note={`${rows.length - billing.length} paused · ${rows.filter((row) => row.client.status === 'onboarding').length} onboarding`}
-            loading={loading}
-          />
-          <Metric index={2} label="New clients" value={fmtNumber(newClients.length)} note={newClients.map((row) => row.client.short).join(', ') || rangeLabel(range)} loading={loading} />
-          <Metric index={3} label="Total leads" value={fmtNumber(sum(currents, 'newLeads'))} delta={delta('newLeads')} loading={loading} />
-          <Metric index={4} label="Recovered leads" value={fmtNumber(sum(currents, 'recovered'))} delta={delta('recovered')} emphasis loading={loading} />
-          <Metric index={5} label="Conversations" value={fmtNumber(sum(currents, 'conversations'))} delta={delta('conversations')} note="Two-way" loading={loading} />
-          <Metric index={6} label="Appointments" value={fmtNumber(sum(currents, 'appointments'))} delta={delta('appointments')} note="Booked" loading={loading} />
-          <Metric index={7} label="Usage" value={fmtNumber(sum(currents, 'messagesSent'))} delta={delta('messagesSent')} note="Automated messages sent" loading={loading} />
-          <Metric index={8} label="Client health" value={`${averageHealth}`} note={`${bands.healthy} healthy · ${bands.watch} watch · ${bands.risk} at risk`} loading={loading} />
-          <Metric index={9} label="Churn risk" value={fmtNumber(atRisk.length)} note={atRisk.map((row) => row.client.short).join(', ') || 'No accounts at risk'} loading={loading} />
-        </div>
+        <section className="op-kpigroup" aria-labelledby="kpi-accounts">
+          <h2 id="kpi-accounts" className="op-kpigroup__label">
+            Accounts
+          </h2>
+          <div className="app-grid app-grid--metrics">
+            <Metric index={0} label="MRR" value={fmtCurrency(mrr)} note={`${billing.length} billing accounts · plan prices`} loading={loading} />
+            <Metric
+              index={1}
+              label="Active clients"
+              value={`${billing.length} of ${rows.length}`}
+              note={`${rows.length - billing.length} paused · ${rows.filter((row) => row.client.status === 'onboarding').length} onboarding`}
+              loading={loading}
+            />
+            <Metric index={2} label="New clients" value={fmtNumber(newClients.length)} note={newClients.map((row) => row.client.short).join(', ') || rangeLabel(range)} loading={loading} />
+            <Metric index={3} label="Client health" value={`${averageHealth}`} note={`${bands.healthy} healthy · ${bands.watch} watch · ${bands.risk} at risk`} loading={loading} />
+            <Metric
+              index={4}
+              label="Alerts"
+              value={fmtNumber(alerts.length)}
+              note={alerts.length ? `${alerts.filter((alert) => alert.severity === 'critical').length} critical · ${alerts.filter((alert) => alert.severity === 'warning').length} warnings` : 'All clear'}
+              loading={loading}
+            />
+            <Metric index={5} label="Churn risk" value={fmtNumber(atRisk.length)} note={atRisk.map((row) => row.client.short).join(', ') || 'No accounts at risk'} loading={loading} />
+          </div>
+        </section>
+
+        <section className="op-kpigroup" aria-labelledby="kpi-activity">
+          <h2 id="kpi-activity" className="op-kpigroup__label">
+            Activity · {rangeLabel(range)}
+          </h2>
+          <div className="app-grid app-grid--metrics app-grid--metrics-5">
+            <Metric index={6} label="Total leads" value={fmtNumber(sum(currents, 'newLeads'))} delta={delta('newLeads')} loading={loading} />
+            <Metric index={7} label="Recovered leads" value={fmtNumber(sum(currents, 'recovered'))} delta={delta('recovered')} emphasis loading={loading} />
+            <Metric index={8} label="Conversations" value={fmtNumber(sum(currents, 'conversations'))} delta={delta('conversations')} note="Two-way" loading={loading} />
+            <Metric index={9} label="Appointments" value={fmtNumber(sum(currents, 'appointments'))} delta={delta('appointments')} note="Booked" loading={loading} />
+            <Metric index={10} label="Usage" value={fmtNumber(sum(currents, 'messagesSent'))} delta={delta('messagesSent')} note="Automated messages sent" loading={loading} />
+          </div>
+        </section>
 
         <div className="app-grid app-grid--main">
           <Panel
             index={1}
-            title="Client performance"
+            title="Compare clients"
             meta={`${rangeLabel(range)}${hasPrevious ? ` · tick marks the prior ${range} days` : ''}`}
             className={cx(loading && 'is-refreshing')}
             actions={
@@ -203,8 +227,8 @@ export function OperatorOverview() {
 
         <Panel
           index={3}
-          title="Clients"
-          meta={`${rows.length} workspaces · ${rangeLabel(range)}`}
+          title="Client performance"
+          meta={`${rows.length} workspaces · ${rangeLabel(range)} · sort any column`}
           flush
           className={cx(loading && 'is-refreshing')}
           actions={
@@ -215,18 +239,17 @@ export function OperatorOverview() {
           }
         >
           <div className="app-table-wrap">
-            <table className="ui-table app-table op-table app-table--stack">
-              <caption className="app-sr">Clients, {rangeLabel(range)}</caption>
+            <table className="ui-table app-table op-table app-table--stack op-perftable">
+              <caption className="app-sr">Client performance, {rangeLabel(range)}</caption>
               <thead>
                 <tr>
                   <SortHeader label="Client" sortKey="name" sort={sort} onSort={setSort} />
-                  <th scope="col">Status</th>
-                  <th scope="col">Plan</th>
+                  <SortHeader label="Plan" sortKey="plan" sort={sort} onSort={setSort} />
                   <SortHeader label="MRR" sortKey="mrr" sort={sort} onSort={setSort} numeric />
                   <SortHeader label="Leads" sortKey="leads" sort={sort} onSort={setSort} numeric />
-                  <SortHeader label="Conv." sortKey="conversations" sort={sort} onSort={setSort} numeric />
-                  <SortHeader label="Appts." sortKey="appointments" sort={sort} onSort={setSort} numeric />
-                  <SortHeader label="Recovered" sortKey="recovered" sort={sort} onSort={setSort} numeric />
+                  <SortHeader label="Recovered leads" sortKey="recovered" sort={sort} onSort={setSort} numeric />
+                  <SortHeader label="Appointments" sortKey="appointments" sort={sort} onSort={setSort} numeric />
+                  <SortHeader label="Usage" sortKey="usage" sort={sort} onSort={setSort} numeric />
                   <SortHeader label="Health" sortKey="health" sort={sort} onSort={setSort} />
                   <SortHeader label="Last activity" sortKey="activity" sort={sort} onSort={setSort} />
                 </tr>
@@ -240,11 +263,16 @@ export function OperatorOverview() {
                         <Link href={`/demo/operator/clients/${row.client.id}`} className="app-rowlink" onClick={(event) => event.stopPropagation()}>
                           <span className="app-cell-title">{row.client.name}</span>
                         </Link>
-                        <span className="app-cell-sub">{row.client.industry}</span>
+                        <span className="app-cell-sub">
+                          {row.client.industry}
+                          {row.client.status !== 'active' && (
+                            <>
+                              {' · '}
+                              <span className={cx(row.client.status === 'paused' && 'app-num-red')}>{clientStatusLabel[row.client.status]}</span>
+                            </>
+                          )}
+                        </span>
                       </th>
-                      <td data-label="Status">
-                        <ClientStatusBadge status={row.client.status} />
-                      </td>
                       <td data-label="Plan">
                         <PlanBadge plan={row.client.plan} />
                       </td>
@@ -254,14 +282,15 @@ export function OperatorOverview() {
                       <td className="ui-num" data-label="Leads">
                         {fmtNumber(s?.newLeads ?? 0)}
                       </td>
-                      <td className="ui-num" data-label="Conversations">
-                        {fmtNumber(s?.conversations ?? 0)}
+                      <td className="ui-num" data-label="Recovered leads">
+                        <span className={cx((s?.recovered ?? 0) > 0 && 'app-num-red')}>{fmtNumber(s?.recovered ?? 0)}</span>
                       </td>
                       <td className="ui-num" data-label="Appointments">
                         {fmtNumber(s?.appointments ?? 0)}
                       </td>
-                      <td className="ui-num" data-label="Recovered">
-                        <span className={cx((s?.recovered ?? 0) > 0 && 'app-num-red')}>{fmtNumber(s?.recovered ?? 0)}</span>
+                      <td className="ui-num" data-label="Usage">
+                        {fmtNumber(s?.messagesSent ?? 0)}
+                        <span className="app-cell-sub">messages</span>
                       </td>
                       <td data-label="Health">
                         <HealthMeter health={row.health} compact />

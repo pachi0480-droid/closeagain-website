@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { primaryCta } from '@/content/site'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { ThemeToggle } from '@/components/site/ThemeToggle'
 import { cx } from './ui'
 
 export type NavItem = {
@@ -91,6 +92,7 @@ export function AppShell({ variant, nav, home, workspace, user, onReset, childre
               CloseAgain
             </Link>
             <span className={cx('app-mobilebar__ws', variant === 'operator' && 'op-badge')}>{variant === 'client' ? workspace.name : 'Master control'}</span>
+            <ThemeToggle className="app-theme" />
             <button
               type="button"
               className="ui-btn ui-btn--quiet app-menu-button"
@@ -235,6 +237,7 @@ function SidebarContent({
             <span className="app-user__name">{user.name}</span>
             <span className="app-user__role">{user.role}</span>
           </span>
+          {idPrefix === 'side' && <ThemeToggle className="app-theme" />}
         </div>
       </div>
     </div>

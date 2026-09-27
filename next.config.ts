@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/book-a-demo', destination: '/contact', permanent: true },
-      { source: '/after-you-buy', destination: '/getting-started', permanent: true },
+      { source: '/getting-started', destination: '/after-you-buy', permanent: true },
     ]
   },
 }

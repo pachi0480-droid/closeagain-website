@@ -5,7 +5,7 @@ import { useId } from 'react'
 import type { Outcome, StageId } from '@/content/demo/types'
 import { stageLabel } from '../labels'
 import { useToast } from '../Toasts'
-import { cx } from '../ui'
+import { SelectBox, cx } from '../ui'
 import { useClientDemo, type LiveLead } from './state'
 
 type StageValue = Exclude<StageId, 'closed'> | 'closed-won' | 'closed-lost'
@@ -33,24 +33,26 @@ export function StageSelect({ lead, compact = false }: { lead: LiveLead; compact
       <label htmlFor={id} className={compact ? 'app-sr' : 'app-stageselect__label'}>
         {compact ? `Move ${lead.name} to stage` : 'Move to stage'}
       </label>
-      <select
-        id={id}
-        className="ui-input app-select"
-        value={toValue(lead.stage, lead.outcome)}
-        onChange={(event) => {
-          const value = event.target.value as StageValue
-          const stage: StageId = value.startsWith('closed') ? 'closed' : (value as StageId)
-          const outcome: Outcome | undefined = value === 'closed-won' ? 'won' : value === 'closed-lost' ? 'lost' : undefined
-          dispatch({ type: 'moveStage', leadId: lead.id, stage, outcome })
-          notify({ title: `${lead.name} moved to ${options.find((option) => option.value === value)?.label}` })
-        }}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <SelectBox>
+        <select
+          id={id}
+          className="ui-input app-select"
+          value={toValue(lead.stage, lead.outcome)}
+          onChange={(event) => {
+            const value = event.target.value as StageValue
+            const stage: StageId = value.startsWith('closed') ? 'closed' : (value as StageId)
+            const outcome: Outcome | undefined = value === 'closed-won' ? 'won' : value === 'closed-lost' ? 'lost' : undefined
+            dispatch({ type: 'moveStage', leadId: lead.id, stage, outcome })
+            notify({ title: `${lead.name} moved to ${options.find((option) => option.value === value)?.label}` })
+          }}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </SelectBox>
     </div>
   )
 }

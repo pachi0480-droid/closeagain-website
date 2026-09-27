@@ -3,8 +3,9 @@
 import { useMemo } from 'react'
 import { fmtDate, fmtNumber, fmtPercent, fmtWeekdayDate } from '@/content/demo/format'
 import { conversionTrend, dailySeries, reachedQualified, sourcePerformance, summarize, windowFor, within } from '@/content/demo/metrics'
+import type { DayPoint } from '@/content/demo/metrics'
 import type { Appointment, Lead } from '@/content/demo/types'
-import { BarList, TimeChart } from '../charts'
+import { BarList, TimeChart, rolling } from '../charts'
 import { priorLabel, rangeLabel, rangeOptions, useRange, type RangeDays } from '../hooks'
 import { sourceLabel } from '../labels'
 import { Metric, PageHeader, Panel, Segmented, cx, deltaOf, pointsDelta } from '../ui'
@@ -41,6 +42,13 @@ export function AnalyticsView() {
   const longLabels = series.map((point) => fmtWeekdayDate(point.start))
   const avgConversion = conversion.length ? conversion.reduce((sum, value) => sum + value, 0) / conversion.length : 0
   const maxSource = Math.max(1, ...sources.map((row) => row.leads))
+  const weekly = range === 90
+  const activity = weekly ? byWeek(series) : {
+    labels,
+    longLabels,
+    conversations: series.map((point) => point.conversations),
+    appointments: series.map((point) => point.appointments),
+  }
   const note = range === 90 ? 'Sample history starts 90 days back' : undefined
 
   return (
@@ -79,10 +87,16 @@ export function AnalyticsView() {
               summary={`${current.newLeads} new leads and ${current.recovered} recovered leads, ${rangeLabel(range)}.`}
               labels={labels}
               longLabels={longLabels}
-              height={250}
+              height={260}
+              kind="columns"
+              yLabel="Leads per day"
+              totalLabel="In total"
+              endLabels={false}
+              format={oneDecimal}
               series={[
-                { id: 'new', label: 'New leads', values: series.map((point) => point.newLeads), tone: 'ink', area: true },
-                { id: 'recovered', label: 'Recovered', values: series.map((point) => point.recovered), tone: 'accent', area: true },
+                { id: 'new', label: 'New leads', values: series.map((point) => point.newLeads), tone: 'ink', stack: 'leads' },
+                { id: 'recovered', label: 'Recovered', values: series.map((point) => point.recovered), tone: 'accent', stack: 'leads' },
+                { id: 'average', label: '7-day average', values: rolling(series.map((point) => point.newLeads + point.recovered)), tone: 'muted', mark: 'line', dashed: true },
               ]}
             />
           </Panel>
@@ -103,27 +117,37 @@ export function AnalyticsView() {
         </div>
 
         <div className="app-grid app-grid--halves">
-          <Panel index={3} title="Conversion trend" meta="Appointments booked per new lead, trailing 7 days" className={cx(loading && 'is-refreshing')}>
+          <Panel
+            index={3}
+            title="Conversations and appointments"
+            meta={weekly ? 'Per week, last 90 days' : `Per day, ${rangeLabel(range)}`}
+            className={cx(loading && 'is-refreshing')}
+          >
+            <TimeChart
+              kind="columns"
+              summary={`${current.conversations} two-way conversations started and ${current.appointments} appointments booked, ${rangeLabel(range)}.`}
+              labels={activity.labels}
+              longLabels={activity.longLabels}
+              height={210}
+              yLabel={weekly ? 'Per week' : 'Per day'}
+              series={[
+                { id: 'conversations', label: 'Conversations started', values: activity.conversations, tone: 'ink' },
+                { id: 'appointments', label: 'Appointments booked', values: activity.appointments, tone: 'accent' },
+              ]}
+            />
+          </Panel>
+          <Panel index={4} title="Conversion trend" meta="Appointments booked per new lead, trailing 7 days" className={cx(loading && 'is-refreshing')}>
             <TimeChart
               summary={`Conversion over ${rangeLabel(range)}, averaging ${fmtPercent(avgConversion)} of new leads booking an appointment.`}
               labels={labels}
               longLabels={longLabels}
-              height={200}
+              height={210}
               integer={false}
+              yLabel="Booked per new lead"
               format={(value) => fmtPercent(value)}
-              reference={{ value: avgConversion, label: `Avg ${fmtPercent(avgConversion)}` }}
-              series={[{ id: 'conversion', label: 'Conversion', values: conversion, tone: 'ink' }]}
+              reference={{ value: avgConversion, label: `Average ${fmtPercent(avgConversion)}` }}
+              series={[{ id: 'conversion', label: 'Conversion, trailing 7 days', values: conversion, tone: 'ink', area: true }]}
               endLabels={false}
-            />
-          </Panel>
-          <Panel index={4} title="Conversations started" meta={`Leads replying for the first time, per day`} className={cx(loading && 'is-refreshing')}>
-            <TimeChart
-              kind="columns"
-              summary={`${current.conversations} two-way conversations started, ${rangeLabel(range)}.`}
-              labels={labels}
-              longLabels={longLabels}
-              height={200}
-              series={[{ id: 'conversations', label: 'Conversations', values: series.map((point) => point.conversations), tone: 'ink' }]}
             />
           </Panel>
         </div>
@@ -178,4 +202,18 @@ export function AnalyticsView() {
       </div>
     </>
   )
+}
+
+const oneDecimal = (value: number) => (Number.isInteger(value) ? fmtNumber(value) : fmtNumber(value, 1))
+
+/** Seven-day buckets, oldest first, ending today — for 90-day views where daily columns get too thin. */
+function byWeek(series: DayPoint[]) {
+  const weeks: DayPoint[][] = []
+  for (let end = series.length; end > 0; end -= 7) weeks.unshift(series.slice(Math.max(0, end - 7), end))
+  return {
+    labels: weeks.map((week) => fmtDate(week[0].start)),
+    longLabels: weeks.map((week) => `${fmtDate(week[0].start)} – ${fmtDate(week[week.length - 1].start)}`),
+    conversations: weeks.map((week) => week.reduce((sum, point) => sum + point.conversations, 0)),
+    appointments: weeks.map((week) => week.reduce((sum, point) => sum + point.appointments, 0)),
+  }
 }

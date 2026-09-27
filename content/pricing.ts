@@ -2,15 +2,15 @@
  * CloseAgain plans — the single source for every price and plan fact.
  *
  * The pricing page, the homepage pricing overview, the inquiry form, the
- * break-even explainer, page metadata and the demo's billing views all read
- * from here. Nothing else on the site may type a price: a test fails if a
- * dollar amount appears in any other content or component file.
+ * break-even explainer, the FAQ, page metadata and the demo's billing views
+ * all read from here. Nothing else on the site may type a price: a test fails
+ * if a dollar amount appears in any other content or component file.
  *
- * What is confirmed: the four prices, monthly billing, setup assistance on
- * every plan, and each plan's feature list as supplied by the owner. What is
- * not: numeric allowances, seat counts, supported channels, overage and
- * contract terms — see docs/open-questions.md. Those are described as
- * “confirmed in your proposal”, never invented.
+ * Every plan fact below was supplied by the owner: prices, monthly billing
+ * with no annual commitment, setup assistance, users and locations per plan,
+ * channels, and each plan's feature list. Numeric usage allowances and any
+ * usage fees are not set yet, so they are confirmed in the proposal, never
+ * invented — see docs/open-questions.md.
  */
 
 export type PlanId = 'core' | 'growth' | 'scale' | 'enterprise'
@@ -21,20 +21,26 @@ export type Plan = {
   /** Monthly price in USD, or null for custom pricing. */
   monthly: number | null
   tagline: string
-  /** “Best for …” — who the plan suits. */
+  /** A short “For …” label above the name. */
+  audience: string
+  /** Who the plan suits, in one sentence. */
   bestFor: string
-  /** What this plan adds over the one before it, in one sentence. */
-  step: string
+  /** The headline facts for a plan card: users, locations, the defining extra. */
+  highlights: string[]
   /** Heading above the feature list, e.g. “Everything in Core, plus”. */
   includesLabel: string
   /** Only what this plan adds — nothing repeated from the plan below. */
   features: string[]
   cta: { label: string; href: string }
-  /** A recommendation with its reason. Never a popularity claim. */
+  /**
+   * Emphasis for one plan, with the reason. “Most popular” is a statement
+   * about customers’ choices: use it only once it is true.
+   */
   recommendation?: { label: string; basis: string }
 }
 
-export const billingNote = 'Billed monthly'
+export const billingNote = 'Monthly billing'
+export const commitmentNote = 'No annual commitment'
 export const setupNote = 'Setup assistance included'
 
 export const formatPrice = (amount: number) => `$${amount.toLocaleString('en-US')}`
@@ -45,59 +51,76 @@ export const plans: Plan[] = [
     name: 'Core',
     monthly: 499,
     tagline: 'Start strong.',
-    bestFor: 'Smaller businesses that need every inquiry answered and followed up, reliably.',
-    step: 'Follow-up for new inquiries and older leads, with one inbox for replies.',
+    audience: 'For reliable follow-up',
+    bestFor: 'Smaller established businesses that need reliable follow-up.',
+    highlights: ['1 user', '1 location', 'New and old lead follow-up'],
     includesLabel: 'Includes',
     features: [
-      'New inquiry capture',
+      'New lead capture',
       'Automated follow-up',
-      'Older lead re-engagement',
-      'Conversation inbox',
-      'Basic reporting',
+      'Old lead re-engagement',
+      'Unified conversation inbox',
+      'Basic appointment reminders',
+      'Basic analytics',
+      'Basic automation templates',
       'Standard integrations',
       'Standard support',
     ],
-    cta: { label: 'Choose Core', href: '/contact?plan=core' },
+    cta: { label: 'Get Core', href: '/contact?plan=core' },
   },
   {
     id: 'growth',
     name: 'Growth',
     monthly: 899,
     tagline: 'Build momentum.',
-    bestFor: 'Businesses that book appointments and want follow-up shaped around their own process.',
-    step: 'Adds custom follow-up sequences, appointment workflows and advanced automations.',
+    audience: 'For growing teams',
+    bestFor: 'Growing teams that book appointments and follow up by email and text.',
+    highlights: ['3–5 users', 'Email + SMS workflows', 'CRM integrations'],
     includesLabel: 'Everything in Core, plus',
     features: [
-      'Custom follow-up sequences',
+      'Higher usage',
+      'Email + SMS workflows',
+      'Advanced follow-up sequences',
       'Appointment workflows',
-      'Advanced automations',
-      'Advanced analytics',
-      'Additional integrations',
-      'Higher usage allowance',
+      'Custom automation rules',
+      'Lead tagging and segmentation',
+      'Deeper analytics',
+      'CRM integrations',
+      'More automation templates',
+      'Basic AI personalization',
       'Priority support',
     ],
-    cta: { label: 'Choose Growth', href: '/contact?plan=growth' },
+    cta: { label: 'Get Growth', href: '/contact?plan=growth' },
   },
   {
     id: 'scale',
     name: 'Scale',
     monthly: 1499,
     tagline: 'Move faster.',
-    bestFor: 'Teams where several people work leads and need workflows and pipeline stages of their own.',
-    step: 'Adds multi-user collaboration, custom workflows and pipeline customization.',
+    audience: 'For teams moving at volume',
+    bestFor: 'Teams running several pipelines or locations that want the most automation.',
+    highlights: ['10+ users', 'Multiple locations', 'Advanced AI personalization'],
     includesLabel: 'Everything in Growth, plus',
     features: [
-      'Multi-user collaboration',
+      'Much higher usage',
+      'Advanced AI personalization',
       'Custom workflows',
-      'Pipeline customization',
+      'Custom sequences by lead type',
+      'Multiple pipelines',
+      'Team collaboration',
+      'Advanced lead scoring',
+      'Missed-call follow-up',
+      'No-show recovery',
       'Advanced reporting',
-      'Higher usage limits',
+      'Revenue and pipeline attribution',
+      'API and webhook access',
       'Priority onboarding',
+      'Faster support',
     ],
-    cta: { label: 'Choose Scale', href: '/contact?plan=scale' },
+    cta: { label: 'Get Scale', href: '/contact?plan=scale' },
     recommendation: {
-      label: 'Recommended for teams',
-      basis: 'The first plan where several people can work leads together.',
+      label: 'Recommended',
+      basis: 'The complete CloseAgain toolkit: multiple pipelines and locations, advanced AI and attribution.',
     },
   },
   {
@@ -105,20 +128,47 @@ export const plans: Plan[] = [
     name: 'Enterprise',
     monthly: null,
     tagline: 'Built around you.',
-    bestFor: 'Multi-location organizations with their own integration, permission and reporting needs.',
-    step: 'Scoped around your locations, permissions, integrations and reporting.',
+    audience: 'For complex operations',
+    bestFor: 'Multi-location organizations that need custom integrations, permissions and dedicated support.',
+    highlights: ['Custom usage', 'Multi-location management', 'Dedicated account manager'],
     includesLabel: 'Includes',
     features: [
-      'Multi-location support',
-      'Advanced permissions',
-      'Custom integrations',
-      'Custom workflows',
-      'Custom reporting',
       'Custom usage',
+      'Custom integrations',
+      'Multi-location management',
+      'Advanced permissions',
+      'Custom workflow builds',
+      'Custom reporting',
+      'Custom dashboards',
+      'Dedicated account manager',
       'Dedicated onboarding',
-      'Priority support',
+      'SLA and priority support',
     ],
     cta: { label: 'Talk to us', href: '/contact?plan=enterprise' },
+  },
+]
+
+/** The pricing page’s “what matters most?” chooser: a priority, and the plan it points to. */
+export const planFinder: ReadonlyArray<{ plan: PlanId; label: string; reason: string }> = [
+  {
+    plan: 'core',
+    label: 'Consistent follow-up',
+    reason: 'Core covers new lead capture, automated follow-up and old lead re-engagement, for one user at one location.',
+  },
+  {
+    plan: 'growth',
+    label: 'Booking appointments',
+    reason: 'Growth adds appointment workflows, email + SMS workflows and CRM integrations, for 3–5 users.',
+  },
+  {
+    plan: 'scale',
+    label: 'Growing a team',
+    reason: 'Scale adds team collaboration for 10+ users, multiple pipelines and locations, and advanced AI personalization.',
+  },
+  {
+    plan: 'enterprise',
+    label: 'Complex operations',
+    reason: 'Enterprise adds multi-location management, advanced permissions, custom builds and a dedicated account manager.',
   },
 ]
 
@@ -143,79 +193,97 @@ export const startingMonthly = Math.min(...listed)
 export const startingPriceText = `Plans start at ${formatPrice(startingMonthly)}/month`
 
 /** The short terms line used beside calls to action. */
-export const planTerms = [startingPriceText, billingNote, setupNote] as const
+export const planTerms = [startingPriceText, billingNote, commitmentNote, setupNote] as const
 
 /**
- * What a proposal settles before anything is billed. These are the facts the
- * public site does not state, because they have not been confirmed yet.
+ * What a proposal still settles before anything is billed — the only plan
+ * facts not published yet (docs/open-questions.md).
  */
-export const proposalCovers = [
-  'Which channels CloseAgain will use for your business',
-  'Your included usage, and what happens if you go over it',
-  'How many people on your team can use it',
-  'Any setup or additional charges',
-  'The minimum term and how to cancel',
-] as const
+export const proposalCovers = ['your exact usage allowance', 'what happens above it', 'any messaging or usage fees'] as const
 
 /**
  * The comparison, row by row, in the owner's own terms. `true` = included,
  * `false` = not included, a string = included at that level.
  *
- * Enterprise is scoped individually; its cells follow its own feature list.
- * Cells marked “Custom” for Enterprise are inferred from that list and are
- * recorded in docs/open-questions.md.
+ * Enterprise follows its own feature list; where that list is silent, its
+ * cells read “Custom” and are recorded in docs/open-questions.md.
  */
 export type ComparisonRow = { label: string; note?: string; values: Record<PlanId, boolean | string> }
 
 export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
   {
-    group: 'Follow-up',
+    group: 'Leads and follow-up',
     rows: [
-      { label: 'New inquiry capture', values: { core: true, growth: true, scale: true, enterprise: true } },
+      { label: 'New lead capture', values: { core: true, growth: true, scale: true, enterprise: true } },
       { label: 'Automated follow-up', values: { core: true, growth: true, scale: true, enterprise: true } },
-      { label: 'Older lead re-engagement', values: { core: true, growth: true, scale: true, enterprise: true } },
-      { label: 'Conversation inbox', values: { core: true, growth: true, scale: true, enterprise: true } },
-      { label: 'Custom follow-up sequences', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'Old lead re-engagement', values: { core: true, growth: true, scale: true, enterprise: true } },
+      { label: 'Unified conversation inbox', values: { core: true, growth: true, scale: true, enterprise: true } },
+      {
+        label: 'Follow-up sequences',
+        values: { core: 'Standard', growth: 'Advanced', scale: 'Custom by lead type', enterprise: 'Custom' },
+      },
+      { label: 'Email + SMS workflows', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'Missed-call follow-up', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
     ],
   },
   {
-    group: 'Next steps and workflows',
-    rows: [
-      { label: 'Appointment workflows', values: { core: false, growth: true, scale: true, enterprise: true } },
-      { label: 'Advanced automations', values: { core: false, growth: true, scale: true, enterprise: true } },
-      { label: 'Custom workflows', values: { core: false, growth: false, scale: true, enterprise: true } },
-      { label: 'Pipeline customization', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
-    ],
-  },
-  {
-    group: 'Reporting',
+    group: 'Automation and AI',
     rows: [
       {
-        label: 'Reporting level',
-        values: { core: 'Basic', growth: 'Advanced analytics', scale: 'Advanced reporting', enterprise: 'Custom reporting' },
+        label: 'Automation templates',
+        values: { core: 'Basic', growth: 'More', scale: 'More', enterprise: 'Custom' },
       },
+      { label: 'Custom automation rules', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'Custom workflows', values: { core: false, growth: false, scale: true, enterprise: 'Custom builds' } },
+      { label: 'AI personalization', values: { core: false, growth: 'Basic', scale: 'Advanced', enterprise: 'Custom' } },
+      { label: 'Lead tagging and segmentation', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'Advanced lead scoring', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
+    ],
+  },
+  {
+    group: 'Appointments',
+    rows: [
+      { label: 'Appointment reminders', values: { core: 'Basic', growth: true, scale: true, enterprise: true } },
+      { label: 'Appointment workflows', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'No-show recovery', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
+    ],
+  },
+  {
+    group: 'Pipeline and reporting',
+    rows: [
+      {
+        label: 'Analytics and reporting',
+        values: { core: 'Basic', growth: 'Deeper', scale: 'Advanced', enterprise: 'Custom' },
+      },
+      { label: 'Multiple pipelines', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
+      { label: 'Revenue and pipeline attribution', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
+      { label: 'Custom dashboards', values: { core: false, growth: false, scale: false, enterprise: true } },
     ],
   },
   {
     group: 'Team and locations',
     rows: [
-      { label: 'Multi-user collaboration', values: { core: false, growth: false, scale: true, enterprise: true } },
+      { label: 'Users', values: { core: '1', growth: '3–5', scale: '10+', enterprise: 'Custom' } },
+      { label: 'Locations', values: { core: '1', growth: '1', scale: 'Multiple', enterprise: 'Multi-location management' } },
+      { label: 'Team collaboration', values: { core: false, growth: false, scale: true, enterprise: true } },
       { label: 'Advanced permissions', values: { core: false, growth: false, scale: false, enterprise: true } },
-      { label: 'Multi-location support', values: { core: false, growth: false, scale: false, enterprise: true } },
+    ],
+  },
+  {
+    group: 'Connections',
+    rows: [
+      { label: 'Integrations', values: { core: 'Standard', growth: 'Standard + CRM', scale: 'Standard + CRM', enterprise: 'Custom' } },
+      { label: 'CRM integrations', values: { core: false, growth: true, scale: true, enterprise: true } },
+      { label: 'API and webhook access', values: { core: false, growth: false, scale: true, enterprise: 'Custom' } },
     ],
   },
   {
     group: 'Usage, setup and support',
     rows: [
       {
-        label: 'Usage allowance',
+        label: 'Usage',
         note: 'Exact allowances are confirmed in your proposal.',
-        values: { core: 'Included', growth: 'Higher', scale: 'Higher limits', enterprise: 'Custom' },
-      },
-      {
-        label: 'Integrations',
-        note: 'Tell us your tools; fit is confirmed before you commit.',
-        values: { core: 'Standard', growth: 'Additional', scale: 'Additional', enterprise: 'Custom' },
+        values: { core: 'Standard', growth: 'Higher', scale: 'Much higher', enterprise: 'Custom' },
       },
       {
         label: 'Setup',
@@ -226,8 +294,12 @@ export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
           enterprise: 'Dedicated onboarding',
         },
       },
-      { label: 'Support', values: { core: 'Standard', growth: 'Priority', scale: 'Priority', enterprise: 'Priority' } },
-      { label: 'Billing', values: { core: 'Monthly', growth: 'Monthly', scale: 'Monthly', enterprise: 'Agreed individually' } },
+      { label: 'Dedicated account manager', values: { core: false, growth: false, scale: false, enterprise: true } },
+      { label: 'Support', values: { core: 'Standard', growth: 'Priority', scale: 'Faster', enterprise: 'SLA and priority' } },
+      {
+        label: 'Billing',
+        values: { core: 'Monthly', growth: 'Monthly', scale: 'Monthly', enterprise: 'Agreed with you' },
+      },
     ],
   },
 ]
@@ -237,7 +309,7 @@ export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
  * features page can never disagree with the pricing page.
  *
  *   availability('Appointment workflows') → { summary: 'Growth and up' }
- *   availability('Reporting level') → { summary: 'Every plan', levels: [...] }
+ *   availability('Users') → { summary: 'Every plan', levels: ['Core: 1', …] }
  */
 export function availability(label: string): { summary: string; levels?: string[] } {
   const row = comparison.flatMap((group) => group.rows).find((candidate) => candidate.label === label)

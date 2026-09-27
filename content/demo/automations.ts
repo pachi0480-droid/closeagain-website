@@ -1,8 +1,9 @@
 /**
  * The master automation library and each client's running automations.
  *
- * Template availability follows content/pricing.ts: appointment workflows and
- * custom sequences are listed from Growth, so those templates require Growth.
+ * Template availability follows the plan feature lists in content/pricing.ts:
+ * advanced follow-up sequences come with Growth; missed-call follow-up and
+ * no-show recovery come with Scale. `planFeature` quotes the feature.
  */
 
 import type { PlanId } from '../pricing.ts'
@@ -67,25 +68,6 @@ export const templates: Template[] = [
     ]),
   },
   {
-    id: 'tpl-missed-inquiry',
-    name: 'Missed Inquiry Recovery',
-    category: 'Recovery',
-    description: 'Texts back missed calls and after-hours inquiries before they go cold.',
-    minPlan: 'core',
-    type: 'sequence',
-    updatedAt: atLocal(2026, 8, 2, 15, 45),
-    updatedBy: 'Riley Brooks',
-    steps: withIds('tpl-missed-inquiry', [
-      s({ kind: 'trigger', event: 'missed-call' }),
-      s({ kind: 'wait', amount: 2, unit: 'minutes' }),
-      s({ kind: 'message', channel: 'text', body: 'Sorry we missed your call! This is {business}. How can we help?' }),
-      s({ kind: 'condition', check: 'replied' }),
-      s({ kind: 'action', action: 'notify-team' }),
-      s({ kind: 'wait', amount: 1, unit: 'days' }),
-      s({ kind: 'message', channel: 'text', body: 'Following up on your call yesterday — still need a hand?' }),
-    ]),
-  },
-  {
     id: 'tpl-reactivation',
     name: 'Old Lead Reactivation',
     category: 'Reactivation',
@@ -106,12 +88,32 @@ export const templates: Template[] = [
     ]),
   },
   {
+    id: 'tpl-missed-inquiry',
+    name: 'Missed Inquiry Recovery',
+    category: 'Recovery',
+    description: 'Texts back missed calls and after-hours inquiries before they go cold.',
+    minPlan: 'scale',
+    planFeature: 'Missed-call follow-up',
+    type: 'sequence',
+    updatedAt: atLocal(2026, 8, 2, 15, 45),
+    updatedBy: 'Riley Brooks',
+    steps: withIds('tpl-missed-inquiry', [
+      s({ kind: 'trigger', event: 'missed-call' }),
+      s({ kind: 'wait', amount: 2, unit: 'minutes' }),
+      s({ kind: 'message', channel: 'text', body: 'Sorry we missed your call! This is {business}. How can we help?' }),
+      s({ kind: 'condition', check: 'replied' }),
+      s({ kind: 'action', action: 'notify-team' }),
+      s({ kind: 'wait', amount: 1, unit: 'days' }),
+      s({ kind: 'message', channel: 'text', body: 'Following up on your call yesterday — still need a hand?' }),
+    ]),
+  },
+  {
     id: 'tpl-no-show',
     name: 'No-Show Follow-Up',
     category: 'Appointments',
     description: 'Reaches out after a missed appointment and offers new times.',
-    minPlan: 'growth',
-    planFeature: 'Appointment workflows',
+    minPlan: 'scale',
+    planFeature: 'No-show recovery',
     type: 'sequence',
     updatedAt: atLocal(2026, 8, 9, 9, 40),
     updatedBy: 'Riley Brooks',
@@ -130,8 +132,8 @@ export const templates: Template[] = [
     name: 'Appointment Reminder',
     category: 'Appointments',
     description: 'Confirms appointments the day before, then again two hours ahead.',
-    minPlan: 'growth',
-    planFeature: 'Appointment workflows',
+    minPlan: 'core',
+    planFeature: 'Basic appointment reminders',
     type: 'sequence',
     updatedAt: atLocal(2026, 6, 30, 14, 10),
     updatedBy: 'Jordan Ellis',
@@ -150,7 +152,7 @@ export const templates: Template[] = [
     category: 'Sales',
     description: 'Follows up on quotes and proposals until there’s a clear answer.',
     minPlan: 'growth',
-    planFeature: 'Custom follow-up sequences',
+    planFeature: 'Advanced follow-up sequences',
     type: 'sequence',
     updatedAt: atLocal(2026, 8, 18, 16, 30),
     updatedBy: 'Riley Brooks',
@@ -167,11 +169,11 @@ export const templates: Template[] = [
   },
   {
     id: 'tpl-win-back',
-    name: 'Customer Win-Back',
+    name: 'Win-Back Campaign',
     category: 'Retention',
     description: 'Brings past customers back with a timely, personal check-in.',
     minPlan: 'growth',
-    planFeature: 'Custom follow-up sequences',
+    planFeature: 'Advanced follow-up sequences',
     type: 'campaign',
     updatedAt: atLocal(2026, 7, 12, 13, 0),
     updatedBy: 'Jordan Ellis',
@@ -196,9 +198,9 @@ export const initialDeployments: Record<string, TemplateId[]> = {
   'juniper-row': ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-no-show', 'tpl-reminder', 'tpl-proposal'],
   'blue-heron': ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-no-show', 'tpl-reminder', 'tpl-proposal', 'tpl-win-back'],
   bellwether: ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-no-show', 'tpl-reminder', 'tpl-proposal'],
-  'crescent-ridge': ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation'],
+  'crescent-ridge': ['tpl-new-lead', 'tpl-reactivation'],
   solstice: ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-no-show', 'tpl-reminder', 'tpl-win-back'],
-  marigold: ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-reminder'],
+  marigold: ['tpl-new-lead', 'tpl-reactivation', 'tpl-reminder'],
   'calder-wynn': ['tpl-new-lead', 'tpl-missed-inquiry', 'tpl-reactivation', 'tpl-no-show', 'tpl-reminder'],
   fieldnote: ['tpl-new-lead', 'tpl-reactivation', 'tpl-proposal'],
   tallyhouse: ['tpl-new-lead', 'tpl-reactivation'],
@@ -232,11 +234,19 @@ const slug = (templateId: string) => templateId.replace(/^tpl-/, '')
 
 export const automationIdFor = (clientId: string, templateId: string) => `${clientId}.${slug(templateId)}`
 
-/** The automations a client is running, built from its deployed templates. */
-export function buildAutomations(client: Client, deployed: readonly string[] = initialDeployments[client.id] ?? []): Automation[] {
+/**
+ * The automations a client is running, built from its deployed templates.
+ * `lookup` resolves template ids; the operator demo passes its own list so
+ * templates created or duplicated in the tab can be deployed too.
+ */
+export function buildAutomations(
+  client: Client,
+  deployed: readonly string[] = initialDeployments[client.id] ?? [],
+  lookup: (id: string) => Template | undefined = templateById,
+): Automation[] {
   const list: Automation[] = []
   for (const templateId of deployed) {
-    const template = templateById(templateId)
+    const template = lookup(templateId)
     if (!template) continue
     const override = renamed[client.id]?.[templateId as TemplateId]
     const launch = client.waves[client.waves.length - 1]

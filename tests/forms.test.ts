@@ -66,19 +66,20 @@ describe('form definition', () => {
     assert.equal(fieldsFor('inquiry'), inquiryFields)
   })
 
-  it('asks for name, email, business, goal and plan up front and keeps the rest optional', () => {
-    const visible = inquiryFields.filter((field) => field.group !== 'details').map((field) => field.name)
-    const details = inquiryFields.filter((field) => field.group === 'details').map((field) => field.name)
-    assert.deepEqual(visible, ['name', 'email', 'business', 'goal', 'plan'])
-    assert.deepEqual(details, ['phone', 'industry', 'volume', 'crm', 'message'])
+  it('shows every buying field in reading order, nothing hidden', () => {
+    assert.deepEqual(
+      inquiryFields.map((field) => field.name),
+      ['name', 'business', 'email', 'phone', 'industry', 'volume', 'crm', 'plan', 'goal', 'message'],
+    )
+    for (const field of inquiryFields) assert.equal(field.group, undefined, field.name)
   })
 
-  it('never requires a field that is hidden inside the disclosure', () => {
-    for (const field of inquiryFields) {
-      if (field.group === 'details') assert.equal(field.required, false, field.name)
-    }
+  it('requires only name, business, email and goal, and marks the rest optional', () => {
     const required = inquiryFields.filter((field) => field.required).map((field) => field.name)
-    assert.deepEqual(required, ['name', 'email', 'business', 'goal'])
+    assert.deepEqual(required, ['name', 'business', 'email', 'goal'])
+    for (const field of inquiryFields) {
+      if (!field.required && field.name !== 'plan') assert.equal(field.hint, 'Optional', field.name)
+    }
   })
 
   it('never forces a plan: it defaults to “not sure yet” and offers every plan', () => {
@@ -90,7 +91,7 @@ describe('form definition', () => {
       planOptions.map((option) => option.value),
       [unsurePlan, ...plans.map((p) => p.id)],
     )
-    assert.equal(planOptions[0].label, 'Not sure — help me choose')
+    assert.equal(planOptions[0].label, 'Not sure yet')
   })
 
   it('uses stable slugs for the goal', () => {
@@ -557,5 +558,39 @@ describe('rate limiting', () => {
     assert.equal(allow('ip', 20), false)
     assert.equal(allow('other', 20), true)
     assert.equal(allow('ip', 1500), true)
+  })
+})
+
+describe('email hand-off before a destination is connected', () => {
+  const values = {
+    name: 'Sam Rivera',
+    business: 'Rivera & Co',
+    email: 'sam@example.com',
+    phone: '',
+    industry: 'Home services',
+    volume: '',
+    crm: 'None yet',
+    plan: 'growth',
+    goal: 'both',
+    message: 'Quotes go quiet after a week.',
+  }
+
+  it('addresses the business and names the plan and business in the subject', async () => {
+    const { inquiryEmailLink } = await import('../lib/forms/email.ts')
+    const link = inquiryEmailLink('hello@example.com', inquiryFields, values)
+    assert.ok(link.startsWith('mailto:hello@example.com?subject='))
+    const params = new URLSearchParams(link.slice(link.indexOf('?') + 1))
+    assert.equal(params.get('subject'), 'CloseAgain — Growth inquiry from Rivera & Co')
+  })
+
+  it('carries every answer, with readable labels and placeholders for blanks', async () => {
+    const { inquiryEmailLink } = await import('../lib/forms/email.ts')
+    const link = inquiryEmailLink('hello@example.com', inquiryFields, values)
+    const body = new URLSearchParams(link.slice(link.indexOf('?') + 1)).get('body') ?? ''
+    for (const field of inquiryFields) assert.ok(body.includes(`${field.label}:`), field.name)
+    assert.ok(body.includes('Main goal: Both'))
+    assert.ok(body.includes('Preferred plan: Growth — '))
+    assert.ok(body.includes('Phone: —'))
+    assert.ok(body.includes('Message: Quotes go quiet after a week.'))
   })
 })

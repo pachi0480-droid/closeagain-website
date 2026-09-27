@@ -5,7 +5,7 @@
  */
 
 import { planById } from '../pricing.ts'
-import { clientAutomations, planAllows, templateById } from './automations.ts'
+import { clientAutomations, planAllows, templateById, type Template } from './automations.ts'
 import { invoicesFor, monthlyPrice, nextRenewal } from './billing.ts'
 import { FEATURED_CLIENT_ID, clients } from './clients.ts'
 import { generateClient, type Dataset } from './generate.ts'
@@ -193,13 +193,15 @@ export const allInvoices = clients.flatMap(invoicesFor).sort((a, b) => b.issuedA
 export type Upsell = { clientId: string; from: string; to: string; delta: number; reason: string }
 
 /**
- * Upsell ideas grounded in plan features: Core clients booking appointments
- * by hand would get appointment workflows on Growth; Growth clients where
- * more people want their own login would get multi-user collaboration on
- * Scale. Accounts at risk are left alone.
+ * Upsell ideas grounded in the plan feature lists in content/pricing.ts:
+ * Core clients booking appointments by hand would get appointment workflows
+ * on Growth; a Growth client asking for something only Scale includes is
+ * offered Scale. Accounts at risk are left alone.
  */
-/** Sample signal: people at the client who have asked for their own login. */
-const seatRequests: Record<string, number> = { fieldnote: 2 }
+/** Sample requests from Growth clients, each for a feature Scale includes. */
+const scaleRequests: Record<string, { feature: string; request: string }> = {
+  fieldnote: { feature: 'API and webhook access', request: 'Asked to send new leads to their project tool by webhook' },
+}
 
 export function upsellOpportunities(rows: readonly ClientRow[]): Upsell[] {
   const out: Upsell[] = []
@@ -217,18 +219,16 @@ export function upsellOpportunities(rows: readonly ClientRow[]): Upsell[] {
         })
       }
     }
-    const seats = seatRequests[client.id] ?? 0
-    if (client.plan === 'growth' && seats > 0) {
-      const to = planById('scale')
-      if (to?.monthly) {
-        out.push({
-          clientId: client.id,
-          from: 'Growth',
-          to: to.name,
-          delta: to.monthly - monthlyPrice(client),
-          reason: `${seats} more people have asked for their own login — Scale adds multi-user collaboration.`,
-        })
-      }
+    const request = scaleRequests[client.id]
+    const scale = planById('scale')
+    if (client.plan === 'growth' && request && scale?.monthly && scale.features.includes(request.feature)) {
+      out.push({
+        clientId: client.id,
+        from: 'Growth',
+        to: scale.name,
+        delta: scale.monthly - monthlyPrice(client),
+        reason: `${request.request} — ${scale.name} adds ${/^[A-Z]{2}/.test(request.feature) ? request.feature : request.feature.charAt(0).toLowerCase() + request.feature.slice(1)}.`,
+      })
     }
   }
   return out
@@ -243,8 +243,12 @@ export const renewals = clients
 
 export type DeployCheck = { ok: true } | { ok: false; reason: string }
 
-export function canDeploy(templateId: string, client: Client, status = client.status): DeployCheck {
-  const template = templateById(templateId)
+/** “Advanced follow-up sequences are…”, “No-show recovery is…”. */
+export const isPlural = (feature: string) => /s$/i.test(feature.trim())
+
+/** Whether a template can run for a client. Pass the template itself for ones created in the demo tab. */
+export function canDeploy(templateOrId: Template | string, client: Client, status = client.status): DeployCheck {
+  const template = typeof templateOrId === 'string' ? templateById(templateOrId) : templateOrId
   if (status === 'paused') {
     return {
       ok: false,
@@ -253,9 +257,10 @@ export function canDeploy(templateId: string, client: Client, status = client.st
   }
   if (template && !planAllows(client.plan, template.minPlan)) {
     const plan = planById(template.minPlan)
+    const feature = template.planFeature ?? template.name
     return {
       ok: false,
-      reason: `${template.planFeature ?? template.name} ${template.planFeature ? 'are' : 'is'} included from ${plan?.name ?? template.minPlan}. ${client.short} is on ${planById(client.plan)?.name}.`,
+      reason: `${feature} ${isPlural(feature) ? 'are' : 'is'} included from ${plan?.name ?? template.minPlan}. ${client.short} is on ${planById(client.plan)?.name}.`,
     }
   }
   return { ok: true }
@@ -277,7 +282,7 @@ export const tickets: Ticket[] = [
   { id: 'T-1048', clientId: 'crescent-ridge', subject: 'Leads stopped coming from the website', status: 'open', priority: 'high', opened: atLocal(2026, 8, 22, 9, 12), lastUpdate: 'Asked Wade whether the quote-page form was edited on Sep 3.' },
   { id: 'T-1047', clientId: 'juniper-row', subject: 'Reconnect the email inbox', status: 'open', priority: 'normal', opened: atLocal(2026, 8, 23, 16, 40), lastUpdate: 'Sent Dana the reconnect link.' },
   { id: 'T-1046', clientId: 'tallyhouse', subject: 'Update the card on file', status: 'waiting', priority: 'high', opened: atLocal(2026, 8, 8, 11, 5), lastUpdate: 'Waiting on Priyanka — finance is issuing a new card.' },
-  { id: 'T-1045', clientId: 'fieldnote', subject: 'Webhook returning 410 Gone', status: 'open', priority: 'normal', opened: atLocal(2026, 8, 20, 14, 22), lastUpdate: 'Their developer is moving the endpoint this week.' },
+  { id: 'T-1045', clientId: 'bellwether', subject: 'Webhook returning 410 Gone', status: 'open', priority: 'normal', opened: atLocal(2026, 8, 20, 14, 22), lastUpdate: 'Their field-service vendor is moving the endpoint this week.' },
   { id: 'T-1044', clientId: 'marigold', subject: 'Calendar setup for two injectors', status: 'open', priority: 'normal', opened: atLocal(2026, 8, 9, 10, 0), lastUpdate: 'Working session booked for Friday.' },
   { id: 'T-1041', clientId: 'juniper-row', subject: 'Add Elena as an admin', status: 'resolved', priority: 'normal', opened: atLocal(2026, 8, 2, 13, 30), lastUpdate: 'Done — Elena accepted the invite.' },
   { id: 'T-1039', clientId: 'blue-heron', subject: 'Separate reporting for the three offices', status: 'resolved', priority: 'normal', opened: atLocal(2026, 7, 27, 9, 45), lastUpdate: 'Custom report shared with Colette.' },
@@ -300,7 +305,7 @@ export const services: Array<{ id: string; name: string; status: ServiceStatus; 
 export const queues: Array<{ id: string; name: string; depth: number; oldest: string; detail: string }> = [
   { id: 'outbound', name: 'Outbound messages', depth: 42, oldest: '38s', detail: 'Texts and emails waiting to send' },
   { id: 'scheduled', name: 'Scheduled follow-ups', depth: 1284, oldest: '—', detail: 'Due in the next 24 hours' },
-  { id: 'webhooks', name: 'Webhook retries', depth: 17, oldest: '4d', detail: 'Fieldnote Creative endpoint' },
+  { id: 'webhooks', name: 'Webhook retries', depth: 17, oldest: '4d', detail: 'Bellwether Heating & Air endpoint' },
   { id: 'imports', name: 'Imports', depth: 1, oldest: '6m', detail: 'Marigold Aesthetics client list' },
 ]
 
@@ -318,7 +323,7 @@ export const jobs: Job[] = [
   { id: 'job-88412', kind: 'Spreadsheet import', clientId: 'marigold', status: 'running', at: DEMO_NOW - 6 * MINUTE, duration: '6m', detail: '1,240 of 1,812 rows' },
   { id: 'job-88409', kind: 'CRM sync', clientId: 'blue-heron', status: 'succeeded', at: DEMO_NOW - 15 * MINUTE, duration: '14s', detail: '312 contacts updated' },
   { id: 'job-88405', kind: 'Email send batch', clientId: 'juniper-row', status: 'failed', at: DEMO_NOW - 38 * MINUTE, duration: '2s', detail: 'Inbox access expired — 6 emails held' },
-  { id: 'job-88398', kind: 'Webhook delivery', clientId: 'fieldnote', status: 'retrying', at: DEMO_NOW - 52 * MINUTE, duration: '1s', detail: '410 Gone from client endpoint' },
+  { id: 'job-88398', kind: 'Webhook delivery', clientId: 'bellwether', status: 'retrying', at: DEMO_NOW - 52 * MINUTE, duration: '1s', detail: '410 Gone from client endpoint' },
   { id: 'job-88391', kind: 'Calendar sync', clientId: 'calder-wynn', status: 'succeeded', at: DEMO_NOW - 1 * HOUR, duration: '9s', detail: '41 events checked' },
   { id: 'job-88377', kind: 'Reactivation batch', clientId: 'juniper-row', status: 'succeeded', at: DEMO_NOW - 70 * MINUTE, duration: '48s', detail: 'Wave 2 · step 1 sent' },
   { id: 'job-88360', kind: 'Form check', clientId: 'crescent-ridge', status: 'failed', at: DEMO_NOW - 2 * HOUR, duration: '3s', detail: 'No submissions in 21 days' },

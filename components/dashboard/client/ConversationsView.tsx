@@ -1,14 +1,15 @@
 'use client'
 
 import { ArrowLeft, Send } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
-import { fmtNumber, fmtStamp } from '@/content/demo/format'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { fmtAgo, fmtCurrencyCompact, fmtNumber, fmtStamp } from '@/content/demo/format'
 import { kits } from '@/content/demo/kits'
 import { STAGES, windowFor } from '@/content/demo/metrics'
 import type { SourceId, StageId } from '@/content/demo/types'
 import { workspaceAutomations, workspaceClient } from '@/content/demo/workspace'
-import { ConversationRow, LeadFacts, Thread, snippet } from '../conversation'
-import { sourceLabel, stageLabel } from '../labels'
+import { ConversationRow, LeadFacts, SourceIcon, Thread, lastReplyAt, snippet } from '../conversation'
+import { sourceLabel, stageShort } from '../labels'
+import { QueryParams, useReplaceQuery } from '../query'
 import { useToast } from '../Toasts'
 import { Avatar, EmptyState, PageHeader, Panel, SearchField, Segmented, SelectField, StageBadge, cx } from '../ui'
 import { HandledButton, StageSelect } from './StageControls'
@@ -19,17 +20,19 @@ type View = 'inbox' | 'board'
 const BOARD_PAGE = 12
 const LIST_PAGE = 40
 const kit = kits[workspaceClient.kit]
+const SOURCES = Object.keys(sourceLabel) as SourceId[]
 
 export function matchesQuery(lead: LiveLead, query: string) {
   const q = query.trim().toLowerCase()
   if (!q) return true
-  if (`${lead.name} ${lead.interest} ${lead.tags.join(' ')} ${lead.email}`.toLowerCase().includes(q)) return true
+  if (`${lead.name} ${lead.interest} ${lead.tags.join(' ')} ${lead.email} ${lead.nextAction}`.toLowerCase().includes(q)) return true
   return lead.thread.some((message) => message.body.toLowerCase().includes(q))
 }
 
 export function ConversationsView() {
   const { state, dispatch } = useClientDemo()
   const leads = useLeads()
+  const replaceQuery = useReplaceQuery()
   const [view, setView] = useState<View>('inbox')
   const [query, setQuery] = useState('')
   const [stage, setStage] = useState<'all' | StageId>('all')
@@ -37,6 +40,21 @@ export function ConversationsView() {
   const [needsReply, setNeedsReply] = useState(false)
   const [showThread, setShowThread] = useState(false)
   const [limit, setLimit] = useState(LIST_PAGE)
+
+  // Filters that can be linked to, e.g. from “Needs attention”: ?show=needs-reply, ?stage=reengage, ?view=board.
+  const onQuery = useCallback(
+    (params: URLSearchParams) => {
+      const nextStage = params.get('stage') as StageId | null
+      const nextSource = params.get('source') as SourceId | null
+      setNeedsReply(params.get('show') === 'needs-reply')
+      setStage(nextStage && STAGES.includes(nextStage) ? nextStage : 'all')
+      setSource(nextSource && SOURCES.includes(nextSource) ? nextSource : 'all')
+      setView(params.get('view') === 'board' ? 'board' : 'inbox')
+      const lead = params.get('lead')
+      if (lead) dispatch({ type: 'select', leadId: lead })
+    },
+    [dispatch],
+  )
 
   const recent = useMemo(() => {
     const since = windowFor(30).start
@@ -61,6 +79,7 @@ export function ConversationsView() {
     setSource('all')
     setNeedsReply(false)
     setLimit(LIST_PAGE)
+    replaceQuery({ show: null, stage: null, source: null, lead: null })
   }
 
   const selectedId = state.selected && filtered.some((lead) => lead.id === state.selected) ? state.selected : (filtered[0]?.id ?? null)
@@ -80,12 +99,14 @@ export function ConversationsView() {
   const openFromBoard = (leadId: string) => {
     select(leadId)
     setView('inbox')
+    replaceQuery({ view: null })
   }
 
-  const sources = Array.from(new Set(recent.map((lead) => lead.source)))
+  const sources = SOURCES.filter((id) => recent.some((lead) => lead.source === id))
 
   return (
     <>
+      <QueryParams onChange={onQuery} />
       <PageHeader
         title="Conversations"
         description={`${fmtNumber(recent.length)} conversations with activity in the last 30 days · ${unreadCount} waiting on a reply`}
@@ -93,10 +114,13 @@ export function ConversationsView() {
         <Segmented
           label="Layout"
           value={view}
-          onChange={setView}
+          onChange={(next) => {
+            setView(next)
+            replaceQuery({ view: next === 'board' ? 'board' : null })
+          }}
           options={[
             { value: 'inbox', label: 'Inbox' },
-            { value: 'board', label: 'Pipeline board' },
+            { value: 'board', label: 'Pipeline' },
           ]}
         />
       </PageHeader>
@@ -108,21 +132,30 @@ export function ConversationsView() {
             label="Stage"
             hideLabel
             value={stage}
-            onChange={setStage}
-            options={[{ value: 'all', label: 'All stages' }, ...STAGES.map((id) => ({ value: id, label: stageLabel[id] }))]}
+            onChange={(next) => {
+              setStage(next)
+              replaceQuery({ stage: next === 'all' ? null : next })
+            }}
+            options={[{ value: 'all', label: 'All stages' }, ...STAGES.map((id) => ({ value: id, label: stageShort[id] }))]}
           />
           <SelectField
             label="Source"
             hideLabel
             value={source}
-            onChange={setSource}
+            onChange={(next) => {
+              setSource(next)
+              replaceQuery({ source: next === 'all' ? null : next })
+            }}
             options={[{ value: 'all', label: 'All sources' }, ...sources.map((id) => ({ value: id, label: sourceLabel[id] }))]}
           />
           <Segmented
             label="Show"
             size="sm"
             value={needsReply ? 'reply' : 'all'}
-            onChange={(value) => setNeedsReply(value === 'reply')}
+            onChange={(value) => {
+              setNeedsReply(value === 'reply')
+              replaceQuery({ show: value === 'reply' ? 'needs-reply' : null })
+            }}
             options={[
               { value: 'all', label: 'All' },
               { value: 'reply', label: 'Needs reply', count: unreadCount },
@@ -141,14 +174,16 @@ export function ConversationsView() {
         {filtered.length === 0 ? (
           <Panel index={1}>
             <EmptyState
-              title="No conversations match"
+              title={needsReply && !query && stage === 'all' && source === 'all' ? 'Every reply is handled' : 'No conversations match'}
               action={
                 <button type="button" className="ui-btn ui-btn--quiet" onClick={clearFilters}>
-                  Clear filters
+                  {needsReply ? 'Show all conversations' : 'Clear filters'}
                 </button>
               }
             >
-              Try a different name or stage, or clear the filters to see all {fmtNumber(recent.length)} conversations.
+              {needsReply
+                ? 'Nobody is waiting on a reply right now. New replies land here first.'
+                : `Try a different name or stage, or clear the filters to see all ${fmtNumber(recent.length)} conversations.`}
             </EmptyState>
           </Panel>
         ) : view === 'inbox' ? (
@@ -271,20 +306,25 @@ function Board({ leads, onOpen }: { leads: LiveLead[]; onOpen: (leadId: string) 
         const cards = leads.filter((lead) => lead.stage === stage)
         const limit = limits[stage] ?? BOARD_PAGE
         const headingId = `board-${stage}`
+        const value = cards.filter((lead) => lead.outcome !== 'lost').reduce((sum, lead) => sum + lead.value, 0)
         return (
           <section key={stage} className={cx('app-column', `app-column--${stage}`)} aria-labelledby={headingId}>
             <header className="app-column__head">
               <h2 id={headingId} className="app-column__title">
-                {stageLabel[stage]}
+                {stageShort[stage]}
               </h2>
               <span className="app-column__count">{fmtNumber(cards.length)}</span>
             </header>
+            {cards.length > 0 && stage !== 'closed' && stage !== 'reengage' && (
+              <p className="app-column__meta">{fmtNumber(cards.filter((lead) => lead.unread).length)} unread · {fmtCurrencyCompact(value)} {kit.valueLabel.toLowerCase()}</p>
+            )}
             {cards.length === 0 ? (
               <p className="app-column__empty">Nothing here right now.</p>
             ) : (
               <ul className="app-column__list">
                 {cards.slice(0, limit).map((lead) => {
                   const { prefix, text } = snippet(lead)
+                  const replied = lastReplyAt(lead)
                   return (
                     <li key={lead.id} className={cx('app-card', lead.unread && 'is-unread')}>
                       <button type="button" className="app-card__open" onClick={() => onOpen(lead.id)}>
@@ -296,6 +336,15 @@ function Board({ leads, onOpen }: { leads: LiveLead[]; onOpen: (leadId: string) 
                         <span className="app-card__snippet">
                           {prefix && <span className="app-conv__prefix">{prefix}</span>}
                           {text}
+                        </span>
+                        <span className="app-card__meta">
+                          <SourceIcon source={lead.source} />
+                          {sourceLabel[lead.source]}
+                          <span aria-hidden="true">·</span>
+                          {replied ? `replied ${fmtAgo(replied)}` : 'no reply yet'}
+                        </span>
+                        <span className="app-card__next">
+                          <span className="app-conv__label">Next</span> {lead.nextAction}
                         </span>
                         <span className="app-sr">Open conversation</span>
                       </button>

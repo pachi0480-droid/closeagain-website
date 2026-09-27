@@ -1,13 +1,13 @@
 'use client'
 
 /**
- * Hand-rolled SVG charts for the demo. Restrained on purpose: 1.5px lines,
- * hairline solid gridlines, area washes at 10% or less, ink for the primary
- * series and vermilion only for the highlighted one.
+ * Hand-rolled charts for the demo. Restrained on purpose: hairline solid
+ * gridlines, 1.5px lines, columns in ink with vermilion only for the series
+ * that matters most, washes at 8% or less.
  *
- * Every chart carries a text summary and a visually hidden data table, and
- * the hover readout also works from the keyboard (focus the chart, then use
- * the arrow keys).
+ * Every chart has a value-axis caption and a legend, carries a text summary
+ * and a visually hidden data table, and its readout works from the pointer
+ * and the keyboard (focus the chart, then use the arrow keys).
  */
 
 import { useId, useState, type CSSProperties, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react'
@@ -27,8 +27,14 @@ export type Series = {
   label: string
   values: number[]
   tone: Tone
-  /** Fill a faint wash under the line. */
+  /** A line, or one column per point. Defaults to the chart's `kind`. */
+  mark?: 'line' | 'column'
+  /** Fill a faint wash under a line. */
   area?: boolean
+  /** A dashed line, for averages and other derived series. */
+  dashed?: boolean
+  /** Column series that share a stack id sit on top of each other. */
+  stack?: string
 }
 
 /** A “nice” axis top and step for counts. */
@@ -40,6 +46,15 @@ export function niceScale(max: number, ticks = 4, integer = true) {
   let step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 2.5 ? 2.5 : norm <= 5 ? 5 : 10) * magnitude
   if (integer) step = Math.max(1, Math.round(step))
   return { top: Math.ceil(max / step) * step, step }
+}
+
+/** A trailing average, so a trend reads through day-to-day noise. */
+export function rolling(values: readonly number[], size = 7): number[] {
+  return values.map((_, index) => {
+    const from = Math.max(0, index - size + 1)
+    const slice = values.slice(from, index + 1)
+    return slice.reduce((sum, value) => sum + value, 0) / slice.length
+  })
 }
 
 const VIEW_W = 1000
@@ -55,16 +70,23 @@ type ChartProps = {
   format?: (value: number) => string
   /** One-sentence description for assistive technology. */
   summary: string
+  /** The default mark for series that do not set one. */
   kind?: 'line' | 'columns'
   integer?: boolean
-  /** Hide the value labels at the end of each line (for small charts). */
+  /** Value labels at the end of each solid line. */
   endLabels?: boolean
   legend?: boolean
-  /** Draw a faint reference line, e.g. an average. */
+  /** A faint reference line, e.g. an average. */
   reference?: { value: number; label: string }
+  /** Caption for the value axis, e.g. “Leads per day”. */
+  yLabel?: string
+  /** Adds a total row to the readout (for stacked columns). */
+  totalLabel?: string
   /** False renders a still picture: no focus stop, readout or data table (for decorative previews). */
   interactive?: boolean
 }
+
+type Group = { key: string; series: Series[] }
 
 export function TimeChart({
   series,
@@ -78,27 +100,50 @@ export function TimeChart({
   endLabels = true,
   legend = true,
   reference,
+  yLabel,
+  totalLabel,
   interactive = true,
 }: ChartProps) {
   const id = useId()
   const [active, setActive] = useState<number | null>(null)
   const [announce, setAnnounce] = useState('')
   const count = labels.length
-  const max = Math.max(0, ...series.flatMap((s) => s.values), reference?.value ?? 0)
+  const markOf = (s: Series) => s.mark ?? (kind === 'columns' ? 'column' : 'line')
+  const lines = series.filter((s) => markOf(s) === 'line')
+  const columnSeries = series.filter((s) => markOf(s) === 'column')
+  const slotted = columnSeries.length > 0
+
+  // Column series grouped by stack: one bar per group per point.
+  const groups: Group[] = []
+  for (const s of columnSeries) {
+    const key = s.stack ?? s.id
+    const group = groups.find((item) => item.key === key)
+    if (group) group.series.push(s)
+    else groups.push({ key, series: [s] })
+  }
+  const groupTotal = (group: Group, index: number) => group.series.reduce((sum, s) => sum + (s.values[index] ?? 0), 0)
+
+  const max = Math.max(
+    0,
+    ...lines.flatMap((s) => s.values),
+    ...groups.flatMap((group) => labels.map((_, index) => groupTotal(group, index))),
+    reference?.value ?? 0,
+  )
   const { top, step } = niceScale(max, 4, integer)
   const plotH = height - PAD_TOP
 
   const x = (index: number) => {
-    if (kind === 'columns') return ((index + 0.5) / count) * VIEW_W
+    if (slotted) return ((index + 0.5) / count) * VIEW_W
     return count <= 1 ? VIEW_W / 2 : (index / (count - 1)) * VIEW_W
   }
   const y = (value: number) => PAD_TOP + plotH - (value / top) * plotH
+  const px = (value: number) => (value / top) * plotH
   const xPct = (index: number) => (x(index) / VIEW_W) * 100
 
   const ticks: number[] = []
   for (let value = 0; value <= top + 1e-9; value += step) ticks.push(value)
 
-  const paths = series.map((s) => {
+  const paths = lines.map((s) => {
     const points = s.values.map((value, index) => `${x(index).toFixed(2)},${y(value).toFixed(2)}`)
     const line = `M${points.join('L')}`
     const base = (PAD_TOP + plotH).toFixed(2)
@@ -106,15 +151,18 @@ export function TimeChart({
     return { id: s.id, line, area }
   })
 
-  const every = Math.max(1, Math.ceil(count / (kind === 'columns' ? 6 : 6)))
+  const every = Math.max(1, Math.ceil(count / 6))
   const tickIndexes = labels.map((_, index) => index).filter((index) => index % every === 0 || index === count - 1)
-  // Avoid the last two axis labels colliding.
+  // Keep the last two axis labels from colliding.
   if (tickIndexes.length > 2 && tickIndexes[tickIndexes.length - 1] - tickIndexes[tickIndexes.length - 2] < every * 0.6) {
     tickIndexes.splice(tickIndexes.length - 2, 1)
   }
 
-  const describe = (index: number) =>
-    `${longLabels[index]}: ${series.map((s) => `${s.label} ${format(s.values[index])}`).join(', ')}`
+  const describe = (index: number) => {
+    const parts = series.map((s) => `${s.label} ${format(s.values[index] ?? 0)}`)
+    if (totalLabel) parts.push(`${totalLabel} ${format(series.reduce((sum, s) => sum + (markOf(s) === 'column' ? (s.values[index] ?? 0) : 0), 0))}`)
+    return `${longLabels[index]}: ${parts.join(', ')}`
+  }
 
   const move = (index: number) => {
     const clamped = Math.max(0, Math.min(count - 1, index))
@@ -125,8 +173,7 @@ export function TimeChart({
   const onPointer = (event: PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     const ratio = (event.clientX - rect.left) / rect.width
-    const index = kind === 'columns' ? Math.floor(ratio * count) : Math.round(ratio * (count - 1))
-    move(index)
+    move(slotted ? Math.floor(ratio * count) : Math.round(ratio * (count - 1)))
   }
 
   const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -145,34 +192,63 @@ export function TimeChart({
     setAnnounce(describe(move(next)))
   }
 
-  // End labels, nudged apart when two lines finish close together.
-  const ends = series
+  // End labels for solid lines, nudged apart when two lines finish close together.
+  const ends = lines
+    .filter((s) => !s.dashed)
     .map((s) => ({ id: s.id, tone: s.tone, value: s.values[s.values.length - 1] ?? 0, top: y(s.values[s.values.length - 1] ?? 0) }))
     .sort((a, b) => a.top - b.top)
   for (let i = 1; i < ends.length; i++) {
     if (ends[i].top - ends[i - 1].top < 16) ends[i].top = ends[i - 1].top + 16
   }
+  const showEnds = endLabels && ends.length > 0
 
   const tipLeft = active !== null ? xPct(active) : 0
   const flip = tipLeft > 62
+  const barWidth = `min(${((groups.length > 1 ? 0.7 : 0.58) / count / Math.max(1, groups.length)) * 100}%, ${groups.length > 1 ? 10 : 16}px)`
+  const total = (index: number) => columnSeries.reduce((sum, s) => sum + (s.values[index] ?? 0), 0)
+
+  // One bar per series per point; stacked series start where the one below ends.
+  const bars: Array<{ key: string; index: number; tone: Tone; shift: number; bottom: number; value: number; top: boolean }> = []
+  if (slotted) {
+    for (let index = 0; index < count; index++) {
+      groups.forEach((group, g) => {
+        let base = 0
+        const first = bars.length
+        for (const s of group.series) {
+          const value = s.values[index] ?? 0
+          if (value > 0) bars.push({ key: `${index}-${s.id}`, index, tone: s.tone, shift: g - (groups.length - 1) / 2, bottom: base, value, top: false })
+          base += value
+        }
+        if (bars.length > first) bars[bars.length - 1].top = true
+      })
+    }
+  }
+
+  const keyClass = (s: Series) =>
+    cx('app-legend__key', `app-legend__key--${s.tone}`, markOf(s) === 'column' && 'app-legend__key--column', s.dashed && 'app-legend__key--dashed')
 
   return (
-    <figure className={cx('app-chart', kind === 'columns' && 'app-chart--columns', !endLabels && 'app-chart--bare')}>
-      {legend && (series.length > 1 || reference) && (
-        <ul className="app-legend" aria-hidden="true">
-          {series.map((s) => (
-            <li key={s.id} className="app-legend__item">
-              <span className={`app-legend__key app-legend__key--${s.tone}`} />
-              {s.label}
-            </li>
-          ))}
-          {reference && (
-            <li className="app-legend__item">
-              <span className="app-legend__key app-legend__key--ref" />
-              {reference.label}
-            </li>
+    <figure className={cx('app-chart', slotted && 'app-chart--columns', !showEnds && 'app-chart--bare')}>
+      {(yLabel || (legend && (series.length > 1 || reference))) && (
+        <div className="app-chart__head" aria-hidden="true">
+          {yLabel && <p className="app-chart__ylabel">{yLabel}</p>}
+          {legend && (series.length > 1 || reference) && (
+            <ul className="app-legend">
+              {series.map((s) => (
+                <li key={s.id} className="app-legend__item">
+                  <span className={keyClass(s)} />
+                  {s.label}
+                </li>
+              ))}
+              {reference && (
+                <li className="app-legend__item">
+                  <span className="app-legend__key app-legend__key--ref" />
+                  {reference.label}
+                </li>
+              )}
+            </ul>
           )}
-        </ul>
+        </div>
       )}
       <div className="app-chart__frame" style={{ '--plot-h': `${height}px` } as CSSProperties}>
         <div className="app-chart__y" aria-hidden="true">
@@ -198,83 +274,89 @@ export function TimeChart({
             {reference && (
               <line x1="0" x2={VIEW_W} y1={y(reference.value)} y2={y(reference.value)} className="app-chart__ref" vectorEffect="non-scaling-stroke" />
             )}
-            {kind === 'line' &&
-              series.map((s, index) => (
-                <g key={s.id}>
-                  {s.area && <path d={paths[index].area} fill={stroke[s.tone]} className="app-chart__area" />}
-                  <path
-                    d={paths[index].line}
-                    fill="none"
-                    stroke={stroke[s.tone]}
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </g>
-              ))}
           </svg>
 
-          {kind === 'columns' && (
+          {slotted && (
             <div className="app-chart__columns" aria-hidden="true">
-              {series[0]?.values.map((value, index) => (
+              {bars.map((bar) => (
                 <span
-                  key={index}
-                  className={cx('app-chart__column', active === index && 'is-active', series[0].tone === 'accent' && 'app-chart__column--accent')}
+                  key={bar.key}
+                  className={cx('app-chart__column', `app-chart__column--${bar.tone}`, active === bar.index && 'is-active', bar.top && 'is-top')}
                   style={{
-                    left: `${((index + 0.5) / count) * 100}%`,
-                    width: `min(${((0.5 / count) * 100).toFixed(3)}%, 14px)`,
-                    height: `${((value / top) * plotH).toFixed(1)}px`,
+                    left: `calc(${((bar.index + 0.5) / count) * 100}% + ${bar.shift} * (${barWidth} + 2px))`,
+                    width: barWidth,
+                    bottom: `${px(bar.bottom).toFixed(1)}px`,
+                    height: `${Math.max(1, px(bar.value)).toFixed(1)}px`,
                   }}
                 />
               ))}
             </div>
           )}
 
+          {lines.length > 0 && (
+            <svg className="app-chart__svg app-chart__svg--lines" viewBox={`0 0 ${VIEW_W} ${height}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              {lines.map((s, index) => (
+                <g key={s.id}>
+                  {s.area && <path d={paths[index].area} fill={stroke[s.tone]} className="app-chart__area" />}
+                  <path
+                    d={paths[index].line}
+                    fill="none"
+                    stroke={stroke[s.tone]}
+                    strokeWidth={s.dashed ? 1.25 : 1.5}
+                    strokeDasharray={s.dashed ? '4 4' : undefined}
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </g>
+              ))}
+            </svg>
+          )}
 
           {active !== null && (
             <div aria-hidden="true">
               <span className="app-chart__crosshair" style={{ left: `${tipLeft}%` }} />
-              {kind === 'line' &&
-                series.map((s) => (
-                  <span
-                    key={s.id}
-                    className={`app-chart__dot app-chart__dot--${s.tone}`}
-                    style={{ left: `${tipLeft}%`, top: `${y(s.values[active])}px` }}
-                  />
-                ))}
+              {lines.map((s) => (
+                <span key={s.id} className={`app-chart__dot app-chart__dot--${s.tone}`} style={{ left: `${tipLeft}%`, top: `${y(s.values[active] ?? 0)}px` }} />
+              ))}
               <div className={cx('app-chart__tip', flip && 'app-chart__tip--flip')} style={{ left: `${tipLeft}%` }}>
                 <p className="app-chart__tip-date">{longLabels[active]}</p>
                 {series.map((s) => (
                   <p key={s.id} className="app-chart__tip-row">
-                    <span className={`app-legend__key app-legend__key--${s.tone}`} />
-                    <strong>{format(s.values[active])}</strong>
+                    <span className={keyClass(s)} />
+                    <strong>{format(s.values[active] ?? 0)}</strong>
                     <span>{s.label}</span>
                   </p>
                 ))}
+                {totalLabel && columnSeries.length > 1 && (
+                  <p className="app-chart__tip-row app-chart__tip-row--total">
+                    <strong>{format(total(active))}</strong>
+                    <span>{totalLabel}</span>
+                  </p>
+                )}
               </div>
             </div>
           )}
 
           {interactive && (
-          <div
-            className="app-chart__hit"
-            role="group"
-            tabIndex={0}
-            aria-label={`${summary} Use the left and right arrow keys to read each point.`}
-            aria-describedby={`${id}-table`}
-            onPointerMove={onPointer}
-            onPointerDown={onPointer}
-            onPointerLeave={() => setActive(null)}
-            onFocus={() => {
-              if (active === null) setAnnounce(describe(move(count - 1)))
-            }}
-            onBlur={() => setActive(null)}
-            onKeyDown={onKey}
-          />
+            <div
+              className="app-chart__hit"
+              role="group"
+              tabIndex={0}
+              aria-label={`${summary} Use the left and right arrow keys to read each point.`}
+              aria-describedby={`${id}-table`}
+              onPointerMove={onPointer}
+              onPointerDown={onPointer}
+              onPointerLeave={() => setActive(null)}
+              onFocus={() => {
+                if (active === null) setAnnounce(describe(move(count - 1)))
+              }}
+              onBlur={() => setActive(null)}
+              onKeyDown={onKey}
+            />
           )}
         </div>
-        {endLabels && kind === 'line' && (
+        {showEnds && (
           <div className="app-chart__ends" aria-hidden="true">
             {ends.map((end) => (
               <span key={end.id} style={{ top: `${end.top}px` }}>
@@ -288,7 +370,7 @@ export function TimeChart({
           {tickIndexes.map((index) => (
             <span
               key={index}
-              className={cx(kind === 'line' && index === 0 && 'is-first', kind === 'line' && index === count - 1 && 'is-last')}
+              className={cx(!slotted && index === 0 && 'is-first', !slotted && index === count - 1 && 'is-last')}
               style={{ left: `${xPct(index)}%` }}
             >
               {labels[index]}
@@ -298,35 +380,35 @@ export function TimeChart({
       </div>
       {interactive && (
         <>
-      <figcaption className="app-sr">{summary}</figcaption>
-      <p className="app-sr" aria-live="polite">
-        {announce}
-      </p>
-      <div className="app-sr">
-      <table id={`${id}-table`}>
-        <caption>{summary}</caption>
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            {series.map((s) => (
-              <th key={s.id} scope="col">
-                {s.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {longLabels.map((label, index) => (
-            <tr key={index}>
-              <th scope="row">{label}</th>
-              {series.map((s) => (
-                <td key={s.id}>{format(s.values[index])}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
+          <figcaption className="app-sr">{summary}</figcaption>
+          <p className="app-sr" aria-live="polite">
+            {announce}
+          </p>
+          <div className="app-sr">
+            <table id={`${id}-table`}>
+              <caption>{summary}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  {series.map((s) => (
+                    <th key={s.id} scope="col">
+                      {s.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {longLabels.map((label, index) => (
+                  <tr key={index}>
+                    <th scope="row">{label}</th>
+                    {series.map((s) => (
+                      <td key={s.id}>{format(s.values[index] ?? 0)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </figure>
@@ -339,16 +421,16 @@ export function Sparkline({ values, tone = 'muted', label }: { values: number[];
   const min = Math.min(0, ...values)
   const range = max - min || 1
   const points = values.map((value, index) => {
-    const px = values.length <= 1 ? 50 : (index / (values.length - 1)) * 100
-    const py = 30 - ((value - min) / range) * 26
-    return { px, py }
+    const x = values.length <= 1 ? 50 : (index / (values.length - 1)) * 100
+    const y = 30 - ((value - min) / range) * 26
+    return { x, y }
   })
   const last = points[points.length - 1]
   return (
     <span className="app-spark" aria-hidden={label ? undefined : true} role={label ? 'img' : undefined} aria-label={label}>
       <svg viewBox="0 0 100 32" preserveAspectRatio="none" focusable="false" aria-hidden="true">
         <polyline
-          points={points.map((p) => `${p.px.toFixed(2)},${p.py.toFixed(2)}`).join(' ')}
+          points={points.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ')}
           fill="none"
           stroke={stroke[tone]}
           strokeWidth="1.5"
@@ -357,7 +439,7 @@ export function Sparkline({ values, tone = 'muted', label }: { values: number[];
           vectorEffect="non-scaling-stroke"
         />
       </svg>
-      {last && <span className={`app-spark__dot app-spark__dot--${tone}`} style={{ top: `${(last.py / 32) * 100}%` }} />}
+      {last && <span className={`app-spark__dot app-spark__dot--${tone}`} style={{ top: `${(last.y / 32) * 100}%` }} />}
     </span>
   )
 }
@@ -396,7 +478,7 @@ export function BarList({
       {hasPrevious && (
         <ul className="app-legend" aria-hidden="true">
           <li className="app-legend__item">
-            <span className="app-legend__key app-legend__key--bar" />
+            <span className="app-legend__key app-legend__key--column" />
             This period
           </li>
           <li className="app-legend__item">

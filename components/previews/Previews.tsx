@@ -18,7 +18,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react'
-import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react'
 
 /**
  * Product previews for the marketing pages: honest slices of CloseAgain's
@@ -45,15 +45,21 @@ const stagger = (i: number): CSSProperties => ({ '--i': i }) as CSSProperties
 
 function Frame({
   title,
+  short,
   meta,
   children,
   className,
 }: {
   title: string
+  /** Shown instead of a long title in phone-width frames. */
+  short?: string
   meta?: string
   children: ReactNode
   className?: string
 }) {
+  // “Sample data” shortens to “Sample” in narrow frames, but never
+  // disappears: the numbers in these windows are examples, not results.
+  const [lead, ...rest] = (meta ?? 'Sample data').split(' ')
   return (
     <div className={['ui', 'ui-frame', 'pv', className].filter(Boolean).join(' ')} aria-hidden="true" inert>
       <div className="ui-frame__bar">
@@ -62,8 +68,22 @@ function Frame({
           <span />
           <span />
         </span>
-        <span className="pv__title">{title}</span>
-        <span className="ui-sample pv__sample">{meta ?? 'Sample data'}</span>
+        <span className="pv__title">
+          {short ? (
+            <>
+              <span className="pv__title-long">{title}</span>
+              <span className="pv__title-short">{short}</span>
+            </>
+          ) : (
+            title
+          )}
+        </span>
+        <span className="ui-sample pv__sample">
+          <span>
+            {lead}
+            {rest.length > 0 && <span className="pv__sample-more"> {rest.join(' ')}</span>}
+          </span>
+        </span>
       </div>
       {children}
     </div>
@@ -130,7 +150,7 @@ function SequencePreview() {
     { when: 'Day 1 · 9:00 AM', title: 'Follow-up #1', state: 'Sent' },
   ]
   return (
-    <Frame title="Automation · New lead follow-up" className="pv--sequence">
+    <Frame title="Automation · New lead follow-up" short="New lead follow-up" className="pv--sequence">
       <div className="pv-toolbar">
         <span className="ui-badge ui-badge--positive">Active</span>
         <span className="pv-toolbar__meta">3 steps · stops when the lead replies</span>
@@ -191,7 +211,7 @@ function SequencePreview() {
 export function ReengagePreview({
   name = 'Maya Chen',
   lastContact = '92 days ago',
-  steps = ['CloseAgain re-engages', 'Reply received', 'Opportunity reopened', 'Appointment booked'],
+  steps = ['CloseAgain re‑engages', 'Reply received', 'Opportunity reopened', 'Appointment booked'],
 }: {
   name?: string
   lastContact?: string
@@ -312,6 +332,21 @@ function InboxPreview({ focus = false }: { focus?: boolean }) {
 
 /* ── Booking: from reply to appointment ────────────────────────────────── */
 
+/** A calendar entry: the time above the name, so narrow day columns never
+    strand a lone separator on its own line. */
+function Slot({
+  time,
+  who,
+  className,
+  ...rest
+}: { time: string; who: string; className?: string } & HTMLAttributes<HTMLSpanElement>) {
+  return (
+    <span className={['pv-slot', className].filter(Boolean).join(' ')} {...rest}>
+      <span className="pv-slot__time">{time}</span> <span className="pv-slot__who">{who}</span>
+    </span>
+  )
+}
+
 function BookingPreview() {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
   const dates = [21, 22, 23, 24, 25]
@@ -322,13 +357,9 @@ function BookingPreview() {
           <div key={day} className={['pv-day', i === 3 && 'is-today'].filter(Boolean).join(' ')}>
             <span className="pv-day__name">{day}</span>
             <span className="pv-day__date">{dates[i]}</span>
-            {i === 1 && <span className="pv-slot">10:00 · Nora B.</span>}
-            {i === 3 && (
-              <span className="pv-slot pv-slot--new" data-scroll="rise" style={stagger(1)}>
-                2:30 · Jordan E.
-              </span>
-            )}
-            {i === 4 && <span className="pv-slot pv-slot--missed">11:00 · No-show</span>}
+            {i === 1 && <Slot time="10:00" who="Nora B." />}
+            {i === 3 && <Slot time="2:30" who="Jordan E." className="pv-slot--new" data-scroll="rise" style={stagger(1)} />}
+            {i === 4 && <Slot time="11:00" who="No-show" className="pv-slot--missed" />}
           </div>
         ))}
       </div>
@@ -370,7 +401,7 @@ function BuilderPreview() {
     { kind: 'Action', title: 'Offer appointment times', detail: 'When the lead is qualified', icon: CalendarDays, tone: 'positive' as const },
   ]
   return (
-    <Frame title="Automation builder · New lead follow-up" className="pv--builder">
+    <Frame title="Automation builder · New lead follow-up" short="Automation builder" className="pv--builder">
       <ol className="pv-nodes">
         {nodes.map((node, i) => (
           <li key={node.title} className="pv-node" style={stagger(i)} data-scroll="rise">

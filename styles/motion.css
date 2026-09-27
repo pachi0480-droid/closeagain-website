@@ -10,7 +10,7 @@
  *      visitor scrolls back (MotionController adds `.is-in` and stops
  *      watching). Scrolling itself is always the browser's own.
  *   3. One vocabulary (tokens.css): 140–200ms for feedback, 180–300ms for
- *      state changes, ~450ms for entrances, ~850ms for a ribbon.
+ *      state changes, ~450ms for entrances, ~1150ms for a supporting ribbon; hero and scroll stories have their own pacing.
  *
  * Reduced motion starts none of it, and without JavaScript nothing is hidden.
  */
@@ -19,6 +19,29 @@
   from {
     opacity: 0;
     translate: 0 8px;
+  }
+}
+
+@keyframes header-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+/* Starts just above zero opacity: the same reveal to the eye, but the
+   headline counts as painted on the first frame (browsers skip text at
+   exactly zero), so it is not reported as the page's late, largest paint. */
+@keyframes rise-line {
+  from {
+    opacity: 0.01;
+    translate: 0 0.22em;
+  }
+}
+
+@keyframes settle-in {
+  from {
+    translate: 0 10px;
   }
 }
 
@@ -40,26 +63,53 @@
   display: block;
   width: var(--rw, 24px);
   background: var(--vermilion);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--ink-blend);
   pointer-events: none;
   transform-origin: 50% 0;
   z-index: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* ── 1. Homepage: the decoration arrives, the content is already there ── */
+  /* ── 1. The homepage opening, once per session ───────────────────────── */
 
-  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
-    animation: draw var(--dur-draw) var(--ease-draw) 120ms backwards;
+  /* Navigation and the headline arrive first, line by line. */
+  html:not([data-intro='seen']) body:has(.hero) .site-header__inner {
+    animation: header-in 520ms var(--ease-editorial) both;
   }
 
-  /* The bubbles follow the ribbon to the end of its run. */
+  html:not([data-intro='seen']) .hero__row--1 {
+    animation: rise-line 760ms var(--ease-editorial) 80ms both;
+  }
+
+  html:not([data-intro='seen']) .hero__row--2 {
+    animation: rise-line 760ms var(--ease-editorial) 220ms both;
+  }
+
+  /* Then the ribbon draws across and reaches the conversation. */
+  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
+    animation: draw 1500ms cubic-bezier(0.3, 0.05, 0.18, 1) 320ms backwards;
+  }
+
   html:not([data-intro='seen']) .hero__bubble--ask {
-    animation: settle 300ms var(--ease-editorial) 760ms backwards;
+    animation: settle 420ms var(--ease-editorial) 1180ms backwards;
   }
 
   html:not([data-intro='seen']) .hero__bubble--reply {
-    animation: settle 300ms var(--ease-editorial) 920ms backwards;
+    animation: settle 460ms var(--ease-editorial) 1480ms backwards;
+  }
+
+  /* The explanation and the calls to action settle into place — moved, never
+     hidden, so they are readable and clickable from the first frame. */
+  html:not([data-intro='seen']) :is(.hero__category, .hero__lede, .hero__actions, .hero__terms) {
+    animation: settle-in 820ms var(--ease-editorial) 360ms backwards;
+  }
+
+  html:not([data-intro='seen']) .hero__actions {
+    animation-delay: 440ms;
+  }
+
+  html:not([data-intro='seen']) .hero__terms {
+    animation-delay: 520ms;
   }
 
   /* ── 2. One-time reveals ─────────────────────────────────────────────── */
@@ -81,15 +131,15 @@
   }
 
   /* A ribbon draws along its curve. Multi-part drawings go in stages. */
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide {
     transition: stroke-dashoffset var(--dur-draw) var(--ease-draw) var(--reveal-delay, 0ms);
   }
 
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide--b {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide--b {
     transition-delay: calc(var(--dur-draw) * 0.7);
   }
 
-  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__guide {
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__guide {
     stroke-dashoffset: 1;
   }
 
@@ -141,6 +191,41 @@
 
 /* ── 3. Page changes: a quick dissolve; the header holds still ─────────── */
 
+/* The ribbon in one stroke: it runs across the top as a new page arrives. */
+.route-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--vermilion);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .route-line:not([data-initial]) {
+    animation: route-line 720ms var(--ease-draw) both;
+  }
+}
+
+@keyframes route-line {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  62% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(.page-exit) {
@@ -157,4 +242,13 @@
   ::view-transition-new(*) {
     animation: none !important;
   }
+}
+
+/* Timelines own the ribbon pieces as one sequence. CSS is the resilient fallback. */
+.flow-ready :is(.ribbon__guide, .ribbon-band, [data-reveal]) { transition: none !important; }
+.ribbon-band[data-progress],
+.ribbon[data-progress] .ribbon__guide { transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .arrow, .btn, .text-link { transition: none; }
 }

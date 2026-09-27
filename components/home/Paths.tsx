@@ -12,13 +12,14 @@ const icons: Record<'fresh' | 'old', LucideIcon[]> = {
 const delay = (i: number) => ({ '--reveal-delay': `${i * 80}ms` }) as CSSProperties
 
 /**
- * The two jobs. Each column is one kind of lead — a new inquiry, an older
- * lead that went quiet — with a ribbon running down behind its three steps.
- * The two ribbons then turn in and merge into one that points at the
- * outcome. Everything draws once, as it arrives.
+ * New + Old. Each column is one conversation — a new lead, an old lead that
+ * went quiet — with a ribbon running down behind its three steps. The two
+ * ribbons then turn in and merge into one that points at the outcome. The
+ * whole drawing follows the visitor's scroll (MotionController), so the
+ * merge happens as they read toward it.
  */
 export function Paths() {
-  const { eyebrow, title, lede, fresh, old, outcome } = home.jobs
+  const { eyebrow, title, lede, fresh, old, outcome } = home.paths
 
   return (
     <section className="paths" aria-labelledby="paths-title">
@@ -34,7 +35,7 @@ export function Paths() {
         <p className="paths__lede">{lede}</p>
       </div>
 
-      <div className="paths__stage wrap">
+      <div className="paths__stage wrap" data-flow>
         <div className="paths__cols">
           {(['fresh', 'old'] as const).map((key) => {
             const column = key === 'fresh' ? fresh : old
@@ -45,7 +46,6 @@ export function Paths() {
                     <span className="paths__label-mark" aria-hidden="true" />
                     {column.label}
                   </span>
-                  <span className="paths__job">{column.job}</span>
                 </h3>
                 <div className="paths__run">
                   <RibbonBand className="paths__band" />
@@ -104,9 +104,7 @@ export function Paths() {
         </div>
 
         <p className="paths__outcome" data-reveal>
-          {outcome.map((line) => (
-            <span key={line}>{line} </span>
-          ))}
+          {outcome}
         </p>
       </div>
     </section>

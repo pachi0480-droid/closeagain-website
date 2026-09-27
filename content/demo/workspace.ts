@@ -644,5 +644,5 @@ export const integrationCatalog: Array<{ id: IntegrationId; name: string; descri
 export const attentionNotes: Record<string, string> = {
   'juniper-row.email-inbox': 'Access expired Sep 23. Reconnect to keep sending from your own address.',
   'crescent-ridge.web-forms': 'No submissions since Sep 3. The form on the quote page may have changed.',
-  'fieldnote.webhooks': 'Endpoint returning 410 Gone since Sep 20. Events are queued for retry.',
+  'bellwether.webhooks': 'Endpoint returning 410 Gone since Sep 20. Events are queued for retry.',
 }

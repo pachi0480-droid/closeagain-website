@@ -5,6 +5,7 @@ import { ClosingCta } from '@/components/editorial/blocks'
 import { Accordion } from '@/components/editorial/Accordion'
 import { BreakEven } from '@/components/pricing/BreakEven'
 import { CompareMatrix, PlanCards } from '@/components/pricing/Plans'
+import { PlanFinder } from '@/components/pricing/PlanFinder'
 import { faqByIds, pricingPage } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -15,11 +16,10 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Four plans, compared honestly. What every plan shares is said once; each
- * card leads with who it suits and what it adds; the details that depend on
- * the business are named as part of the proposal rather than invented; and
- * a break-even check lets visitors weigh the price against their own numbers.
- * Every price comes from content/pricing.ts.
+ * Four plans, easy to tell apart. What every plan shares is said once; each
+ * card leads with who it is for and its headline facts; the full comparison
+ * opens in place; and a break-even check lets visitors weigh the price
+ * against their own numbers. Every price comes from content/pricing.ts.
  */
 export default function PricingPage() {
   const { title, lede, common, proposal, compare, value, questions, closing } = pricingPage
@@ -46,6 +46,8 @@ export default function PricingPage() {
             Plans
           </h2>
 
+          <PlanFinder />
+
           <div className="pricing__common">
             <p className="pricing__common-title">{common.title}</p>
             <ul className="pricing__common-list">
@@ -60,17 +62,10 @@ export default function PricingPage() {
 
           <PlanCards />
 
-          <div className="pricing__proposal">
-            <h3 className="pricing__proposal-title">{proposal.title}</h3>
-            <p className="pricing__proposal-body">{proposal.body}</p>
-            <ul className="pricing__proposal-list">
-              {proposal.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
+          <p className="pricing__decision-note">{proposal}</p>
 
           <CompareMatrix openLabel={compare.open} closeLabel={compare.close} />
+
         </div>
       </section>
 

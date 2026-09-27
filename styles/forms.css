@@ -361,3 +361,29 @@ textarea.field__control {
     padding-top: 0.5rem;
   }
 }
+
+.contact-form__email {
+  margin: 1.75rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.contact-form__email a {
+  display: inline-block;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__email {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  overflow-wrap: anywhere;
+}

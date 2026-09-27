@@ -45,17 +45,17 @@
 }
 
 .btn:hover {
-  background: #2c2b27;
+  background: var(--btn-hover);
 }
 
 .btn:active {
-  background: #000;
+  background: var(--btn-active);
 }
 
 .btn[aria-disabled='true'],
 .btn:disabled {
   cursor: progress;
-  background: #3d3c37;
+  background: var(--btn-disabled);
 }
 
 .btn:focus-visible {
@@ -115,7 +115,7 @@
   z-index: 40;
   /* Transparent at rest so the paper shows through; frosted cream once the
      page moves beneath it. */
-  background-color: rgb(242 239 231 / 0);
+  background-color: var(--header-clear);
   box-shadow: 0 1px 0 transparent;
   transition:
     background-color var(--dur-ui) var(--ease-ui),
@@ -140,13 +140,13 @@
 
 /* Elsewhere the motion controller sets data-scrolled on <html>. */
 [data-scrolled] .site-header {
-  background-color: rgb(242 239 231 / 0.84);
+  background-color: var(--header-frost);
   box-shadow: 0 1px 0 var(--rule);
 }
 
 @keyframes header-settle {
   to {
-    background-color: rgb(242 239 231 / 0.84);
+    background-color: var(--header-frost);
     box-shadow: 0 1px 0 var(--rule);
   }
 }
@@ -594,14 +594,74 @@
   color: var(--ink-3);
 }
 
+/* ── Theme toggle ──────────────────────────────────────────────────────── */
+
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-press) var(--ease-ui),
+    border-color var(--dur-press) var(--ease-ui);
+}
+
+.theme-toggle:hover {
+  border-color: var(--rule);
+  background: var(--surface);
+}
+
+.theme-toggle__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.theme-toggle__icon--sun,
+[data-theme='dark'] .theme-toggle__icon--moon {
+  display: none;
+}
+
+[data-theme='dark'] .theme-toggle__icon--sun {
+  display: block;
+}
+
+@media (max-width: 559px) {
+  .site-header__theme {
+    display: none;
+  }
+}
+
+.menu__theme {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.menu__theme .theme-toggle {
+  border-color: var(--rule);
+}
+
 /* ── Ribbon ────────────────────────────────────────────────────────────── */
 
 .ribbon {
   display: block;
   overflow: visible;
   pointer-events: none;
-  /* Lets the paper grain show through the vermilion, like printed ink. */
-  mix-blend-mode: multiply;
+  /* Lets the paper grain show through the vermilion, like printed ink
+     (normal blending on dark paper, where multiply would swallow it). */
+  mix-blend-mode: var(--ink-blend);
 }
 
 .ribbon__shape {

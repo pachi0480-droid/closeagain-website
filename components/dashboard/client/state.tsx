@@ -8,10 +8,13 @@
  */
 
 import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react'
+import { clientAttention, type AttentionItem, type IntegrationState } from '@/content/demo/attention'
 import { DEMO_NOW } from '@/content/demo/time'
 import type { AppointmentStatus, IntegrationId, IntegrationStatus, Lead, Message, Outcome, StageId, Step } from '@/content/demo/types'
 import {
+  attentionNotes,
   initiallyDoneTasks,
+  integrationCatalog,
   workspaceAccount,
   workspaceAppointments,
   workspaceAutomations,
@@ -227,4 +230,34 @@ export function useIntegrationStatus(id: IntegrationId): IntegrationStatus {
 export function useUnreadCount() {
   const leads = useLeads()
   return leads.filter((lead) => lead.unread).length
+}
+
+/** Every integration with this tab's changes, and the note shown when one needs attention. */
+export function useIntegrationStates(): IntegrationState[] {
+  const { state } = useClientDemo()
+  const { integrations } = state
+  return useMemo(
+    () =>
+      integrationCatalog.map((item) => ({
+        id: item.id,
+        name: item.name,
+        status: integrations[item.id] ?? workspaceClient.integrations[item.id],
+        note: attentionNotes[`${workspaceClient.id}.${item.id}`],
+      })),
+    [integrations],
+  )
+}
+
+/** The overview's “Needs attention” items, recomputed as the visitor works through them. */
+export function useAttention(): AttentionItem[] {
+  const { state } = useClientDemo()
+  const leads = useLeads()
+  const appointments = useAppointments()
+  const automations = useAutomations()
+  const integrations = useIntegrationStates()
+  const { followUps } = state
+  return useMemo(
+    () => clientAttention({ leads, appointments, automations, integrations, followUps }),
+    [leads, appointments, automations, integrations, followUps],
+  )
 }

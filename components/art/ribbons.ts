@@ -340,3 +340,62 @@ export const trailTurn: { viewBox: string; leftToRight: RibbonSpec; rightToLeft:
 }
 
 export { head as arrowHead }
+
+/**
+ * Automation section: the conversation arrives from the left edge, passes
+ * behind the sequence preview, and carries on down the page between the two
+ * columns — it never crosses the copy.
+ */
+export const weaveWide: Art = {
+  viewBox: '0 0 1440 760',
+  spec: {
+    points: [
+      [-80, 236],
+      [120, 250],
+      [330, 292],
+      [540, 352],
+      [690, 446],
+      [760, 556],
+      [786, 640],
+    ],
+    width: [
+      [0, 40],
+      [0.5, 32],
+      [1, 30],
+    ],
+    arrow: head,
+    wobble: 0.03,
+    seed: 14,
+  },
+}
+
+/**
+ * Old leads: the ribbon goes out behind the lead card, turns, and comes back
+ * over the top — the shape of “again”. Coordinates assume the card spans
+ * x 267–933 and y 50–550 of this box (see .second__ribbon).
+ */
+export const secondChanceLoop: Art = {
+  viewBox: '0 0 1000 600',
+  spec: {
+    points: [
+      [1180, 430],
+      [900, 440],
+      [560, 452],
+      [300, 446],
+      [168, 392],
+      [120, 288],
+      [150, 170],
+      [236, 86],
+      [360, 30],
+      [500, 12],
+    ],
+    width: [
+      [0, 36],
+      [0.5, 30],
+      [1, 29],
+    ],
+    arrow: head,
+    wobble: 0.03,
+    seed: 16,
+  },
+}

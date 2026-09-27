@@ -6,6 +6,7 @@ import { flushSync } from 'react-dom'
 import { Arrow } from '@/components/ui/links'
 import { formMessages, inquiryDetails, planNote, type FieldDefinition } from '@/content/forms'
 import { planById, planSummary } from '@/content/pricing'
+import { inquiryEmailLink } from '@/lib/forms/email'
 import { endpointFor, fallbackIds, honeypotField } from '@/lib/forms/protocol'
 import { normalizeValue, validateField, validateSubmission, type FormKind } from '@/lib/forms/schema'
 import { formReducer, initialFormState } from '@/lib/forms/state'
@@ -37,11 +38,21 @@ export function LeadForm({
   fields,
   submitLabel,
   guidance,
+  initialPlan,
+  initialIndustry,
+  emailTo,
 }: {
   kind: FormKind
   fields: readonly FieldDefinition[]
   submitLabel: string
   guidance: string
+  initialPlan?: string
+  initialIndustry?: string
+  /**
+   * Set while no delivery destination is connected: a valid form opens the
+   * visitor's email app with the details filled in, addressed here.
+   */
+  emailTo?: string
 }) {
   const router = useRouter()
   const [state, dispatch] = useReducer(formReducer, initialFormState)
@@ -50,9 +61,10 @@ export function LeadForm({
   const [plan, setPlan] = useState<string | null>(null)
   const linkedPlan = useSyncExternalStore(
     subscribeNoop,
-    () => new URLSearchParams(window.location.search).get('plan') ?? '',
-    () => '',
+    () => new URLSearchParams(window.location.search).get('plan') ?? initialPlan ?? '',
+    () => initialPlan ?? '',
   )
+  const [emailOpened, setEmailOpened] = useState(false)
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
   const detailsRef = useRef<HTMLDetailsElement>(null)
@@ -116,6 +128,16 @@ export function LeadForm({
       return
     }
 
+    if (emailTo) {
+      // Hand the details to the visitor's own email app. Nothing is sent by
+      // the site, and nothing is claimed: they review the draft and send it.
+      window.location.href = inquiryEmailLink(emailTo, fields, checked.values)
+      flushSync(() => dispatch({ type: 'reset' }))
+      setEmailOpened(true)
+      statusRef.current?.focus()
+      return
+    }
+
     inFlight.current = true
     dispatch({ type: 'submit' })
     const outcome = await sendSubmission(kind, checked.values, {
@@ -154,6 +176,7 @@ export function LeadForm({
     const hintId = field.hint ? `${id(field.name)}-hint` : undefined
     const errorId = error ? `${id(field.name)}-error` : undefined
     const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+    const initialChoice = field.name === 'plan' ? initialPlan : field.name === 'industry' ? initialIndustry : undefined
     const common = {
       id: id(field.name),
       name: field.name,
@@ -184,7 +207,7 @@ export function LeadForm({
           <textarea {...common} rows={4} maxLength={field.max} />
         ) : field.kind === 'choice' ? (
           <div className="field__select">
-            <select {...common} defaultValue={field.defaultValue ?? ''}>
+            <select {...common} defaultValue={initialChoice ?? field.defaultValue ?? ''}>
               {field.placeholderOption !== undefined && <option value="">{field.placeholderOption}</option>}
               {field.options?.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -245,7 +268,7 @@ export function LeadForm({
           {formMessages.returned.invalid}
         </p>
         <p id={fallbackIds.unavailable} className="form-note form-note--problem">
-          {formMessages.unavailable}
+          {emailTo ? formMessages.email.returned(emailTo) : formMessages.unavailable}
         </p>
         <p id={fallbackIds.failed} className="form-note form-note--problem">
           {formMessages.returned.failed}
@@ -258,7 +281,7 @@ export function LeadForm({
       <div className="form__grid">{mainFields.map(renderField)}</div>
 
       {detailFields.length > 0 && (
-        <details ref={detailsRef} className="form__details">
+        <details ref={detailsRef} className="form__details" open={initialIndustry ? true : undefined}>
           <summary className="form__summary">
             <span>{inquiryDetails.summary}</span>
             <span className="form__summary-icon" aria-hidden="true" />
@@ -297,6 +320,9 @@ export function LeadForm({
         aria-live="polite"
         tabIndex={-1}
       >
+        {emailOpened && state.status === 'idle' && emailTo && (
+          <p className="form-status__message">{formMessages.email.opened(emailTo)}</p>
+        )}
         {state.message && state.status !== 'idle' && (
           <p className="form-status__message">
             {tone === 'problem' && (

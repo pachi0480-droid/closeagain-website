@@ -1,36 +1,28 @@
 /**
  * Homepage copy. The hero headline is the brand — change it deliberately.
  *
- * The worked example follows one fictional lead. It demonstrates how
- * CloseAgain works; it is not a customer story and shows no results.
+ * Every product view on this page is a sample workflow with fictional people.
+ * It demonstrates how CloseAgain works; it is not a customer story and shows
+ * no results.
  */
 
-import { availability, billingNote, planTerms, startingPriceText } from './pricing.ts'
+import type { ShowcaseArea } from './demo/types.ts'
+import { billingNote, planTerms, startingPriceText } from './pricing.ts'
 import { learnCta, primaryCta, site } from './site.ts'
 
-export type ExampleActor = 'lead' | 'auto' | 'team'
-
-export type ExampleMessage = {
-  /** Small label above the message, e.g. “Sent automatically”. */
-  tag: string
-  when: string
-  text: string
-}
-
-export type ExampleStep = {
-  id: string
-  /** Who acted: the lead, CloseAgain automatically, or the customer's team. */
-  actor: ExampleActor
-  kind: 'message' | 'gap' | 'event'
-  /** Messages for `message` steps — a step can hold a reply and its follow-up. */
-  messages?: readonly ExampleMessage[]
-  /** The line shown for `gap` and `event` steps. */
-  text?: string
-  when?: string
-  /** The lead's status once this step has happened. */
+export type FlowEvent = {
+  time: string
+  title: string
+  detail: string
+  tone: 'ink' | 'red' | 'positive'
+  /** The lead's status once this event has happened. */
   status: string
-  note: { title: string; body: string }
 }
+
+/** The dashboard areas the homepage showcase walks through (shared with the demo). */
+export type { ShowcaseArea }
+
+const terms = planTerms.join(' · ')
 
 export const home = {
   meta: {
@@ -42,11 +34,11 @@ export const home = {
     category: site.category,
     /** Rendered as three spans so small screens can break after “The”. */
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
-    /** Three lines on wide screens; wraps naturally elsewhere. */
+    /** Three lines on wide screens, as in the approved composition. */
     lede: [
-      'Turn more of the leads you already have into paying customers.',
-      'CloseAgain follows up with new inquiries and re‑engages older leads,',
-      'helping your team book more appointments and close more sales.',
+      'CloseAgain captures new leads, follows up automatically,',
+      'and re‑engages old opportunities —',
+      'so more conversations become customers.',
     ],
     primary: primaryCta,
     secondary: learnCta,
@@ -57,176 +49,108 @@ export const home = {
   again: {
     word: 'Again.',
     lines: [
-      'Inquiries wait too long for a reply.',
-      'Quotes go out, and nobody follows up.',
-      'Good leads go quiet\u00A0— and so do sales.',
-      'CloseAgain follows up,',
-      'and then follows up again.',
+      'People get busy.',
+      'Good opportunities go cold.',
+      'CloseAgain keeps new opportunities moving —',
+      'and gives old conversations another chance.',
     ],
   },
 
-  jobs: {
-    eyebrow: 'What CloseAgain does',
-    title: ['New inquiries.', 'Older leads.', 'One system.'],
-    lede: 'CloseAgain works on the demand you already have. It doesn’t run ads or find new prospects — it makes sure the people who already reached out get an answer, a follow-up and another chance.',
+  paths: {
+    eyebrow: 'One system',
+    title: ['New opportunities.', 'Old opportunities.', 'One system.'],
+    lede: 'Every new lead gets a fast, consistent follow-up. Every quiet lead gets another chance. Both land in the same place.',
     fresh: {
-      label: 'New inquiries',
-      job: 'Respond before interest fades.',
+      label: 'New leads',
       steps: [
-        { title: 'Inquiry arrives', meta: 'Website form · just now' },
-        { title: 'Follow-up sent automatically', meta: 'A minute later' },
+        { title: 'New lead captured', meta: 'Website form · just now' },
+        { title: 'Follow-up sent', meta: 'Automatically · 1 min later' },
         { title: 'Lead replies', meta: '“Thursday works for me.”' },
       ],
     },
     old: {
-      label: 'Older leads',
-      job: 'Revisit leads that went quiet.',
+      label: 'Old leads',
       steps: [
         { title: 'Last contacted 84 days ago', meta: 'Quote sent · no reply' },
-        { title: 'Re-engagement sent', meta: 'Automatically, on your schedule' },
+        { title: 'Re-engagement sent', meta: 'Automatically · this morning' },
         { title: 'Lead replies', meta: '“Yes — still interested.”' },
       ],
     },
-    outcome: ['More replies.', 'More chances to close.'],
+    outcome: 'More conversations.',
   },
 
-  example: {
-    eyebrow: 'A worked example',
-    title: 'From inquiry to booked appointment.',
-    lede: 'One lead, one thread: what CloseAgain does on its own, and where your team takes over.',
-    note: 'The lead, the business and the timings are fictional.',
+  flow: {
+    eyebrow: 'A morning with CloseAgain',
+    title: 'From lead to customer.',
+    body: 'One lead, twelve minutes, no one chasing: captured, followed up, answered and booked while interest is still high.',
+    note: 'The lead and the business are fictional.',
     lead: { name: 'Jordan Ellis', initials: 'JE', context: 'Kitchen remodel · Website form' },
-    steps: [
+    events: [
+      { time: '9:12 AM', title: 'New lead captured', detail: 'Jordan Ellis · Website form', tone: 'ink', status: 'New lead' },
       {
-        id: 'inquiry',
-        actor: 'lead',
-        kind: 'message',
-        messages: [
-          {
-            tag: 'New inquiry · Website form',
-            when: 'Mon · 9:12 AM',
-            text: 'Hi — could you quote a kitchen remodel? We’re hoping to start this summer.',
-          },
-        ],
-        status: 'New inquiry',
-        note: { title: 'An inquiry arrives.', body: 'Through your website form, while your team is busy with other work.' },
-      },
-      {
-        id: 'follow-up',
-        actor: 'auto',
-        kind: 'message',
-        messages: [
-          {
-            tag: 'Sent automatically',
-            when: 'Mon · 9:13 AM',
-            text: 'Thanks, Jordan — happy to help. Could we find 15 minutes this week to talk it through?',
-          },
-          {
-            tag: 'Follow-up · sent automatically',
-            when: 'Wed · 10:00 AM',
-            text: 'Just checking in — would Thursday or Friday suit you for a quick call?',
-          },
-        ],
+        time: '9:13 AM',
+        title: 'Follow-up sent',
+        detail: '“Hi Jordan — thanks for reaching out. Could we find a time to talk this week?”',
+        tone: 'ink',
         status: 'Following up',
-        note: {
-          title: 'CloseAgain answers, then follows up.',
-          body: 'A reply a minute later, in wording you approved. No answer? Follow-ups continue on your schedule, then stop.',
-        },
       },
       {
-        id: 'quiet',
-        actor: 'lead',
-        kind: 'gap',
-        text: '92 days without a reply',
-        status: 'Quiet',
-        note: {
-          title: 'Jordan goes quiet.',
-          body: 'Plans change and people get busy. Without another follow-up, this lead is usually lost.',
-        },
-      },
-      {
-        id: 'again',
-        actor: 'auto',
-        kind: 'message',
-        messages: [
-          {
-            tag: 'Re-engagement · sent automatically',
-            when: 'June · 9:30 AM',
-            text: 'Hi Jordan — still interested in the kitchen remodel? We have openings in July.',
-          },
-        ],
-        status: 'Re-engaged',
-        note: {
-          title: 'Months later, CloseAgain checks back.',
-          body: 'Older leads get another relevant message, on a schedule you approve.',
-        },
-      },
-      {
-        id: 'answer',
-        actor: 'lead',
-        kind: 'message',
-        messages: [{ tag: 'Jordan replied', when: 'June · 11:04 AM', text: 'Yes. Let’s talk — is Thursday afternoon free?' }],
+        time: '9:18 AM',
+        title: 'Lead replied',
+        detail: '“Yes, Thursday afternoon works.”',
+        tone: 'red',
         status: 'Replied',
-        note: {
-          title: 'Jordan replies.',
-          body: 'CloseAgain spots the reply, stops the follow-up and puts the thread in front of your team.',
-        },
       },
+      { time: '9:21 AM', title: 'Appointment booked', detail: 'Thursday · 2:30 PM', tone: 'ink', status: 'Appointment' },
       {
-        id: 'booked',
-        actor: 'auto',
-        kind: 'event',
-        text: 'Consultation · Thursday, 2:30 PM',
-        when: 'Booked June · 11:20 AM',
-        status: 'Appointment booked',
-        note: {
-          title: 'A consultation is booked.',
-          body: `Through an appointment workflow (${availability('Appointment workflows').summary}), or by your team.`,
-        },
+        time: '9:24 AM',
+        title: 'Opportunity updated',
+        detail: 'Stage moved to Appointment · assigned to your team',
+        tone: 'positive',
+        status: 'Opportunity',
       },
-      {
-        id: 'handoff',
-        actor: 'team',
-        kind: 'event',
-        text: 'Handed to your team',
-        status: 'With your team',
-        note: {
-          title: 'Your team closes the sale.',
-          body: 'The visit, the quote and the decision are your team’s work. CloseAgain got Jordan this far.',
-        },
-      },
-    ] satisfies readonly ExampleStep[],
-    outcome: {
-      title: 'CloseAgain doesn’t close the sale. It gets you to the conversation that can.',
-      body: 'A reply isn’t a customer, and an appointment isn’t revenue. CloseAgain makes sure interested people get an answer, a follow-up and a clear next step — so your team has more real chances to win the work.',
-    },
+    ] satisfies readonly FlowEvent[],
+    handoff: 'From here, your team takes Jordan from appointment to sale.',
   },
 
-  capabilities: {
-    eyebrow: 'Features',
-    title: 'Four jobs that usually slip, handled.',
-    link: { label: 'See how each one works', href: '/features' },
+  automation: {
+    eyebrow: 'Automatic follow-up',
+    title: 'Follow up without living in your inbox.',
+    body: 'Set the sequence once. CloseAgain sends each follow-up on time, notices the reply, and hands you the next step.',
+  },
+
+  second: {
+    eyebrow: 'Old leads',
+    title: 'Some conversations just need another chance.',
+    body: 'A lead that went quiet isn’t a lost lead. CloseAgain reaches back out — and when they answer, the conversation picks up where it left off.',
+  },
+
+  showcase: {
+    eyebrow: 'The CloseAgain dashboard',
+    title: 'One dashboard. Every conversation.',
+    views: [
+      { id: 'overview', label: 'Overview', body: 'New leads, active conversations and what needs you today, at a glance.' },
+      { id: 'conversations', label: 'Conversations', body: 'Every thread in one inbox, organized by stage and next action.' },
+      { id: 'leads', label: 'Leads', body: 'Source, score, status and the next step for every lead.' },
+      { id: 'automations', label: 'Automations', body: 'Follow-up sequences, replies and what sends next.' },
+      { id: 'appointments', label: 'Appointments', body: 'Upcoming bookings, no-shows and reminders.' },
+      { id: 'analytics', label: 'Analytics', body: 'Where leads come from and how they convert.' },
+    ] satisfies ReadonlyArray<{ id: ShowcaseArea; label: string; body: string }>,
+    note: 'Sample workspace with fictional data.',
+    link: { label: 'Explore the sample dashboard', href: '/demo' },
   },
 
   pricing: {
     eyebrow: 'Pricing',
-    title: 'Plans that grow with your team.',
-    body: planTerms.join('\u00A0· '),
-    link: { label: 'Compare plans', href: '/pricing' },
-  },
-
-  questions: {
-    eyebrow: 'Before you get in touch',
-    title: 'Good questions to ask.',
-    /** FAQ entries shown on the homepage, by id (content/pages.ts → faq). */
-    ids: ['find-leads', 'team-role', 'after-contact', 'contract'],
-    link: { label: 'All questions', href: '/faq' },
+    title: 'Simple pricing. Clear differences.',
+    body: terms,
+    link: { label: 'Compare all plans', href: '/pricing' },
   },
 
   closing: {
-    title: 'Your next customer may already be in your inbox.',
-    body: planTerms.join('\u00A0· '),
+    title: 'Ready to close more conversations?',
+    body: terms,
     cta: primaryCta,
-    secondary: { label: 'See pricing', href: '/pricing' },
+    secondary: { label: 'What happens after you buy', href: '/after-you-buy' },
   },
 } as const

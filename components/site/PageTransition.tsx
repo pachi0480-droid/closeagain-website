@@ -1,18 +1,23 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { ViewTransition } from 'react'
+import { useState, ViewTransition } from 'react'
 
 /**
- * Route changes cross over with a short masked wipe (see motion.css). The
- * header stays put; only the page content transitions. Browsers without the
- * View Transitions API — and reduced-motion visitors — simply navigate.
+ * Route changes: the new page dissolves in quickly (see motion.css) while a
+ * thin vermilion line — the ribbon, in one stroke — runs across the top of
+ * the window. The header stays put. The first page load and reduced-motion
+ * visitors get neither; browsers without View Transitions simply navigate.
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [firstPath] = useState(pathname)
   return (
-    <ViewTransition key={pathname} enter="page-enter" exit="page-exit" default="none">
-      <div className="page">{children}</div>
-    </ViewTransition>
+    <>
+      <span key={pathname} className="route-line" data-initial={pathname === firstPath || undefined} aria-hidden="true" />
+      <ViewTransition key={pathname} enter="page-enter" exit="page-exit" default="none">
+        <div className="page">{children}</div>
+      </ViewTransition>
+    </>
   )
 }

@@ -1,15 +1,15 @@
 # CloseAgain — website and sample demo
 
-Turn more of the leads you already have into paying customers. CloseAgain
-follows up with new inquiries and re-engages older leads, helping your team
-book more appointments and close more sales.
+CloseAgain captures new leads, follows up automatically, and re-engages old
+opportunities — so more conversations become customers.
 
 This repository holds the public website — where people learn what
-CloseAgain does and send an inquiry — and an optional clickable demo on sample
-data. It does not contain the CloseAgain service itself.
+CloseAgain does, compare plans and contact the team to buy — and a clickable
+demo of the client and owner dashboards on sample data. It does not contain
+the CloseAgain service itself.
 
 ```bash
-npm install
+npm ci
 npm run dev          # http://localhost:3000
 npm run build        # production build
 npm start            # serve the build
@@ -21,54 +21,59 @@ npm run forms:sink   # local stand-in form destination, for testing only
 
 Next.js 16 (App Router) · React 19 · TypeScript · lucide-react for interface
 icons · Tailwind v4 for the reset only. Marketing pages are prerendered static
-HTML; the form endpoint and the confirmation page are the only server-rendered
-pieces.
+HTML; contact, the form endpoint and the confirmation page render on the server.
+GSAP (loaded only on pages with a scroll-driven ribbon story) coordinates the
+connected ribbon motion. Light and dark themes share one token set.
+
+See `RESEARCH-AND-CHANGES.md` for the design decisions and `DEPLOYMENT-NOTES.md`
+for current delivery behavior, verification and launch requirements.
 
 ## Before this goes live
 
 1. **Inquiry destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
    endpoint that accepts the JSON described in `.env.example`, optionally with
-   `FORMS_WEBHOOK_SECRET`. Until then the form truthfully says requests are
-   temporarily unavailable and nothing is recorded.
+   `FORMS_WEBHOOK_SECRET`. Without it, the buying form hands the visitor's
+   details to their own email app, addressed to **Closeagainhq@gmail.com**. A
+   draft is never reported as a sent inquiry.
 2. **Legal copy.** `/privacy` and `/terms` are marked placeholders, kept out of
    search. Add approved text in `content/legal.ts` and set `status` to
    `'approved'`.
 3. **Public origin.** Set `NEXT_PUBLIC_SITE_URL` on the production deployment
    only. Without it the site is a preview: noindex everywhere, robots.txt
    disallows crawling, empty sitemap, no canonical URLs.
-4. **Unconfirmed facts.** `docs/open-questions.md` lists everything the site
-   deliberately does not claim yet — channels, usage allowances, users per
-   plan, contract terms, how appointments are booked — and how each is worded
+4. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
+   confirmed and what is still open — Core's channel, usage allowances and
+   fees, the Scale badge, how appointments are booked — and how each is worded
    meanwhile. Answer them there, then update `content/`.
 
 ## Routes
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero · Again · the two jobs (new inquiries, older leads) · one worked example · four jobs · pricing overview · buying questions · next step |
-| `/how-it-works` | Six steps, each labelled automatic or your team |
-| `/features` | Four buyer jobs: the problem, what CloseAgain does, what you control, limits, and plan availability |
-| `/who-its-for` | Fit and not-fit, then eight lead-driven industries with concrete use cases |
-| `/pricing` | Core · Growth · Scale · Enterprise, what every plan shares, what the proposal confirms, the full comparison and a break-even check |
-| `/getting-started` | Inquiry → fit and scope → approve plan and terms → setup → review → launch |
-| `/faq`, `/about` | Straight answers; the short brand story |
-| `/contact` | Find the right plan — the inquiry form (`?plan=growth`, `?industry=…` pre-fill) |
+| `/` | Hero · Again · New + Old opportunities · From lead to customer · follow-up automation · old lead recovery · dashboard showcase · pricing · next step |
+| `/how-it-works` | Six steps on one ribbon, each labelled automatic or your team, then what stays in your hands |
+| `/features` | Nine capabilities, each with its product view and the plans that include it |
+| `/who-its-for` | Eight lead-driven industries, each with a one-line value statement |
+| `/pricing` | Core · Growth · Scale · Enterprise, a plan finder, what every plan shares, the full comparison and a break-even check |
+| `/after-you-buy` | What happens after you buy: six steps to go live (`/getting-started` redirects here) |
+| `/faq`, `/about` | Eleven buying questions; the short brand story |
+| `/contact` | Contact to buy — the buying form (`?plan=growth`, `?industry=…` pre-fill) |
 | `/thank-you` | Confirmation, shown only after a confirmed submission; neutral otherwise |
 | `/privacy`, `/terms` | Marked placeholders |
-| `/demo` | Sample client dashboard (noindex) — optional, linked from the footer and features page |
-| `/demo/operator` | Sample operator views (noindex) — kept working, not linked from the public journey |
-| `/after-you-buy`, `/book-a-demo` | Permanent redirects to `/getting-started` and `/contact` |
+| `/demo` | Sample client dashboard (noindex) — linked from the footer, features page and the homepage showcase |
+| `/demo/operator` | Sample owner “Master control” dashboard (noindex) — not linked from the buying journey |
+| `/getting-started`, `/book-a-demo` | Permanent redirects to `/after-you-buy` and `/contact` |
 
 ## Where things live
 
 ```
-content/          ALL public copy and data
+content/          Shared public copy and data
   site.ts         brand, navigation, the primary call to action
   pricing.ts      the ONLY place prices and plan facts live
-  home.ts         homepage copy, including the worked example
+  home.ts         homepage copy: hero, paths, the lead-to-customer flow, showcase
   pages.ts        supporting pages; FAQ (by id, reused on home and pricing)
-  contact.ts      the inquiry page and confirmation copy
-  forms.ts        inquiry fields, options and messages
+  contact.ts      the buying page and confirmation copy
+  forms.ts        buying-form fields, options and messages
   legal.ts        privacy and terms (placeholders)
   demo/           sample data for the demo
 docs/
@@ -77,14 +82,16 @@ app/(marketing)/  public pages (header + footer layout)
 app/(product)/    the sample demo (its own shell; loads styles/dashboard.css)
 app/api/forms/    the submission endpoint (/api/forms/inquiry)
 components/
-  home/           hero, two jobs, worked example, jobs summary
+  home/           hero, connected paths, lead flow, automation, old leads,
+                  dashboard showcase, control band
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
   art/            ribbon renderer and shapes, trail, bubbles
   editorial/      intro, rows, trio, accordion, closing CTA, word split
   forms/          the inquiry form and its page layout
-  site/           header, mobile menu, footer, page transition, motion
-  dashboard/      the demo UI
+  site/           header, mobile menu, theme toggle, footer, page transition, motion
+  dashboard/      the demo UI; dashboard/showcase/ is the homepage's scaled
+                  dashboard and phone cards (loads only styles/showcase.css)
 lib/
   ribbon.ts       centreline + width profile → filled ribbon outline
   breakeven.ts    break-even arithmetic (visitor's numbers only)
@@ -98,9 +105,11 @@ lib/
   or a plan price appears in any content, component or library file other than
   `content/pricing.ts`. Labels, the starting price, form options, metadata and
   plan availability on the features page are all derived from it.
-- **Honest plan comparison.** Every plan has a best-for and a step-up sentence;
-  no plan repeats a benefit from the plan below as if it were an upgrade; no
-  popularity claims — a recommendation must state its reason.
+- **Honest plan comparison.** Every plan has a best-for sentence and its
+  headline facts; no plan repeats a benefit from the plan below as if it were
+  an upgrade; no popularity claims — a recommendation must state its reason.
+  The owner's commercial terms are asserted: monthly billing, no annual
+  commitment, setup assistance included.
 - **Honest forms.** Success is shown only after `POST /api/forms/inquiry`
   returns HTTP 200 with `{"status":"ok"}`, which happens only after the webhook
   answered 2xx. The endpoint then sets a short-lived, HttpOnly receipt cookie
@@ -122,21 +131,41 @@ substitution rather than its exact face.
 
 Motion decorates finished content and never gates it:
 
-- The hero's headline, explanation and calls to action are there on first
-  paint. Only the ribbon draws and the two bubbles arrive — on the first
-  homepage visit of a session.
-- Selected content rises into place once, as it arrives, and is never hidden
-  again when scrolling back. Scrolling is always the browser's own.
-- Page changes dissolve in 180ms; the header holds still.
+- The homepage opens once per session in a set order: navigation, the two
+  headline lines, the ribbon drawing through, the two bubbles, then the copy
+  and buttons settling into place. The copy and buttons move but are never
+  hidden, so they are readable and clickable from the first frame.
+- Ribbon stories follow the visitor's scroll: the New + Old paths merge, the
+  lead-to-customer events complete in order, the automation and old-lead
+  ribbons draw, and long page trails track reading progress. Scrolling is
+  always the browser's own — nothing is pinned or hijacked.
+- The dashboard showcase: on wide screens the dashboard stays in view while
+  its six areas scroll past beside it, and the area being read is ringed.
+  Tablets pair each area with its own card; phones swipe through them.
+- Other content rises into place once, as it arrives.
+- Page changes dissolve in 180ms while a thin vermilion line — the ribbon in
+  one stroke — runs across the top; the header holds still.
+- Themes: light is the brand default; the toggle (header, mobile menu,
+  dashboard) switches to the warm dark theme with a short cross-fade, set
+  before first paint so nothing flashes.
 - `prefers-reduced-motion` and no-JavaScript both show the finished page.
 
-## The inquiry form
+## The buying form
 
-Name, work email, business, main goal and plan (defaulting to "not sure") are
-visible; phone, industry, lead volume, CRM and a message sit in an optional
-section. Client and server share one validation module. Unavailable, rejected,
-network, timeout and rate-limited states each have a plain message and keep
-what was typed; without JavaScript the endpoint accepts a normal form post.
+All ten fields are visible, in reading order: full name, business name, work
+email, phone, industry, monthly lead volume, current CRM, preferred plan
+(defaulting to "not sure", pre-selected from `?plan=`), main goal and a
+message. Only name, business, email and goal are required. Client and server
+share one validation module.
+
+- **With `FORMS_WEBHOOK_URL`:** the form submits in the background and moves
+  on only after the server confirms delivery. Unavailable, rejected, network,
+  timeout and rate-limited states each have a plain message and keep what was
+  typed; without JavaScript the endpoint accepts a normal form post.
+- **Without it:** a valid form opens the visitor's email app with every detail
+  filled in, addressed to the business. The page says the visitor sends it —
+  it never claims anything was sent.
+
 Protection: honeypot, per-address rate limit (in-memory, per instance),
 cross-site refusal, a streamed body-size cap. Logs record outcomes only.
 
@@ -146,7 +175,7 @@ behaviour, not a production integration.
 
 ## Honesty
 
-No testimonials, logos, customer counts, results or ratings. The worked
-example and product views are labelled illustrative or sample, with fictional
-people and businesses; the demo's figures are computed from sample accounts.
+No testimonials, logos, customer counts, results or ratings. Product views
+and the dashboard showcase are labelled sample, with fictional people and
+businesses; the demo's figures are computed from sample accounts.
 The industry images are generated editorial stills, labelled on the page.

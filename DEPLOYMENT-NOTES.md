@@ -50,11 +50,13 @@ Both contact modes were checked against the same production build: direct email 
 
 ## Final visual and interaction verification
 
-- Production build and TypeScript completed successfully; ESLint passed; all 78 tests passed.
-- Inspected the homepage, new conversation demo, pricing tiers and contact layouts at 320px, 390px, 960px and 1440px as applicable. No page-level horizontal overflow was found. The wide comparison scrolls inside its own labeled region.
-- Verified scenario switching, all four conversation steps, immediate play feedback, pause, plan selection, comparison disclosure, and the break-even calculator.
-- Verified mobile menu focus, Escape dismissal and focus return. Reduced-motion mode disables ribbon choreography and leaves every reveal visible. With JavaScript disabled, content stays readable and the mobile menu links to footer navigation.
-- Verified exact price/CTA alignment across the three desktop tiers and repaired Enterprise heading/focus contrast.
-- Fresh production-browser testing reported no console errors or warnings during the final checked interactions.
+Checked against the local production build (`npm run build`, `next start`):
 
-The local preview is http://127.0.0.1:5387 while the preview server is running. It is not a public deployment. Desktop/mobile browser checks are not a claim of cross-browser certification or measured conversion improvement.
+- Lint, typecheck, all 95 tests and the production build pass.
+- Headless Chrome: 19 routes — every marketing page, the buying form with a plan pre-selected, the 404, and the main client and owner dashboard views — at 1440, 1280, 1024, 768, 430, 390, 375 and 320px, in light and dark (304 runs). No page scrolls sideways, no text escapes its box, and there are no console errors. The one exception was at 320px, below the smallest required width, and it has been fixed.
+- WebKit (Safari's engine): 16 routes at 1440, 1280, 768, 390 and 375px in both themes (160 runs), all clean.
+- Loading: on every page the main content paints within 0.6s locally, with zero layout shift. On a throttled connection, the homepage headline paints at about 0.85s.
+- The accessibility audit (headings, landmarks, names, labels, image text) is clean on the marketing pages. The dashboards are app screens without a marketing footer, and their inline table links follow the table's row spacing.
+- Reduced motion shows the finished page with no animation. Without JavaScript, content stays readable.
+
+These checks were run locally. They do not certify every browser or device, and they do not measure conversion.

@@ -82,14 +82,16 @@ app/(marketing)/  public pages (header + footer layout)
 app/(product)/    the sample demo (its own shell; loads styles/dashboard.css)
 app/api/forms/    the submission endpoint (/api/forms/inquiry)
 components/
-  home/           hero, connected paths, lead flow, automation, old leads, control band
+  home/           hero, connected paths, lead flow, automation, old leads,
+                  dashboard showcase, control band
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
   art/            ribbon renderer and shapes, trail, bubbles
   editorial/      intro, rows, trio, accordion, closing CTA, word split
   forms/          the inquiry form and its page layout
   site/           header, mobile menu, theme toggle, footer, page transition, motion
-  dashboard/      the demo UI
+  dashboard/      the demo UI; dashboard/showcase/ is the homepage's scaled
+                  dashboard and phone cards (loads only styles/showcase.css)
 lib/
   ribbon.ts       centreline + width profile → filled ribbon outline
   breakeven.ts    break-even arithmetic (visitor's numbers only)
@@ -137,8 +139,12 @@ Motion decorates finished content and never gates it:
   lead-to-customer events complete in order, the automation and old-lead
   ribbons draw, and long page trails track reading progress. Scrolling is
   always the browser's own — nothing is pinned or hijacked.
+- The dashboard showcase: on wide screens the dashboard stays in view while
+  its six areas scroll past beside it, and the area being read is ringed.
+  Tablets pair each area with its own card; phones swipe through them.
 - Other content rises into place once, as it arrives.
-- Page changes dissolve in 180ms; the header holds still.
+- Page changes dissolve in 180ms while a thin vermilion line — the ribbon in
+  one stroke — runs across the top; the header holds still.
 - Themes: light is the brand default; the toggle (header, mobile menu,
   dashboard) switches to the warm dark theme with a short cross-fade, set
   before first paint so nothing flashes.

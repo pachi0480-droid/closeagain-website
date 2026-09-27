@@ -37,6 +37,7 @@ export type RibbonGeometry = {
   guide: string
   /** Widest point of the shape, for sizing the reveal mask stroke. */
   maxWidth: number
+  bounds: { x: number; y: number; width: number; height: number }
 }
 
 type Vec = [number, number]
@@ -206,5 +207,14 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
     segments.map((s) => ` C ${pt(s[1])} ${pt(s[2])} ${pt(s[3])}`).join('') +
     (spec.arrow ? ` L ${pt(tip)}` : '')
 
-  return { outline, guide, maxWidth }
+  const padding = maxWidth * 1.5
+  const xs = [...samples.map((p) => p[0]), tip[0]]
+  const ys = [...samples.map((p) => p[1]), tip[1]]
+  const bounds = {
+    x: Math.min(...xs) - padding,
+    y: Math.min(...ys) - padding,
+    width: Math.max(...xs) - Math.min(...xs) + padding * 2,
+    height: Math.max(...ys) - Math.min(...ys) + padding * 2,
+  }
+  return { outline, guide, maxWidth, bounds }
 }

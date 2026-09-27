@@ -1164,3 +1164,38 @@
   margin: calc(clamp(2.5rem, 5vw, 4.5rem) * -0.6) 0 clamp(2rem, 4vw, 3rem);
   color: var(--ink-3);
 }
+
+/* Clear chapters, with a compact reassurance section after the demonstration. */
+.control { border-top: 1px solid var(--rule); }
+.control__head { display: grid; grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3.5rem; }
+.control__lede { color: var(--ink-3); max-width: 23rem; margin: 0 0 .4rem; font-size: var(--text-lede); }
+.control__grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.control__item { padding: 2.5rem 2.5rem 2.8rem; }
+.control__item:first-child { padding-left: 0; }
+.control__item:last-child { padding-right: 0; }
+.control__item + .control__item { border-left: 1px solid var(--rule); }
+.control__top { display: flex; justify-content: space-between; color: var(--vermilion-ink); margin-bottom: 2.5rem; }
+.control__top span { font-size: .85rem; font-variant-numeric: tabular-nums; }
+.control__item h3 { margin: 0 0 .8rem; font-size: var(--display-xs); }
+.control__item p { margin: 0; color: var(--ink-3); font-size: 1.075rem; line-height: 1.6; max-width: 23rem; }
+.control__foot { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1.3rem; }
+.control__foot p { display: flex; gap: .6rem; align-items: center; font-size: .9375rem; color: var(--ink-3); margin: 0; }
+.paths__stage { margin-top: clamp(2rem, 4vw, 3.5rem); }
+.paths__outcome { font-size: clamp(2.25rem, 4vw, 3.75rem); }
+.paths__outcome span { display: inline; }
+.paths__outcome span + span::before { content: ' '; }
+@media (max-width: 759px) {
+  .control__head, .control__grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .control__head { margin-bottom: 2rem; }
+  .control__grid { gap: 0; }
+  .control__item, .control__item:first-child, .control__item:last-child { padding: 1.75rem 0; }
+  .control__item + .control__item { border-left: 0; border-top: 1px solid var(--rule); }
+  .control__top { margin-bottom: 1rem; }
+  .control__foot { flex-direction: column; align-items: flex-start; }
+  .paths__outcome span { display: block; }
+  .hero__exchange { height: calc(var(--hs) * 2.05); }
+  .hero__lede { font-size: 1.15rem; }
+  .hero__actions { gap: .4rem 1.4rem; margin-top: 1.4rem; }
+  .hero__actions .text-link { font-size: 1rem; }
+  .hero__stage { padding-bottom: 2.5rem; }
+}

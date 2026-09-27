@@ -9,16 +9,16 @@
  */
 
 import { planTerms, startingPriceText } from './pricing.ts'
-import { primaryCta } from './site.ts'
+import { primaryCta, site } from './site.ts'
 
 export const contact = {
   meta: {
-    title: 'Find the right plan',
+    title: 'Let’s talk about your leads',
     description: `Tell us about your business and how leads reach you. We’ll talk through fit, scope and which plan makes sense. ${startingPriceText}.`,
   },
-  eyebrow: 'Find the right plan',
-  title: 'Find the right plan.',
-  lede: 'Tell us a little about your business and how leads reach you. We’ll get back to you to talk through fit, scope and which plan makes sense. Nothing is charged here.',
+  eyebrow: 'A conversation, not a commitment',
+  title: 'Let’s talk about your leads.',
+  lede: 'New inquiries slipping through? Older leads going quiet? Tell us where follow-up gets stuck. We’ll help you explore the right next step for your business.',
   terms: planTerms,
   next: {
     title: 'What happens next',
@@ -33,6 +33,23 @@ export const contact = {
   form: {
     submit: 'Send my details',
     guidance: 'No payment is taken here. Please don’t include sensitive information.',
+  },
+  email: {
+    eyebrow: 'Straight to our inbox',
+    title: 'Tell us what you’re working on.',
+    intro: 'A few lines are enough to start. No lengthy brief needed.',
+    prompts: [
+      'Your business name or website',
+      'How new leads reach your team',
+      'What you’d like your follow-up to do better',
+    ],
+    cta: 'Email CloseAgain',
+    note: 'Opens a draft in your email app. Review it and press send when you’re ready.',
+    alternative: 'Or copy the address above into your preferred email service.',
+    subject: 'Let’s talk about CloseAgain',
+    draft: 'Hi CloseAgain,\n\nI’d like to learn whether CloseAgain is a fit for my business.\n\nBusiness name or website:\nHow leads reach us:\nWhat we’d like to improve:\n',
+    formAlternative: 'Prefer to email us directly?',
+    address: site.email,
   },
 } as const
 

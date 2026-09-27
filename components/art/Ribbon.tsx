@@ -62,10 +62,10 @@ export function Ribbon({
               key={i}
               id={`${id}-reveal-${i}`}
               maskUnits="userSpaceOnUse"
-              x="-5000"
-              y="-5000"
-              width="15000"
-              height="15000"
+              x={geometry.bounds.x}
+              y={geometry.bounds.y}
+              width={geometry.bounds.width}
+              height={geometry.bounds.height}
             >
               <path
                 className={['ribbon__guide', geometry.stage && `ribbon__guide--${geometry.stage}`]

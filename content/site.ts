@@ -16,6 +16,7 @@ const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/
 
 export const site = {
   name: 'CloseAgain',
+  email: 'Closeagainhq@gmail.com',
   tagline: 'The conversation isn’t over.',
   /** What CloseAgain is, in four words. */
   category: 'Automated lead follow-up and recovery',
@@ -69,7 +70,7 @@ export const footerGroups: Array<{ title: string; links: NavLink[] }> = [
   {
     title: 'Next step',
     links: [
-      { label: 'Find the right plan', href: '/contact' },
+      { label: 'See if it fits', href: '/contact' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },
     ],
@@ -80,7 +81,7 @@ export const footerGroups: Array<{ title: string; links: NavLink[] }> = [
  * The primary call to action everywhere on the site. It opens an inquiry —
  * a conversation about fit, scope and plan — not a checkout, and says so.
  */
-export const primaryCta = { label: 'Find the right plan', href: '/contact' } as const
+export const primaryCta = { label: 'See if it fits', href: '/contact' } as const
 
 /** The quieter route for visitors who want to understand the service first. */
 export const learnCta = { label: 'See how it works', href: '/how-it-works' } as const

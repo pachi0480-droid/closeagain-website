@@ -16,6 +16,9 @@ export function SiteFooter() {
             <div className="site-footer__cta">
               <ButtonLink href={primaryCta.href}>{primaryCta.label}</ButtonLink>
               <p>{planTerms.join('\u00A0· ')}</p>
+              <a className="site-footer__email" href={`mailto:${site.email}`}>
+                {site.email}
+              </a>
             </div>
           </div>
 

@@ -68,8 +68,12 @@ confirmed. The following are not, and the pricing page groups them under
 
 ## Before public launch
 
-- **`FORMS_WEBHOOK_URL`:** where inquiries are delivered. Until it is set, the
-  form truthfully says requests are temporarily unavailable.
+- **`FORMS_WEBHOOK_URL` (optional):** where form inquiries are delivered. With
+  no valid destination, `/contact` shows a direct-email card addressed to the
+  confirmed business email, `Closeagainhq@gmail.com`. Opening a draft does not
+  send it. A valid destination enables the inquiry form at request time; a
+  direct-email alternative remains available. Verify downstream inbox/CRM
+  delivery before relying on the form.
 - **Privacy and Terms:** approved text is needed. Both pages are marked
   placeholders and are not indexed.
 - **`NEXT_PUBLIC_SITE_URL`:** set on the production deployment only. Without it

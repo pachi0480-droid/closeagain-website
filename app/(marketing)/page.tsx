@@ -4,9 +4,9 @@ import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { Accordion } from '@/components/editorial/Accordion'
 import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
-import { JobsSummary } from '@/components/home/JobsSummary'
+import { Control } from '@/components/home/Control'
 import { Paths } from '@/components/home/Paths'
-import { WorkedExample } from '@/components/home/WorkedExample'
+import { ConversationDemo } from '@/components/home/ConversationDemo'
 import { PlanCards } from '@/components/pricing/Plans'
 import { TextLink } from '@/components/ui/links'
 import { home } from '@/content/home'
@@ -27,7 +27,7 @@ export const metadata: Metadata = pageMetadata({
  * before buying, and the next step. One ribbon runs through the story.
  */
 export default function HomePage() {
-  const { again, capabilities, pricing, questions, closing } = home
+  const { again, pricing, questions, closing } = home
 
   return (
     <>
@@ -44,19 +44,9 @@ export default function HomePage() {
       </WordSplit>
 
       <Paths />
-      <WorkedExample />
+      <ConversationDemo />
 
-      <section className="section" aria-labelledby="capabilities-title">
-        <div className="wrap">
-          <SectionHead
-            id="capabilities-title"
-            eyebrow={capabilities.eyebrow}
-            title={capabilities.title}
-            link={capabilities.link}
-          />
-          <JobsSummary />
-        </div>
-      </section>
+      <Control />
 
       <section className="section price-band" aria-labelledby="price-band-title">
         <div className="wrap">

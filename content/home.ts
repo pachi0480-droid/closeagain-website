@@ -6,7 +6,7 @@
  */
 
 import { availability, billingNote, planTerms, startingPriceText } from './pricing.ts'
-import { learnCta, primaryCta, site } from './site.ts'
+import { primaryCta, site } from './site.ts'
 
 export type ExampleActor = 'lead' | 'auto' | 'team'
 
@@ -44,12 +44,12 @@ export const home = {
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
     /** Three lines on wide screens; wraps naturally elsewhere. */
     lede: [
-      'Turn more of the leads you already have into paying customers.',
-      'CloseAgain follows up with new inquiries and re‑engages older leads,',
-      'helping your team book more appointments and close more sales.',
+      'Your next customer may already be in your inbox.',
+      'Follow up with new inquiries. Reconnect with quiet leads.',
+      'Give your team more chances to win the work.',
     ],
     primary: primaryCta,
-    secondary: learnCta,
+    secondary: { label: 'Watch a conversation come back', href: '#conversation-demo' },
     terms: [startingPriceText, billingNote],
     exchange: { ask: 'Still interested?', reply: 'Yes. Let’s talk.' },
   },
@@ -57,18 +57,17 @@ export const home = {
   again: {
     word: 'Again.',
     lines: [
-      'Inquiries wait too long for a reply.',
-      'Quotes go out, and nobody follows up.',
-      'Good leads go quiet\u00A0— and so do sales.',
-      'CloseAgain follows up,',
-      'and then follows up again.',
+      'An unanswered inquiry. A quote that went quiet.',
+      'A potential customer who just wasn’t ready.',
+      'Good opportunities deserve another conversation.',
+      'CloseAgain makes sure it happens.',
     ],
   },
 
   jobs: {
     eyebrow: 'What CloseAgain does',
     title: ['New inquiries.', 'Older leads.', 'One system.'],
-    lede: 'CloseAgain works on the demand you already have. It doesn’t run ads or find new prospects — it makes sure the people who already reached out get an answer, a follow-up and another chance.',
+    lede: 'For the person who just reached out, and the one who went quiet months ago. Keep both moving toward a real conversation with your team.',
     fresh: {
       label: 'New inquiries',
       job: 'Respond before interest fades.',
@@ -197,7 +196,7 @@ export const home = {
       },
     ] satisfies readonly ExampleStep[],
     outcome: {
-      title: 'CloseAgain doesn’t close the sale. It gets you to the conversation that can.',
+      title: 'Your team takes it from here.',
       body: 'A reply isn’t a customer, and an appointment isn’t revenue. CloseAgain makes sure interested people get an answer, a follow-up and a clear next step — so your team has more real chances to win the work.',
     },
   },
@@ -210,7 +209,7 @@ export const home = {
 
   pricing: {
     eyebrow: 'Pricing',
-    title: 'Plans that grow with your team.',
+    title: 'The right plan. Room to grow.',
     body: planTerms.join('\u00A0· '),
     link: { label: 'Compare plans', href: '/pricing' },
   },

@@ -37,11 +37,15 @@ export function LeadForm({
   fields,
   submitLabel,
   guidance,
+  initialPlan,
+  initialIndustry,
 }: {
   kind: FormKind
   fields: readonly FieldDefinition[]
   submitLabel: string
   guidance: string
+  initialPlan?: string
+  initialIndustry?: string
 }) {
   const router = useRouter()
   const [state, dispatch] = useReducer(formReducer, initialFormState)
@@ -50,8 +54,8 @@ export function LeadForm({
   const [plan, setPlan] = useState<string | null>(null)
   const linkedPlan = useSyncExternalStore(
     subscribeNoop,
-    () => new URLSearchParams(window.location.search).get('plan') ?? '',
-    () => '',
+    () => new URLSearchParams(window.location.search).get('plan') ?? initialPlan ?? '',
+    () => initialPlan ?? '',
   )
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
@@ -154,6 +158,7 @@ export function LeadForm({
     const hintId = field.hint ? `${id(field.name)}-hint` : undefined
     const errorId = error ? `${id(field.name)}-error` : undefined
     const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+    const initialChoice = field.name === 'plan' ? initialPlan : field.name === 'industry' ? initialIndustry : undefined
     const common = {
       id: id(field.name),
       name: field.name,
@@ -184,7 +189,7 @@ export function LeadForm({
           <textarea {...common} rows={4} maxLength={field.max} />
         ) : field.kind === 'choice' ? (
           <div className="field__select">
-            <select {...common} defaultValue={field.defaultValue ?? ''}>
+            <select {...common} defaultValue={initialChoice ?? field.defaultValue ?? ''}>
               {field.placeholderOption !== undefined && <option value="">{field.placeholderOption}</option>}
               {field.options?.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -258,7 +263,7 @@ export function LeadForm({
       <div className="form__grid">{mainFields.map(renderField)}</div>
 
       {detailFields.length > 0 && (
-        <details ref={detailsRef} className="form__details">
+        <details ref={detailsRef} className="form__details" open={initialIndustry ? true : undefined}>
           <summary className="form__summary">
             <span>{inquiryDetails.summary}</span>
             <span className="form__summary-icon" aria-hidden="true" />

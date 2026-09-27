@@ -70,7 +70,7 @@ const structuredData = site.origin
   ? {
       '@context': 'https://schema.org',
       '@graph': [
-        { '@type': 'Organization', '@id': `${site.origin}/#organization`, name: site.name, url: site.origin },
+        { '@type': 'Organization', '@id': `${site.origin}/#organization`, name: site.name, url: site.origin, email: site.email },
         {
           '@type': 'WebSite',
           '@id': `${site.origin}/#website`,

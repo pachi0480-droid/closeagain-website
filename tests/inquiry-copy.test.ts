@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs'
 import { describe, it } from 'node:test'
 import { contact, thankYou } from '../content/contact.ts'
 import { planById, planSummary, planTerms, startingPriceText } from '../content/pricing.ts'
-import { primaryCta } from '../content/site.ts'
+import { primaryCta, site } from '../content/site.ts'
 
 /** Every file this part of the site owns that could carry visitor-facing words. */
 const ownedFiles = [
@@ -17,6 +17,7 @@ const ownedFiles = [
   'content/forms.ts',
   'components/forms/FormPage.tsx',
   'components/forms/LeadForm.tsx',
+  'components/forms/DirectEmailCard.tsx',
   'app/(marketing)/contact/page.tsx',
   'app/(marketing)/thank-you/page.tsx',
   'app/api/forms/[kind]/route.ts',
@@ -54,10 +55,10 @@ describe('prices', () => {
 
 describe('contact page copy', () => {
   it('names one honest next step: an inquiry, not a checkout', () => {
-    assert.equal(contact.meta.title, 'Find the right plan')
-    assert.equal(contact.eyebrow, 'Find the right plan')
-    assert.equal(contact.title, 'Find the right plan.')
-    assert.match(contact.lede, /Nothing is charged here\.$/)
+    assert.match(contact.meta.title, /talk about your leads/i)
+    assert.match(contact.eyebrow, /conversation, not a commitment/i)
+    assert.match(contact.title, /talk about your leads/i)
+    assert.match(contact.lede, /follow-up/i)
     assert.deepEqual(contact.next.steps, [
       'You send a few details',
       'We talk through fit and scope',
@@ -67,6 +68,9 @@ describe('contact page copy', () => {
     assert.deepEqual(contact.process, { label: 'See the full getting-started process', href: '/getting-started' })
     assert.equal(contact.form.submit, 'Send my details')
     assert.equal(contact.form.guidance, 'No payment is taken here. Please don’t include sensitive information.')
+    assert.equal(contact.email.address, site.email)
+    assert.match(contact.email.note, /Opens a draft in your email app/)
+    assert.match(contact.email.note, /press send/)
   })
 })
 

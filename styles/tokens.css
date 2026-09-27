@@ -91,7 +91,7 @@
   --dur-state: 260ms; /* a message or status changing */
   --dur-settle: 450ms;
   --dur-reveal: 450ms; /* selected content arriving */
-  --dur-draw: 850ms; /* a ribbon drawing along its curve */
+  --dur-draw: 1150ms; /* a ribbon drawing along its curve */
   --stagger: 60ms;
   --travel: 12px;
 }

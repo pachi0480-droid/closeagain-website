@@ -9,7 +9,7 @@ CloseAgain does and send an inquiry — and an optional clickable demo on sample
 data. It does not contain the CloseAgain service itself.
 
 ```bash
-npm install
+npm ci
 npm run dev          # http://localhost:3000
 npm run build        # production build
 npm start            # serve the build
@@ -21,23 +21,25 @@ npm run forms:sink   # local stand-in form destination, for testing only
 
 Next.js 16 (App Router) · React 19 · TypeScript · lucide-react for interface
 icons · Tailwind v4 for the reset only. Marketing pages are prerendered static
-HTML; the form endpoint and the confirmation page are the only server-rendered
-pieces.
+HTML; contact, the form endpoint and the confirmation page render on the server.
+GSAP coordinates the connected ribbon motion.
+
+See `RESEARCH-AND-CHANGES.md` for the design decisions and `DEPLOYMENT-NOTES.md`
+for current delivery behavior, verification and launch requirements.
 
 ## Before this goes live
 
 1. **Inquiry destination.** Set `FORMS_WEBHOOK_URL` (server-side) to an HTTPS
    endpoint that accepts the JSON described in `.env.example`, optionally with
-   `FORMS_WEBHOOK_SECRET`. Until then the form truthfully says requests are
-   temporarily unavailable and nothing is recorded.
+   `FORMS_WEBHOOK_SECRET`. Without it, contact uses a working direct-email card for
+   **Closeagainhq@gmail.com**. A draft is never reported as a sent inquiry.
 2. **Legal copy.** `/privacy` and `/terms` are marked placeholders, kept out of
    search. Add approved text in `content/legal.ts` and set `status` to
    `'approved'`.
 3. **Public origin.** Set `NEXT_PUBLIC_SITE_URL` on the production deployment
    only. Without it the site is a preview: noindex everywhere, robots.txt
    disallows crawling, empty sitemap, no canonical URLs.
-4. **Unconfirmed facts.** `docs/open-questions.md` lists everything the site
-   deliberately does not claim yet — channels, usage allowances, users per
+4. **Unconfirmed facts.** `docs/open-questions.md` lists facts still requiring owner confirmation — channels, usage allowances, users per
    plan, contract terms, how appointments are booked — and how each is worded
    meanwhile. Answer them there, then update `content/`.
 
@@ -45,14 +47,14 @@ pieces.
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero · Again · the two jobs (new inquiries, older leads) · one worked example · four jobs · pricing overview · buying questions · next step |
+| `/` | Hero · Again · the two jobs (new inquiries, older leads) · interactive conversation walkthrough · messaging controls · pricing overview · buying questions · next step |
 | `/how-it-works` | Six steps, each labelled automatic or your team |
 | `/features` | Four buyer jobs: the problem, what CloseAgain does, what you control, limits, and plan availability |
 | `/who-its-for` | Fit and not-fit, then eight lead-driven industries with concrete use cases |
 | `/pricing` | Core · Growth · Scale · Enterprise, what every plan shares, what the proposal confirms, the full comparison and a break-even check |
 | `/getting-started` | Inquiry → fit and scope → approve plan and terms → setup → review → launch |
 | `/faq`, `/about` | Straight answers; the short brand story |
-| `/contact` | Find the right plan — the inquiry form (`?plan=growth`, `?industry=…` pre-fill) |
+| `/contact` | Direct-email contact, or configured inquiry form (`?plan=growth`, `?industry=…` pre-fill) |
 | `/thank-you` | Confirmation, shown only after a confirmed submission; neutral otherwise |
 | `/privacy`, `/terms` | Marked placeholders |
 | `/demo` | Sample client dashboard (noindex) — optional, linked from the footer and features page |
@@ -62,7 +64,7 @@ pieces.
 ## Where things live
 
 ```
-content/          ALL public copy and data
+content/          Shared public copy and data
   site.ts         brand, navigation, the primary call to action
   pricing.ts      the ONLY place prices and plan facts live
   home.ts         homepage copy, including the worked example
@@ -77,7 +79,7 @@ app/(marketing)/  public pages (header + footer layout)
 app/(product)/    the sample demo (its own shell; loads styles/dashboard.css)
 app/api/forms/    the submission endpoint (/api/forms/inquiry)
 components/
-  home/           hero, two jobs, worked example, jobs summary
+  home/           hero, connected paths, interactive conversation and controls
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
   art/            ribbon renderer and shapes, trail, bubbles

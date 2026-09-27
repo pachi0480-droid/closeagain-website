@@ -34,7 +34,7 @@ export function Paths() {
         <p className="paths__lede">{lede}</p>
       </div>
 
-      <div className="paths__stage wrap">
+      <div className="paths__stage wrap" data-flow>
         <div className="paths__cols">
           {(['fresh', 'old'] as const).map((key) => {
             const column = key === 'fresh' ? fresh : old

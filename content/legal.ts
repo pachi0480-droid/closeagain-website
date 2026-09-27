@@ -2,13 +2,15 @@
  * Legal pages.
  *
  * No approved policy text exists yet, so both documents are deliberately
- * unfinished: each section is a marked placeholder, and the pages ask search
- * engines not to index them. Nothing here is policy.
+ * unfinished: policy sections are marked placeholders, and the pages ask
+ * search engines not to index them. Only the business contact is confirmed.
  *
  * To publish: set `status` to 'approved', add `effectiveDate`, and replace each
  * section's `body` with the approved paragraphs. The layout, numbering, table of
  * contents and indexing all follow from this object.
  */
+
+import { site } from './site.ts'
 
 export type LegalSection = {
   id: string
@@ -41,7 +43,7 @@ export const privacy: LegalDocument = {
     placeholder('sharing', 'Sharing and service providers'),
     placeholder('retention', 'Retention'),
     placeholder('your-choices', 'Your choices and rights'),
-    placeholder('contact', 'Contact'),
+    { id: 'contact', heading: 'Contact', body: [`For questions, email ${site.email}.`] },
   ],
 }
 
@@ -58,6 +60,6 @@ export const terms: LegalDocument = {
     placeholder('intellectual-property', 'Intellectual property'),
     placeholder('disclaimers', 'Disclaimers and limitations'),
     placeholder('changes', 'Changes to these terms'),
-    placeholder('contact', 'Contact'),
+    { id: 'contact', heading: 'Contact', body: [`For questions, email ${site.email}.`] },
   ],
 }

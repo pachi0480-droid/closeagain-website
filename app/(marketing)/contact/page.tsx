@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
 import { FormPage } from '@/components/forms/FormPage'
 import { LeadForm } from '@/components/forms/LeadForm'
+import { DirectEmailCard } from '@/components/forms/DirectEmailCard'
 import { TextLink } from '@/components/ui/links'
 import { contact } from '@/content/contact'
-import { inquiryFields } from '@/content/forms'
+import { industryOptions, inquiryFields } from '@/content/forms'
+import { planById } from '@/content/pricing'
+import { parseWebhookUrl } from '@/lib/forms/delivery'
 import { pageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = pageMetadata({
@@ -13,8 +16,19 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /** The inquiry: plan terms and what happens next, beside a short form. Nothing is bought here. */
-export default function ContactPage() {
-  const { terms, next, process, form } = contact
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plan?: string | string[]; industry?: string | string[] }>
+}) {
+  const { terms, next, process: processLink, form } = contact
+  // Reading searchParams opts this page into request-time rendering. This
+  // decision must use the server's current configuration, never a build-time
+  // snapshot or a NEXT_PUBLIC_ variable exposing the delivery destination.
+  const query = await searchParams
+  const selectedPlan = planById(typeof query.plan === 'string' ? query.plan : undefined)
+  const selectedIndustry = industryOptions.find((option) => option.value === query.industry)?.value
+  const canSubmit = Boolean(parseWebhookUrl(process.env.FORMS_WEBHOOK_URL))
 
   return (
     <FormPage
@@ -42,13 +56,32 @@ export default function ContactPage() {
                 </li>
               ))}
             </ol>
-            <TextLink href={process.href} arrow className="buy-next__link">
-              {process.label}
+            <TextLink href={processLink.href} arrow className="buy-next__link">
+              {processLink.label}
             </TextLink>
           </div>
         </div>
       }
-      form={<LeadForm kind="inquiry" fields={inquiryFields} submitLabel={form.submit} guidance={form.guidance} />}
+      form={
+        canSubmit ? (
+          <div className="contact-form">
+            <LeadForm
+              kind="inquiry"
+              fields={inquiryFields}
+              submitLabel={form.submit}
+              guidance={form.guidance}
+              initialPlan={selectedPlan?.id}
+              initialIndustry={selectedIndustry}
+            />
+            <p className="contact-form__email">
+              {contact.email.formAlternative}{' '}
+              <a href={`mailto:${contact.email.address}`}>{contact.email.address}</a>
+            </p>
+          </div>
+        ) : (
+          <DirectEmailCard plan={selectedPlan} industry={selectedIndustry} />
+        )
+      }
     />
   )
 }

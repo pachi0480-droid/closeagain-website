@@ -6,6 +6,7 @@ import { flushSync } from 'react-dom'
 import { Arrow } from '@/components/ui/links'
 import { formMessages, inquiryDetails, planNote, type FieldDefinition } from '@/content/forms'
 import { planById, planSummary } from '@/content/pricing'
+import { inquiryEmailLink } from '@/lib/forms/email'
 import { endpointFor, fallbackIds, honeypotField } from '@/lib/forms/protocol'
 import { normalizeValue, validateField, validateSubmission, type FormKind } from '@/lib/forms/schema'
 import { formReducer, initialFormState } from '@/lib/forms/state'
@@ -130,16 +131,7 @@ export function LeadForm({
     if (emailTo) {
       // Hand the details to the visitor's own email app. Nothing is sent by
       // the site, and nothing is claimed: they review the draft and send it.
-      const lines = fields.map((field) => {
-        const value = checked.values[field.name]
-        const shown = field.options?.find((option) => option.value === value)?.label ?? value
-        return `${field.label}: ${shown || '—'}`
-      })
-      const chosenPlan = planById(checked.values.plan)
-      const subject = `CloseAgain — ${chosenPlan ? `${chosenPlan.name} ` : ''}inquiry from ${checked.values.business}`
-      window.location.href = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-        `Hi CloseAgain,\n\n${lines.join('\n')}\n`,
-      )}`
+      window.location.href = inquiryEmailLink(emailTo, fields, checked.values)
       flushSync(() => dispatch({ type: 'reset' }))
       setEmailOpened(true)
       statusRef.current?.focus()

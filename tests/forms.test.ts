@@ -560,3 +560,37 @@ describe('rate limiting', () => {
     assert.equal(allow('ip', 1500), true)
   })
 })
+
+describe('email hand-off before a destination is connected', () => {
+  const values = {
+    name: 'Sam Rivera',
+    business: 'Rivera & Co',
+    email: 'sam@example.com',
+    phone: '',
+    industry: 'Home services',
+    volume: '',
+    crm: 'None yet',
+    plan: 'growth',
+    goal: 'both',
+    message: 'Quotes go quiet after a week.',
+  }
+
+  it('addresses the business and names the plan and business in the subject', async () => {
+    const { inquiryEmailLink } = await import('../lib/forms/email.ts')
+    const link = inquiryEmailLink('hello@example.com', inquiryFields, values)
+    assert.ok(link.startsWith('mailto:hello@example.com?subject='))
+    const params = new URLSearchParams(link.slice(link.indexOf('?') + 1))
+    assert.equal(params.get('subject'), 'CloseAgain — Growth inquiry from Rivera & Co')
+  })
+
+  it('carries every answer, with readable labels and placeholders for blanks', async () => {
+    const { inquiryEmailLink } = await import('../lib/forms/email.ts')
+    const link = inquiryEmailLink('hello@example.com', inquiryFields, values)
+    const body = new URLSearchParams(link.slice(link.indexOf('?') + 1)).get('body') ?? ''
+    for (const field of inquiryFields) assert.ok(body.includes(`${field.label}:`), field.name)
+    assert.ok(body.includes('Main goal: Both'))
+    assert.ok(body.includes('Preferred plan: Growth — '))
+    assert.ok(body.includes('Phone: —'))
+    assert.ok(body.includes('Message: Quotes go quiet after a week.'))
+  })
+})

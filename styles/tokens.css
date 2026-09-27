@@ -86,13 +86,14 @@
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-draw: cubic-bezier(0.45, 0.05, 0.25, 1);
-  --dur-press: 160ms;
-  --dur-ui: 200ms;
+  --dur-press: 150ms; /* button and link feedback */
+  --dur-ui: 180ms; /* hovers, toggles */
+  --dur-state: 260ms; /* a message or status changing */
   --dur-settle: 450ms;
-  --dur-reveal: 600ms;
-  --dur-draw: 950ms;
-  --stagger: 70ms;
-  --travel: 16px;
+  --dur-reveal: 450ms; /* selected content arriving */
+  --dur-draw: 850ms; /* a ribbon drawing along its curve */
+  --stagger: 60ms;
+  --travel: 12px;
 }
 
 @media (min-width: 960px) {

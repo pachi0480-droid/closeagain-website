@@ -6,9 +6,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Pin the workspace root so Turbopack does not walk up to a parent lockfile.
   turbopack: { root: path.resolve(process.cwd()) },
-  // The demo-request page became the buying page; keep old links working.
+  // Renamed pages keep their old addresses working.
   async redirects() {
-    return [{ source: '/book-a-demo', destination: '/contact', permanent: true }]
+    return [
+      { source: '/book-a-demo', destination: '/contact', permanent: true },
+      { source: '/after-you-buy', destination: '/getting-started', permanent: true },
+    ]
   },
 }
 

@@ -9,6 +9,7 @@
 
 import { ArrowLeft, ArrowUpRight, Check, ChevronsUpDown, LucideProvider, Menu, RotateCcw, X, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
+import { primaryCta } from '@/content/site'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { cx } from './ui'
@@ -111,8 +112,8 @@ export function AppShell({ variant, nav, home, workspace, user, onReset, childre
                 <RotateCcw aria-hidden="true" size={14} />
                 Reset demo
               </button>
-              <Link href="/contact" className="app-notice__cta">
-                Contact to buy
+              <Link href={primaryCta.href} className="app-notice__cta">
+                {primaryCta.label}
                 <ArrowUpRight aria-hidden="true" size={15} />
               </Link>
             </span>
@@ -206,14 +207,18 @@ function SidebarContent({
       </nav>
 
       <div className="app-sidebar__foot">
-        <div className="app-viewswitch" role="group" aria-label="Demo view">
-          <Link href="/demo" className="app-viewswitch__link" aria-current={variant === 'client' ? 'true' : undefined} onClick={onNavigate}>
-            Client view
-          </Link>
-          <Link href="/demo/operator" className="app-viewswitch__link" aria-current={variant === 'operator' ? 'true' : undefined} onClick={onNavigate}>
-            Operator view
-          </Link>
-        </div>
+        {/* The public demo is the client workspace. The operator view is not
+            advertised from it; it keeps a way back to the client view. */}
+        {variant === 'operator' && (
+          <div className="app-viewswitch" role="group" aria-label="Demo view">
+            <Link href="/demo" className="app-viewswitch__link" onClick={onNavigate}>
+              Client view
+            </Link>
+            <Link href="/demo/operator" className="app-viewswitch__link" aria-current="true" onClick={onNavigate}>
+              Operator view
+            </Link>
+          </div>
+        )}
         <Link href="/" className="app-backlink">
           <ArrowLeft aria-hidden="true" size={15} />
           Back to the CloseAgain site
@@ -276,6 +281,24 @@ function WorkspaceSwitcher({
     { href: '/demo', name: 'Juniper Row Realty', meta: 'Client workspace', current: variant === 'client', mark: 'JR', ink: false },
     { href: '/demo/operator', name: 'Master control', meta: 'Operator · all clients', current: variant === 'operator', mark: 'MC', ink: true },
   ]
+
+  // In the public client demo the workspace is just a label: nothing points
+  // visitors at the operator's internal views.
+  if (variant === 'client') {
+    return (
+      <div className="app-workspace">
+        <div className="app-workspace__button app-workspace__button--static">
+          <span className="app-workspace__mark" aria-hidden="true">
+            {workspace.mark}
+          </span>
+          <span className="app-workspace__text">
+            <span className="app-workspace__name">{workspace.name}</span>
+            <span className="app-workspace__meta">{workspace.meta}</span>
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="app-workspace" ref={wrapRef}>

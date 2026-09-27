@@ -109,6 +109,14 @@
   border-color: var(--line-strong);
 }
 
+/* The client demo's workspace is a label, not a switcher. */
+.app-workspace__button--static,
+.app-workspace__button--static:hover {
+  cursor: default;
+  background: transparent;
+  border-color: var(--line);
+}
+
 .app-workspace__mark {
   display: inline-grid;
   place-items: center;
@@ -502,6 +510,14 @@
 .app-grid--metrics {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+/* The narrowest phones: long single-word labels (“Appointments”) need the room. */
+@media (max-width: 359px) {
+  .app-grid--metrics .app-metric__label {
+    letter-spacing: 0.04em;
+    font-size: 0.6875rem;
+  }
 }
 
 @media (min-width: 720px) {

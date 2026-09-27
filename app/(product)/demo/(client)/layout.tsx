@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+// The demo's own stylesheet loads only on demo routes, not with the marketing site.
+import '@/styles/dashboard.css'
 import { ClientShell } from '@/components/dashboard/client/ClientShell'
 import { ClientDemoProvider } from '@/components/dashboard/client/state'
 import { demoRobots } from '@/components/dashboard/metadata'

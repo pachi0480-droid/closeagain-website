@@ -13,7 +13,17 @@ type Item = { q: string; a: string; links?: ReadonlyArray<{ label: string; href:
  * The server renders the same state the browser starts with, so nothing
  * moves on hydration. Without JavaScript every answer is simply shown.
  */
-export function Accordion({ items, defaultOpen = 0 }: { items: readonly Item[]; defaultOpen?: number }) {
+export function Accordion({
+  items,
+  defaultOpen = 0,
+  headingLevel = 'h2',
+}: {
+  items: readonly Item[]
+  defaultOpen?: number
+  /** h3 when the accordion sits under its own section heading. */
+  headingLevel?: 'h2' | 'h3'
+}) {
+  const Heading = headingLevel
   const [open, setOpen] = useState<ReadonlySet<number>>(() => new Set([defaultOpen]))
   const baseId = useId()
 
@@ -36,7 +46,7 @@ export function Accordion({ items, defaultOpen = 0 }: { items: readonly Item[]; 
         const panelId = `${baseId}-a${i}`
         return (
           <div key={item.q} className="acc__item" data-open={expanded}>
-            <h2 className="acc__heading">
+            <Heading className="acc__heading">
               <button
                 id={buttonId}
                 type="button"
@@ -48,7 +58,7 @@ export function Accordion({ items, defaultOpen = 0 }: { items: readonly Item[]; 
                 <span className="acc__q-text">{item.q}</span>
                 <span className="acc__icon" aria-hidden="true" />
               </button>
-            </h2>
+            </Heading>
             <div id={panelId} className="acc__panel" role="region" aria-labelledby={buttonId}>
               <div className="acc__inner">
                 <div className="acc__a">

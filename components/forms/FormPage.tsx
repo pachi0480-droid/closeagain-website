@@ -3,8 +3,9 @@ import { Ribbon } from '@/components/art/Ribbon'
 import { formSweep } from '@/components/art/ribbons'
 
 /**
- * Split layout shared by the contact and demo pages: copy and ribbon on the
- * left, the form on the right. Stacks copy-first on small screens.
+ * Split layout for a page built around a form: copy and ribbon on the left,
+ * the form on the right. Stacks copy-first on small screens. The copy column
+ * is a size container, so the title is sized to the column it sits in.
  */
 export function FormPage({
   id,

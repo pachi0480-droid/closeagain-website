@@ -36,7 +36,7 @@
   margin-top: 0.9rem;
 }
 
-/* ── Contact and demo: copy beside the form ────────────────────────────── */
+/* ── Contact: copy beside the form ─────────────────────────────────────── */
 
 .form-page {
   position: relative;
@@ -49,16 +49,30 @@
   gap: clamp(2.25rem, 5vw, 3.5rem);
 }
 
+/* A size container: the title is sized to this column, not to the viewport. */
 .form-page__copy {
   position: relative;
+  min-width: 0;
+  container-type: inline-size;
 }
 
+/*
+ * Between about 960 and 1,200px the copy column is much narrower than the
+ * viewport, so a viewport-sized headline outgrew it and ran into the form.
+ * The size is now capped at 28% of the column (28cqi): any word up to about
+ * 3.5em wide always fits. The current title's longest word, “plan.”, measures
+ * 2.04em, and the cap never shrinks it below --display-l at any width. A
+ * title with longer words needs a smaller cap; `overflow-wrap` is only the
+ * last line of defence.
+ */
 .form-page__title {
   margin: 0;
   max-width: 9.5em;
   font-size: var(--display-l);
+  font-size: min(var(--display-l), 28cqi);
   line-height: 1.02;
   letter-spacing: -0.04em;
+  overflow-wrap: break-word;
 }
 
 .form-page__lede {
@@ -120,12 +134,91 @@
   color: var(--ink-2);
 }
 
+.arrival__next {
+  max-width: 34rem;
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.arrival__next-title {
+  margin: 0 0 1rem;
+  font-size: var(--display-xs);
+}
+
+.arrival__steps {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arrival__steps li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  color: var(--ink-2);
+}
+
+.arrival__num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ink);
+  /* Sit the circle on the first line of text rather than on its baseline. */
+  translate: 0 0.3rem;
+}
+
+.arrival__note {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  max-width: 34rem;
+  margin: 1.75rem 0 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.arrival__note::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--vermilion);
+}
+
 .arrival__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 2rem;
   margin-top: 2.5rem;
+}
+
+/* Long labels may wrap on the narrowest phones instead of leaving the page. */
+.arrival__actions .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.2;
+  padding-block: 0.7rem;
+}
+
+/* …though with a little less padding they still fit on one line at 320px. */
+@media (max-width: 400px) {
+  .arrival__actions .btn {
+    gap: 0.7em;
+    padding-inline: 1rem;
+  }
 }
 
 .arrival__art {
@@ -349,32 +442,104 @@
   color: var(--vermilion);
 }
 
-.feature-index ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: clamp(1.75rem, 4vw, 2.5rem) 0 0;
+.feature-overview {
+  margin-top: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+/* One job on the features page: the problem, the capabilities, the limits. */
+.feature-group__title {
+  font-size: var(--display-s);
+}
+
+.feature-group__problem {
+  max-width: 34rem;
+  margin: 1rem 0 0;
+  font-size: var(--text-lede);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.feature-caps {
+  display: grid;
+  gap: 1.35rem;
+  margin: 1.75rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-.feature-index a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.5rem;
-  padding: 0 0.95rem;
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  font-size: 0.9375rem;
-  color: var(--ink-2);
-  transition:
-    border-color var(--dur-press) var(--ease-ui),
-    background-color var(--dur-press) var(--ease-ui);
+.feature-cap {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
 }
 
-.feature-index a:hover {
-  border-color: var(--ink);
-  background: var(--surface);
+.feature-cap__name {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.15;
+}
+
+.feature-cap__does {
+  max-width: 34rem;
+  margin: 0.4rem 0 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.feature-cap__meta {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
+  font-size: var(--ui-sm);
+  line-height: 1.45;
+}
+
+.feature-cap__meta > div {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.feature-cap__meta dt {
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 0.12rem;
+}
+
+.feature-cap__meta dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.feature-group__limits {
+  display: grid;
+  gap: 0.3rem;
+  max-width: 34rem;
+  margin: 1.5rem 0 0;
+  padding: 0.9rem 1rem;
+  border-left: 2px solid var(--vermilion);
+  background: rgb(205 57 38 / 0.04);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.feature-group__limits-label {
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vermilion-ink);
+}
+
+@media (max-width: 479px) {
+  .feature-cap__meta > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.1rem;
+  }
 }
 
 /* ── The trail: one ribbon through a sequence of sections ──────────────── */
@@ -449,6 +614,25 @@
   color: var(--vermilion-ink);
 }
 
+.trail__who {
+  display: inline-block;
+  margin: 0 0 0.85rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--vermilion);
+  border-radius: 2px;
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vermilion-ink);
+}
+
+.trail__who--team {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
 .trail__title {
   margin: 0;
   max-width: 13em;
@@ -508,10 +692,80 @@
   }
 }
 
-/* ── Who it’s for: the industries ──────────────────────────────────────── */
+/* ── Who it’s for: fit, then the industries ────────────────────────────── */
+
+.fit {
+  padding-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+
+.fit__grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.fit__col {
+  padding: 1.5rem 1.5rem 1.6rem;
+  border-top: 2px solid var(--vermilion);
+  background: var(--surface);
+}
+
+.fit__col--not {
+  border-top-color: var(--ink);
+  background: transparent;
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.fit__title {
+  margin: 0 0 0.9rem;
+  font-size: var(--display-xs);
+}
+
+.fit__list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fit__list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.fit__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.55rem;
+  height: 2px;
+  background: var(--vermilion);
+}
+
+.fit__col--not .fit__list li::before {
+  background: var(--ink-3);
+}
+
+@media (min-width: 820px) {
+  .fit__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
 
 .industries {
   padding-bottom: var(--section-y);
+}
+
+.industries__title {
+  margin: 0 0 clamp(1.5rem, 3vw, 2.25rem);
+  font-size: var(--display-s);
 }
 
 .industries__grid {
@@ -522,9 +776,10 @@
   list-style: none;
 }
 
-.industry__link {
+.industry {
+  position: relative;
   display: grid;
-  height: 100%;
+  grid-template-rows: auto 1fr;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -534,8 +789,8 @@
     box-shadow 320ms var(--ease-editorial);
 }
 
-.industry__link:hover,
-.industry__link:focus-visible {
+.industry:hover,
+.industry:focus-within {
   border-color: var(--ink);
   box-shadow: var(--shadow-soft);
 }
@@ -543,7 +798,7 @@
 .industry__media {
   position: relative;
   display: block;
-  aspect-ratio: 16 / 11;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   background: var(--surface-3);
 }
@@ -553,41 +808,77 @@
   transition: scale 900ms var(--ease-editorial);
 }
 
-.industry__link:hover .industry__image,
-.industry__link:focus-visible .industry__image {
+.industry:hover .industry__image,
+.industry:focus-within .industry__image {
   scale: 1.035;
 }
 
 .industry__text {
-  position: relative;
   display: grid;
-  align-content: start;
-  gap: 0.45rem;
-  padding: 1.1rem 1.15rem 3rem;
+  grid-template-rows: auto 1fr auto;
+  gap: 0.8rem;
+  padding: 1.1rem 1.15rem 1.1rem;
 }
 
 .industry__name {
-  font-family: var(--font-display);
+  margin: 0;
   font-size: 1.5rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
 
-.industry__outcome {
+.industry__facts {
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.industry__facts dt {
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.industry__facts dd {
+  margin: 0.1rem 0 0;
   font-size: 0.9375rem;
   line-height: 1.45;
   color: var(--ink-2);
 }
 
+/* The whole card is the target; the link text names it. */
 .industry__go {
-  position: absolute;
-  right: 1.15rem;
-  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: 1rem;
   color: var(--vermilion-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
 }
 
-.industry__link:hover .arrow,
-.industry__link:focus-visible .arrow {
+.industry__go::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.industry__go:focus-visible {
+  outline: none;
+}
+
+.industry:has(.industry__go:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.industry:hover .arrow,
+.industry:focus-within .arrow {
   translate: 4px 0;
 }
 
@@ -603,7 +894,7 @@
   }
 
   .industry__media {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
   }
 }
 
@@ -614,7 +905,7 @@
   }
 }
 
-/* ── After you buy ─────────────────────────────────────────────────────── */
+/* ── Getting started ───────────────────────────────────────────────────── */
 
 .onboarding {
   padding-bottom: var(--section-y);
@@ -707,7 +998,49 @@
   color: var(--ink-3);
 }
 
-/* ── Contact to buy ────────────────────────────────────────────────────── */
+.onboarding__needs {
+  max-width: 52rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.onboarding__needs-title {
+  margin: 0 0 1rem;
+  font-size: var(--display-xs);
+}
+
+.onboarding__needs-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.onboarding__needs-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.onboarding__needs-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 0.55rem;
+  height: 2px;
+  background: var(--vermilion);
+}
+
+@media (min-width: 720px) {
+  .onboarding__needs-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2.5rem;
+  }
+}
+
+/* ── Find the right plan: terms and next steps beside the form ─────────── */
 
 .buy-aside {
   display: grid;
@@ -761,6 +1094,10 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
+}
+
+.buy-next__link {
+  margin-top: 1rem;
 }
 
 .buy-next__num {

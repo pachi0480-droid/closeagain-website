@@ -25,28 +25,36 @@
   }
 }
 
-/* “You selected Growth — $899/month.” */
-.form__plan {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  border-left: 3px solid var(--vermilion);
-  background: #faf0ea;
-  font-size: 1rem;
-  color: var(--ink-2);
-}
-
-.form__plan:empty {
-  display: none;
-}
-
-.form__plan strong {
-  font-weight: 600;
-  color: var(--vermilion-ink);
-}
-
 .field {
   display: grid;
   gap: 0.5rem;
+  /* The first invalid field is scrolled into view whole: label, control and
+     message, clear of the sticky header. */
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+  scroll-margin-bottom: 1.25rem;
+}
+
+/* “You selected Growth — …/month. We’ll confirm it fits before anything is agreed.” */
+.field__note {
+  margin: 0;
+  padding: 0.1rem 0 0.1rem 0.85rem;
+  border-left: 2px solid var(--vermilion);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.field__note strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Empty until a real plan is chosen. It stays in place (it is a live region)
+   but takes no room: no rule, and the field's row gap is cancelled. */
+.field__note:empty {
+  margin-top: -0.5rem;
+  padding: 0;
+  border: 0;
 }
 
 .field__label {
@@ -62,6 +70,10 @@
 }
 
 .field__control {
+  /* Focus scrolls the control into view: keep its label clear of the sticky
+     header above it, and its error message in view below it. */
+  scroll-margin-top: calc(var(--header-h) + 3rem);
+  scroll-margin-bottom: 4.5rem;
   width: 100%;
   min-height: 3.25rem;
   padding: 0.8rem 0.95rem;
@@ -119,6 +131,26 @@ textarea.field__control {
   pointer-events: none;
 }
 
+/* Phones: the longest choices (“Revisit older leads that went quiet”, “I’m not
+   sure yet — help me choose”) need the room, so controls drop to 16px — still
+   large enough that iOS does not zoom on focus — and the select padding
+   tightens. Every choice then fits from 360px up; at 320px the two longest
+   are clipped by the native select, as any 16px select would be. */
+@media (max-width: 479px) {
+  .field__control {
+    font-size: 1rem;
+    padding-inline: 0.85rem;
+  }
+
+  .field__select select {
+    padding-right: 2.4rem;
+  }
+
+  .field__select::after {
+    right: 0.95rem;
+  }
+}
+
 .field--invalid .field__control {
   border-color: var(--error);
   box-shadow: inset 3px 0 0 var(--error);
@@ -155,6 +187,82 @@ textarea.field__control {
   translate: 0 0.12rem;
 }
 
+/* ── “Add details (optional)” ─────────────────────────────────────────────
+   A native disclosure between fine rules, so it opens without JavaScript. */
+
+.form__details {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.form__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.25rem;
+  padding-block: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+  list-style: none;
+  cursor: pointer;
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+.form__summary::-webkit-details-marker {
+  display: none;
+}
+
+.form__summary:hover > :first-child {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+/* Plus that becomes a minus, as in the FAQ. */
+.form__summary-icon {
+  position: relative;
+  flex: none;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.form__summary-icon::before,
+.form__summary-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 0.75px);
+  height: 1.5px;
+  background: var(--ink);
+  transition:
+    rotate 260ms var(--ease-editorial),
+    opacity var(--dur-ui) var(--ease-ui);
+}
+
+.form__summary-icon::after {
+  rotate: 90deg;
+}
+
+.form__details[open] .form__summary-icon::after {
+  rotate: 0deg;
+  opacity: 0;
+}
+
+.form__grid--details {
+  padding-block: 0.35rem 1.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form__summary-icon::before,
+  .form__summary-icon::after {
+    transition: none;
+  }
+}
+
 /* Honeypot: off-screen, out of the tab order, hidden from assistive tech. */
 .form__trap {
   position: absolute;
@@ -173,6 +281,7 @@ textarea.field__control {
 
 .form__button {
   min-width: 13.5rem;
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
 }
 
 .form__button-labels {
@@ -196,6 +305,14 @@ textarea.field__control {
   font-size: 0.9375rem;
   line-height: 1.45;
   color: var(--ink-3);
+}
+
+/* The status region takes focus after a failure; the no-JS notes are link
+   targets. Neither may land under the sticky header. */
+.form-status,
+.form-note {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  scroll-margin-bottom: 1.5rem;
 }
 
 .form-status:focus {

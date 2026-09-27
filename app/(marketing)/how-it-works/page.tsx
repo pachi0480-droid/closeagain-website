@@ -12,7 +12,11 @@ export const metadata: Metadata = pageMetadata({
   path: '/how-it-works',
 })
 
-/** Six steps on one unbroken ribbon: a lead's path through CloseAgain. */
+/**
+ * Six steps on one unbroken ribbon: a lead's path through CloseAgain, each
+ * step labelled with who does the work — CloseAgain automatically, or the
+ * customer's own team.
+ */
 export default function HowItWorksPage() {
   const { steps, closing } = howItWorks
 
@@ -32,7 +36,10 @@ export default function HowItWorksPage() {
                   <span className="trail__num" aria-hidden="true">
                     {step.number}
                   </span>
-                  <h2 className="trail__title" data-scroll="rise">
+                  <p className={['trail__who', step.who === 'Your team' && 'trail__who--team'].filter(Boolean).join(' ')}>
+                    {step.who}
+                  </p>
+                  <h2 className="trail__title">
                     <span className="sr-only">Step {i + 1}: </span>
                     {step.title}
                   </h2>

@@ -251,7 +251,19 @@
 }
 
 /* The narrowest phones: the menu carries the call to action. */
-@media (max-width: 369px) {
+/* Narrow phones: the call to action keeps its words and drops the arrow. */
+@media (max-width: 419px) {
+  .site-header__cta {
+    padding: 0 0.8rem;
+  }
+
+  .site-header__cta .arrow {
+    display: none;
+  }
+}
+
+/* Below this the menu carries the call to action on its own. */
+@media (max-width: 359px) {
   .site-header__cta {
     display: none;
   }

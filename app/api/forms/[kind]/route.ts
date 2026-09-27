@@ -1,19 +1,22 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { readTextWithin } from '@/lib/forms/body'
 import { resolveDelivery } from '@/lib/forms/delivery'
 import { processSubmission } from '@/lib/forms/process'
 import {
   httpStatusFor,
   receiptCookie,
   receiptMaxAge,
+  redirectPathFor,
   type ServerStatus,
 } from '@/lib/forms/protocol'
 import { createRateLimiter } from '@/lib/forms/rate-limit'
-import { formKinds, type FormKind } from '@/lib/forms/schema'
+import { encodeReceipt, type Receipt } from '@/lib/forms/receipt'
+import { isFormKind } from '@/lib/forms/schema'
 
 /**
- * POST /api/forms/purchase — the “Contact to buy” inquiry
+ * POST /api/forms/inquiry — the “Find the right plan” inquiry
  *
- * Accepts JSON from the enhanced forms and ordinary form posts from browsers
+ * Accepts JSON from the enhanced form and ordinary form posts from browsers
  * without JavaScript. Validation here is the one that counts. Success is
  * reported only after the configured delivery destination confirms receipt.
  */
@@ -21,26 +24,24 @@ import { formKinds, type FormKind } from '@/lib/forms/schema'
 const allow = createRateLimiter({ limit: 8, windowMs: 10 * 60 * 1000 })
 const maxBodyBytes = 24 * 1024
 
-const formPage: Record<FormKind, string> = { purchase: '/contact' }
-
 export async function POST(request: NextRequest, context: { params: Promise<{ kind: string }> }) {
-  const { kind: rawKind } = await context.params
-  if (!formKinds.includes(rawKind as FormKind)) {
+  const { kind } = await context.params
+  if (!isFormKind(kind)) {
     return NextResponse.json({ status: 'rejected' }, { status: 404 })
   }
-  const kind = rawKind as FormKind
 
   const contentType = request.headers.get('content-type') ?? ''
   const isJson = contentType.includes('application/json')
   const isFormPost = contentType.includes('application/x-www-form-urlencoded')
 
-  const reply = (outcome: ServerStatus, delivered = false, status = httpStatusFor[outcome.status]) => {
+  const reply = (outcome: ServerStatus, receipt: Receipt | null = null, status = httpStatusFor[outcome.status]) => {
+    // A no-JavaScript post is redirected to a same-host path; see redirectPathFor.
     const response = isJson
       ? NextResponse.json(outcome, { status })
-      : NextResponse.redirect(redirectTarget(request, kind, outcome), 303)
+      : new NextResponse(null, { status: 303, headers: { location: redirectPathFor(kind, outcome.status) } })
     response.headers.set('cache-control', 'no-store')
-    if (delivered) {
-      response.cookies.set(receiptCookie, kind, {
+    if (receipt) {
+      response.cookies.set(receiptCookie, encodeReceipt(receipt), {
         httpOnly: true,
         sameSite: 'lax',
         secure: request.nextUrl.protocol === 'https:',
@@ -53,12 +54,12 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ki
 
   // Refuse cross-site posts. Browsers send this header on every request.
   if (request.headers.get('sec-fetch-site') === 'cross-site') {
-    return reply({ status: 'rejected' }, false, 403)
+    return reply({ status: 'rejected' }, null, 403)
   }
-  if (!isJson && !isFormPost) return reply({ status: 'rejected' }, false, 415)
+  if (!isJson && !isFormPost) return reply({ status: 'rejected' }, null, 415)
 
   const declared = Number(request.headers.get('content-length') ?? 0)
-  if (declared > maxBodyBytes) return reply({ status: 'rejected' }, false, 413)
+  if (declared > maxBodyBytes) return reply({ status: 'rejected' }, null, 413)
 
   const clientKey =
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'local'
@@ -66,8 +67,9 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ki
 
   let raw: Record<string, unknown>
   try {
-    const text = await request.text()
-    if (text.length > maxBodyBytes) return reply({ status: 'rejected' }, false, 413)
+    // The declared length can be absent or wrong, so the cap also applies to what arrives.
+    const text = await readTextWithin(request.body, maxBodyBytes)
+    if (text === null) return reply({ status: 'rejected' }, null, 413)
     raw = isJson ? JSON.parse(text) : Object.fromEntries(new URLSearchParams(text))
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('not an object')
   } catch {
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ki
   }
 
   const delivery = resolveDelivery()
-  const { outcome, delivered } = await processSubmission(kind, raw, delivery)
+  const { outcome, receipt } = await processSubmission(kind, raw, delivery)
 
   // Operational signal only — never the visitor's details.
   if (outcome.status === 'unavailable') {
@@ -86,33 +88,5 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ki
     console.info(`[forms] ${kind} submission rejected by the spam trap`)
   }
 
-  return reply(outcome, delivered)
-}
-
-/** Where a no-JavaScript post goes next. Nothing the visitor typed goes in the URL. */
-function redirectTarget(request: NextRequest, kind: FormKind, outcome: ServerStatus) {
-  const url = request.nextUrl.clone()
-  url.search = ''
-  if (outcome.status === 'ok') {
-    url.pathname = '/thank-you'
-    url.hash = ''
-  } else {
-    url.pathname = formPage[kind]
-    url.hash = `form-${noScriptAnchor(outcome)}`
-  }
-  return url
-}
-
-function noScriptAnchor(outcome: ServerStatus) {
-  switch (outcome.status) {
-    case 'invalid':
-    case 'rejected':
-      return 'invalid'
-    case 'unavailable':
-      return 'unavailable'
-    case 'busy':
-      return 'busy'
-    default:
-      return 'failed'
-  }
+  return reply(outcome, receipt)
 }

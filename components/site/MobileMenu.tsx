@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Arrow } from '@/components/ui/links'
+import { billingNote, startingPriceText } from '@/content/pricing'
 import type { NavLink } from '@/content/site'
 
 const subscribeNoop = () => () => {}
@@ -115,7 +116,9 @@ export function MobileMenu({
               <span>{cta.label}</span>
               <Arrow />
             </Link>
-            <p className="menu__terms">Plans start at $499/month · Monthly billing</p>
+            <p className="menu__terms">
+              {startingPriceText} · {billingNote}
+            </p>
           </div>
 
           <p className="menu__note" aria-hidden="true">

@@ -1,5 +1,8 @@
 'use client'
 
+// Self-contained: the demo stylesheet is not part of the marketing bundle.
+import '@/styles/dashboard.css'
+
 /**
  * A still, compact picture of the client dashboard for the marketing site.
  *

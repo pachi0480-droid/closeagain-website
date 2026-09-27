@@ -1,6 +1,6 @@
 import { ButtonLink, Wordmark } from '@/components/ui/links'
-import { billingNote, setupNote, startingPrice } from '@/content/pricing'
-import { buyCta, footerGroups, site } from '@/content/site'
+import { planTerms } from '@/content/pricing'
+import { footerGroups, primaryCta, site } from '@/content/site'
 import { NavLink } from './NavLink'
 
 export function SiteFooter() {
@@ -14,10 +14,8 @@ export function SiteFooter() {
             <Wordmark />
             <p className="site-footer__tagline">{site.tagline}</p>
             <div className="site-footer__cta">
-              <ButtonLink href={buyCta.href}>{buyCta.label}</ButtonLink>
-              <p>
-                Plans start at ${startingPrice}/month · {billingNote} · {setupNote}
-              </p>
+              <ButtonLink href={primaryCta.href}>{primaryCta.label}</ButtonLink>
+              <p>{planTerms.join('\u00A0· ')}</p>
             </div>
           </div>
 
@@ -41,7 +39,7 @@ export function SiteFooter() {
           <p>
             © {year} {site.name}
           </p>
-          <p>Captures new leads. Follows up automatically. Re-engages old opportunities.</p>
+          <p>{site.category}</p>
         </div>
       </div>
     </footer>

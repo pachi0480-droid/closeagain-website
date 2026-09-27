@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { fmtAgo, fmtCurrency, fmtDateYear, fmtNumber, fmtPercent } from '@/content/demo/format'
 import type { ClientRow } from '@/content/demo/operator'
-import { plans } from '@/content/pricing'
+import { plans, priceLabel } from '@/content/pricing'
 import type { ClientStatus, Industry } from '@/content/demo/types'
 import { clientStatusLabel } from '../labels'
 import { EmptyState, PageHeader, Panel, SearchField, SelectField, SortHeader, cx, type SortState } from '../ui'
@@ -198,7 +198,7 @@ export function ClientsView() {
           <p className="app-panel-foot ui-meta">
             MRR is each plan’s list price from the pricing page ({plans
               .filter((item) => item.monthly)
-              .map((item) => `${item.name} ${item.priceLabel}`)
+              .map((item) => `${item.name} ${priceLabel(item)}`)
               .join(', ')}
             ); Enterprise uses its sample contract value. Paused accounts are not billed. Latest activity across all clients: {fmtAgo(Math.max(...rows.map((row) => row.lastActivity)))}.
           </p>

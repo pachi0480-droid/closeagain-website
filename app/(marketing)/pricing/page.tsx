@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
+import { Check } from 'lucide-react'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
-import { ClosingCta, Trio } from '@/components/editorial/blocks'
+import { ClosingCta } from '@/components/editorial/blocks'
+import { Accordion } from '@/components/editorial/Accordion'
+import { BreakEven } from '@/components/pricing/BreakEven'
 import { CompareMatrix, PlanCards } from '@/components/pricing/Plans'
-import { pricingPage } from '@/content/pages'
+import { faqByIds, pricingPage } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = pageMetadata({
@@ -11,9 +14,15 @@ export const metadata: Metadata = pageMetadata({
   path: '/pricing',
 })
 
-/** Four plans, one comparison, no tricks: prices come from content/pricing.ts. */
+/**
+ * Four plans, compared honestly. What every plan shares is said once; each
+ * card leads with who it suits and what it adds; the details that depend on
+ * the business are named as part of the proposal rather than invented; and
+ * a break-even check lets visitors weigh the price against their own numbers.
+ * Every price comes from content/pricing.ts.
+ */
 export default function PricingPage() {
-  const { title, lede, compare, reassurance, closing } = pricingPage
+  const { title, lede, common, proposal, compare, value, questions, closing } = pricingPage
 
   return (
     <>
@@ -36,14 +45,57 @@ export default function PricingPage() {
           <h2 id="plans-title" className="sr-only">
             Plans
           </h2>
+
+          <div className="pricing__common">
+            <p className="pricing__common-title">{common.title}</p>
+            <ul className="pricing__common-list">
+              {common.items.map((item) => (
+                <li key={item}>
+                  <Check size={15} strokeWidth={2} aria-hidden="true" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <PlanCards />
+
+          <div className="pricing__proposal">
+            <h3 className="pricing__proposal-title">{proposal.title}</h3>
+            <p className="pricing__proposal-body">{proposal.body}</p>
+            <ul className="pricing__proposal-list">
+              {proposal.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+
           <CompareMatrix openLabel={compare.open} closeLabel={compare.close} />
         </div>
       </section>
 
-      <section className="section section--ruled" aria-label="Good to know">
-        <div className="wrap">
-          <Trio items={reassurance} />
+      <section className="section value" aria-labelledby="value-title">
+        <div className="wrap value__inner">
+          <div className="value__copy">
+            <p className="eyebrow">{value.eyebrow}</p>
+            <h2 id="value-title" className="section__title value__title">
+              {value.title}
+            </h2>
+            <p className="value__body">{value.body}</p>
+          </div>
+          <BreakEven />
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="pricing-questions-title">
+        <div className="wrap home-questions__inner">
+          <div className="home-questions__head">
+            <p className="eyebrow">{questions.eyebrow}</p>
+            <h2 id="pricing-questions-title" className="section__title">
+              {questions.title}
+            </h2>
+          </div>
+          <Accordion items={faqByIds(questions.ids)} headingLevel="h3" />
         </div>
       </section>
 

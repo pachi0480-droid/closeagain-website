@@ -10,10 +10,14 @@ import { features } from '@/content/pages'
 export function JobsSummary({
   linkLabel = 'How it works',
   basePath = '/features',
+  titlesAsHeadings = true,
 }: {
   linkLabel?: string
   basePath?: string
+  /** Off where the list is navigation to sections that carry the real headings. */
+  titlesAsHeadings?: boolean
 }) {
+  const Title = titlesAsHeadings ? 'h3' : 'p'
   return (
     <ol className="jobs">
       {features.groups.map((group, i) => (
@@ -26,7 +30,7 @@ export function JobsSummary({
           <span className="jobs__num" aria-hidden="true">
             {group.number}
           </span>
-          <h3 className="jobs__title">{group.title}</h3>
+          <Title className="jobs__title">{group.title}</Title>
           <p className="jobs__body">{group.summary}</p>
           <Link href={`${basePath}#${group.id}`} className="text-link jobs__link">
             <span>

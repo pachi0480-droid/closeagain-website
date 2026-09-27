@@ -28,7 +28,7 @@ export default function FeaturesPage() {
     <>
       <PageIntro eyebrow={features.eyebrow} title={features.title} lede={features.lede} className="intro--features">
         <nav className="feature-overview" aria-label="The four jobs">
-          <JobsSummary linkLabel="Details" basePath="" />
+          <JobsSummary linkLabel="Details" basePath="" titlesAsHeadings={false} />
         </nav>
       </PageIntro>
 

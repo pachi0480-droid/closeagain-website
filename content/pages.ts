@@ -10,7 +10,7 @@
 import { availability, billingNote, planSummary, planTerms, plans, proposalCovers, setupNote } from './pricing.ts'
 import { primaryCta } from './site.ts'
 
-const terms = planTerms.join(' · ')
+const terms = planTerms.join('\u00A0· ')
 
 export const howItWorks = {
   meta: {

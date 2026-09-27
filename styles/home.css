@@ -1073,8 +1073,11 @@
 
 .jobs__title {
   margin: 0;
+  font-family: var(--font-display);
   font-size: var(--display-xs);
   line-height: 1.1;
+  letter-spacing: var(--tracking-display);
+  color: var(--ink);
 }
 
 .jobs__body {

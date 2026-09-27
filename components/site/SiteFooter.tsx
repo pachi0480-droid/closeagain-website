@@ -15,7 +15,7 @@ export function SiteFooter() {
             <p className="site-footer__tagline">{site.tagline}</p>
             <div className="site-footer__cta">
               <ButtonLink href={primaryCta.href}>{primaryCta.label}</ButtonLink>
-              <p>{planTerms.join(' · ')}</p>
+              <p>{planTerms.join('\u00A0· ')}</p>
             </div>
           </div>
 

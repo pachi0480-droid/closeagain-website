@@ -211,7 +211,7 @@ export const home = {
   pricing: {
     eyebrow: 'Pricing',
     title: 'Plans that grow with your team.',
-    body: planTerms.join(' · '),
+    body: planTerms.join('\u00A0· '),
     link: { label: 'Compare plans', href: '/pricing' },
   },
 
@@ -225,7 +225,7 @@ export const home = {
 
   closing: {
     title: 'Your next customer may already be in your inbox.',
-    body: planTerms.join(' · '),
+    body: planTerms.join('\u00A0· '),
     cta: primaryCta,
     secondary: { label: 'See pricing', href: '/pricing' },
   },

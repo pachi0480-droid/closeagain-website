@@ -188,6 +188,41 @@
 
 /* ── 3. Page changes: a quick dissolve; the header holds still ─────────── */
 
+/* The ribbon in one stroke: it runs across the top as a new page arrives. */
+.route-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--vermilion);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .route-line:not([data-initial]) {
+    animation: route-line 720ms var(--ease-draw) both;
+  }
+}
+
+@keyframes route-line {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  62% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(.page-exit) {

@@ -2,10 +2,10 @@
 
 /** Conversation building blocks shared by the inbox, the lead drawer and the operator views. */
 
-import { Bot, Mail, MessageSquare, Phone, FileText } from 'lucide-react'
-import { fmtCurrency, fmtDateYear, fmtDay, fmtStamp, fmtTime, fmtUntil } from '@/content/demo/format'
+import { Bot, Database, FileText, Mail, MessageSquare, Phone, UserRound } from 'lucide-react'
+import { fmtAgo, fmtCurrency, fmtDateYear, fmtDay, fmtStamp, fmtTime, fmtUntil } from '@/content/demo/format'
 import { localParts } from '@/content/demo/time'
-import type { Channel, Lead, Message } from '@/content/demo/types'
+import type { Channel, Lead, Message, SourceId } from '@/content/demo/types'
 import { channelLabel, sourceLabel } from './labels'
 import { Avatar, Score, StageBadge, Tag, cx } from './ui'
 
@@ -85,6 +85,13 @@ function Bubble({ message, lead }: { message: Message; lead: Lead }) {
   )
 }
 
+/** When the lead last wrote — the “last reply” in lists — or undefined if they never have. */
+export function lastReplyAt(lead: Lead): number | undefined {
+  // The first message is the inquiry itself, not a reply to follow-up.
+  for (let i = lead.thread.length - 1; i > 0; i--) if (lead.thread[i].from === 'lead') return lead.thread[i].at
+  return undefined
+}
+
 export function ConversationRow({
   lead,
   selected,
@@ -99,7 +106,7 @@ export function ConversationRow({
   handled?: boolean
 }) {
   const { prefix, text } = snippet(lead)
-  const last = lead.thread[lead.thread.length - 1]
+  const replied = lastReplyAt(lead)
   return (
     <li>
       <button type="button" className={cx('app-conv', selected && 'is-selected', lead.unread && 'is-unread')} aria-current={selected ? 'true' : undefined} onClick={onSelect}>
@@ -115,12 +122,18 @@ export function ConversationRow({
             {text}
           </span>
           <span className="app-conv__tags">
-            <StageBadge stage={lead.stage} outcome={lead.outcome} />
+            <StageBadge stage={lead.stage} outcome={lead.outcome} short />
             <span className="app-conv__channel">
-              <ChannelIcon channel={last.channel} />
-              {channelLabel[last.channel]}
+              <SourceIcon source={lead.source} />
+              {sourceLabel[lead.source]}
             </span>
             {handled && <span className="app-conv__handled">Handled</span>}
+          </span>
+          <span className="app-conv__next">
+            <span className="app-conv__action">
+              <span className="app-conv__label">Next</span> {lead.nextAction}
+            </span>
+            <span className="app-conv__replied">{replied ? `Replied ${fmtAgo(replied)}` : 'No reply yet'}</span>
           </span>
         </span>
         {lead.unread && (
@@ -131,6 +144,12 @@ export function ConversationRow({
       </button>
     </li>
   )
+}
+
+/** A generic icon for where a lead came from. */
+export function SourceIcon({ source, size = 13 }: { source: SourceId; size?: number }) {
+  const Icon = source === 'phone' ? Phone : source === 'email' ? Mail : source === 'crm' || source === 'import' ? Database : source === 'referral' ? UserRound : FileText
+  return <Icon aria-hidden="true" size={size} strokeWidth={1.5} />
 }
 
 /** The key facts about a lead, as a definition list. */

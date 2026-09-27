@@ -198,7 +198,8 @@ export function useClientAutomations(clientId: string): Automation[] {
   return useMemo(() => {
     const client = clients.find((item) => item.id === clientId)
     if (!client) return []
-    return buildAutomations(client, deployments[clientId] ?? []).map((automation) => {
+    const lookup = (id: string) => templates.find((template) => template.id === id)
+    return buildAutomations(client, deployments[clientId] ?? [], lookup).map((automation) => {
       const template = templates.find((item) => item.id === automation.templateId)
       const steps: Step[] = template ? template.steps.map((step) => ({ ...step, id: `${client.id}.${step.id}` })) : automation.steps
       return { ...automation, steps, enabled: client.status === 'paused' ? false : (state.automations[automation.id] ?? automation.enabled) }
@@ -215,7 +216,7 @@ export function useAllAutomations(): Automation[] {
   return useMemo(
     () =>
       clients.flatMap((client) =>
-        buildAutomations(client, deployments[client.id] ?? []).map((automation) => {
+        buildAutomations(client, deployments[client.id] ?? [], (id) => templates.find((template) => template.id === id)).map((automation) => {
           const template = templates.find((item) => item.id === automation.templateId)
           const steps: Step[] = template ? template.steps.map((step) => ({ ...step, id: `${client.id}.${step.id}` })) : automation.steps
           return { ...automation, steps, enabled: client.status === 'paused' ? false : (state.automations[automation.id] ?? automation.enabled) }

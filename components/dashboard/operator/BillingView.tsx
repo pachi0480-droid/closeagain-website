@@ -3,7 +3,7 @@
 import { ArrowDownRight, ArrowUpRight, LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { monthlyPrice, planDistribution, planMovements } from '@/content/demo/billing'
+import { monthlyPrice, planDistribution, planFact, planMovements, usersLabel } from '@/content/demo/billing'
 import { fmtCurrency, fmtDate, fmtDateYear, fmtNumber } from '@/content/demo/format'
 import { allInvoices, clientName, clientShort, renewals, upsellOpportunities } from '@/content/demo/operator'
 import { DAY, DEMO_NOW } from '@/content/demo/time'
@@ -308,7 +308,7 @@ export function BillingView() {
                   <th scope="col" className="ui-num">
                     Per client
                   </th>
-                  <th scope="col">Usage on plan</th>
+                  <th scope="col">Plan allowance</th>
                 </tr>
               </thead>
               <tbody>
@@ -324,7 +324,10 @@ export function BillingView() {
                     <td className="ui-num" data-label="Per client">
                       {row.clients ? fmtNumber(Math.round(row.messages / row.clients)) : '—'}
                     </td>
-                    <td data-label="Usage on plan">{row.plan.features.find((feature) => /usage/i.test(feature)) ?? (row.plan.id === 'core' ? 'Standard' : '—')}</td>
+                    <td data-label="Plan allowance">
+                      {String(planFact(row.plan.id, 'Usage') ?? '—')}
+                      <span className="app-cell-sub">{usersLabel(row.plan.id)}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

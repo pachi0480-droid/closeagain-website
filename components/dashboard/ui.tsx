@@ -5,7 +5,7 @@
  * primitives in styles/product.css. Visual rules live in styles/dashboard.css.
  */
 
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import { useId, useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react'
 import { fmtNumber, initials } from '@/content/demo/format'
 import type { Outcome, StageId } from '@/content/demo/types'
@@ -382,14 +382,26 @@ export function SelectField<T extends string>({
       <label htmlFor={id} className={hideLabel ? 'app-sr' : 'app-field__label'}>
         {label}
       </label>
-      <select id={id} className="ui-input app-select" value={value} disabled={disabled} onChange={(event) => onChange(event.target.value as T)}>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <SelectBox>
+        <select id={id} className="ui-input app-select" value={value} disabled={disabled} onChange={(event) => onChange(event.target.value as T)}>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </SelectBox>
     </div>
+  )
+}
+
+/** A native select with a drawn chevron that follows the theme. */
+export function SelectBox({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <span className={cx('app-selectbox', className)}>
+      {children}
+      <ChevronDown className="app-selectbox__icon" aria-hidden="true" size={14} strokeWidth={1.75} />
+    </span>
   )
 }
 

@@ -1,18 +1,38 @@
 'use client'
 
-import { ArrowRight, Inbox } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, CalendarCheck, Inbox, MessageSquare, PhoneMissed, RotateCcw, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo } from 'react'
-import { fmtCurrencyCompact, fmtDate, fmtDayTime, fmtNumber, fmtPercent, fmtStamp, fmtTime, fmtWeekdayDate } from '@/content/demo/format'
-import { automationStats, dailySeries, summarize, windowFor } from '@/content/demo/metrics'
+import { leadActivity, type ActivityKind } from '@/content/demo/activity'
+import { automationReviews } from '@/content/demo/attention'
+import {
+  fmtAgo,
+  fmtCurrency,
+  fmtCurrencyCompact,
+  fmtDate,
+  fmtDayTime,
+  fmtNumber,
+  fmtPercent,
+  fmtStamp,
+  fmtTime,
+  fmtUntil,
+  fmtWeekdayDate,
+} from '@/content/demo/format'
+import { automationStats, dailySeries, recoveredOpportunities, summarize, windowFor } from '@/content/demo/metrics'
+import { kits } from '@/content/demo/kits'
 import { DAY, DEMO_NOW } from '@/content/demo/time'
-import { TimeChart, Sparkline } from '../charts'
+import { workspaceClient } from '@/content/demo/workspace'
+import { TimeChart, Sparkline, rolling } from '../charts'
 import { snippet } from '../conversation'
 import { priorLabel, rangeLabel, rangeOptions, useRange, type RangeDays } from '../hooks'
+import { sourceLabel } from '../labels'
 import { QuickFind } from '../QuickFind'
 import { Avatar, Badge, EmptyState, Metric, PageHeader, Panel, Segmented, StageBadge, cx, deltaOf, pointsDelta } from '../ui'
-import { useAppointments, useAutomations, useClientDemo, useLeads, useTasks } from './state'
+import { NeedsAttention } from './NeedsAttention'
+import { useAppointments, useAttention, useAutomations, useClientDemo, useLeads, useTasks } from './state'
+
+const kit = kits[workspaceClient.kit]
 
 export function OverviewView() {
   const router = useRouter()
@@ -21,11 +41,15 @@ export function OverviewView() {
   const appointments = useAppointments()
   const automations = useAutomations()
   const tasks = useTasks()
+  const attention = useAttention()
   const { range, loading, change } = useRange(30)
 
-  const current = useMemo(() => summarize(leads, appointments, windowFor(range)), [leads, appointments, range])
+  const period = useMemo(() => windowFor(range), [range])
+  const current = useMemo(() => summarize(leads, appointments, period), [leads, appointments, period])
   const previous = useMemo(() => (range === 90 ? null : summarize(leads, appointments, windowFor(range, 1))), [leads, appointments, range])
   const series = useMemo(() => dailySeries(leads, appointments, range), [leads, appointments, range])
+  const recovered = useMemo(() => recoveredOpportunities(leads, period), [leads, period])
+  const activity = useMemo(() => leadActivity(leads, appointments, 8), [leads, appointments])
 
   const unread = leads.filter((lead) => lead.unread).length
   const active = leads.filter((lead) => lead.stage === 'active').length
@@ -45,8 +69,13 @@ export function OverviewView() {
   const doneCount = tasks.length - openTasks.length
   const orderedTasks = [...openTasks.sort((a, b) => a.due - b.due), ...tasks.filter((task) => task.done)]
 
-  const period = windowFor(range)
-  const campaignRows = automations.map((automation) => ({ automation, stats: automationStats(automation, leads, appointments, period) }))
+  const reviews = new Map(automationReviews(automations, leads).map((review) => [review.automation.id, review.reason]))
+  const automationRows = automations.map((automation) => ({ automation, stats: automationStats(automation, leads, appointments, period) }))
+  const running = automations.filter((automation) => automation.enabled).length
+
+  const labels = series.map((point) => fmtDate(point.start))
+  const longLabels = series.map((point) => fmtWeekdayDate(point.start))
+  const inflow = series.map((point) => point.newLeads + point.recovered)
 
   return (
     <>
@@ -57,12 +86,7 @@ export function OverviewView() {
           items={leads.map((lead) => ({ id: lead.id, title: lead.name, sub: lead.interest, meta: fmtStamp(lead.lastContactAt), keywords: lead.tags.join(' ') }))}
           onPick={(item) => openConversation(item.id)}
         />
-        <Segmented
-          label="Date range"
-          options={rangeOptions}
-          value={`${range}` as `${RangeDays}`}
-          onChange={(value) => change(Number(value) as RangeDays)}
-        />
+        <Segmented label="Date range" options={rangeOptions} value={`${range}` as `${RangeDays}`} onChange={(value) => change(Number(value) as RangeDays)} />
         <Link href="/demo/conversations" className="ui-btn">
           <Inbox aria-hidden="true" />
           Open inbox
@@ -81,13 +105,7 @@ export function OverviewView() {
             loading={loading}
             chart={<Sparkline values={rolling(series.map((point) => point.newLeads))} tone="ink" />}
           />
-          <Metric
-            index={1}
-            label="Active conversations"
-            value={fmtNumber(active)}
-            note={`${unread} waiting on a reply`}
-            loading={loading}
-          />
+          <Metric index={1} label="Active conversations" value={fmtNumber(active)} note={`${unread} waiting on a reply`} loading={loading} />
           <Metric
             index={2}
             label="Recovered leads"
@@ -124,27 +142,41 @@ export function OverviewView() {
           />
         </div>
 
+        <NeedsAttention items={attention} index={1} />
+
         <div className="app-grid app-grid--main">
           <Panel
-            index={1}
-            title="Lead activity"
+            index={2}
+            title="Performance trend"
             meta={`New and recovered leads per day, ${rangeLabel(range)}`}
             className={cx(loading && 'is-refreshing')}
+            actions={
+              <Link href="/demo/analytics" className="app-textlink">
+                Analytics
+                <ArrowRight aria-hidden="true" size={15} />
+              </Link>
+            }
           >
             <TimeChart
-              summary={`Lead activity, ${rangeLabel(range)}: ${current.newLeads} new leads and ${current.recovered} recovered leads.`}
-              labels={series.map((point) => fmtDate(point.start))}
-              longLabels={series.map((point) => fmtWeekdayDate(point.start))}
-              height={330}
+              summary={`Leads per day, ${rangeLabel(range)}: ${current.newLeads} new and ${current.recovered} recovered.`}
+              labels={labels}
+              longLabels={longLabels}
+              height={300}
+              kind="columns"
+              yLabel="Leads per day"
+              totalLabel="In total"
+              endLabels={false}
               series={[
-                { id: 'new', label: 'New leads', values: series.map((point) => point.newLeads), tone: 'ink', area: true },
-                { id: 'recovered', label: 'Recovered', values: series.map((point) => point.recovered), tone: 'accent', area: true },
+                { id: 'new', label: 'New leads', values: series.map((point) => point.newLeads), tone: 'ink', stack: 'leads' },
+                { id: 'recovered', label: 'Recovered', values: series.map((point) => point.recovered), tone: 'accent', stack: 'leads' },
+                { id: 'average', label: '7-day average', values: rolling(inflow), tone: 'muted', mark: 'line', dashed: true },
               ]}
+              format={(value) => (Number.isInteger(value) ? fmtNumber(value) : fmtNumber(value, 1))}
             />
           </Panel>
 
           <Panel
-            index={2}
+            index={3}
             title="Recent conversations"
             meta={`${unread} unread`}
             flush
@@ -196,12 +228,13 @@ export function OverviewView() {
           </Panel>
         </div>
 
-        <div className="app-grid app-grid--split">
+        <div className="app-grid app-grid--thirds">
           <Panel
-            index={3}
+            index={4}
             title="Follow-up tasks"
             meta={`${doneCount} of ${tasks.length} done today`}
             flush
+            className="app-tasks-panel"
             actions={
               <span className="ui-track app-task-progress" aria-hidden="true">
                 <span style={{ width: `${(doneCount / tasks.length) * 100}%` }} />
@@ -212,83 +245,218 @@ export function OverviewView() {
           </Panel>
 
           <Panel
-            index={4}
-            title="Campaign performance"
-            meta={rangeLabel(range)}
+            index={5}
+            title="Recovered opportunities"
+            meta={`${fmtNumber(recovered.leads.length)} came back · ${fmtCurrencyCompact(recovered.value)} ${kit.valueLabel.toLowerCase()}`}
             flush
             className={cx(loading && 'is-refreshing')}
             actions={
-              <Link href="/demo/automations" className="app-textlink">
-                Automations
+              <Link href="/demo/leads?show=recovered" className="app-textlink">
+                All
                 <ArrowRight aria-hidden="true" size={15} />
               </Link>
             }
           >
-            <div className="app-table-wrap">
-              <table className="ui-table app-table app-table--stack">
-                <caption className="app-sr">Campaign performance, {rangeLabel(range)}</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Automation</th>
-                    <th scope="col" className="ui-num">
-                      Enrolled
-                    </th>
-                    <th scope="col" className="ui-num">
-                      Replied
-                    </th>
-                    <th scope="col" className="ui-num">
-                      Booked
-                    </th>
-                    <th scope="col" className="ui-num">
-                      Recovered
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {campaignRows.map(({ automation, stats }) => {
-                    const reminder = automation.templateId === 'tpl-reminder'
-                    return (
-                      <tr key={automation.id}>
-                        <th scope="row">
-                          <span className="app-cell-title">{automation.name}</span>
-                          <span className="app-cell-sub">
-                            <span className={cx('app-status-dot', automation.enabled ? 'is-on' : 'is-off')} aria-hidden="true" />
-                            {automation.type === 'campaign' ? 'Campaign' : 'Sequence'} · {automation.enabled ? 'Active' : 'Paused'}
+            {recovered.leads.length === 0 ? (
+              <EmptyState title="Nothing recovered yet">Older leads that reply to a re-engagement message show up here.</EmptyState>
+            ) : (
+              <ul className="ui-list">
+                {recovered.leads.slice(0, 6).map((lead) => (
+                  <li key={lead.id}>
+                    <Link
+                      href="/demo/conversations"
+                      className="ui-row ui-row--interactive app-opp"
+                      onClick={() => dispatch({ type: 'select', leadId: lead.id })}
+                    >
+                      <Avatar name={lead.name} tone="red" />
+                      <span className="app-opp__body">
+                        <span className="app-opp__top">
+                          <span className="app-opp__name">{lead.name}</span>
+                          <span className="app-opp__value">{fmtCurrency(lead.value)}</span>
+                        </span>
+                        <span className="app-opp__sub">
+                          <StageBadge stage={lead.stage} outcome={lead.outcome} short />
+                          <span className="app-opp__when">Back {fmtAgo(lead.recoveredAt ?? lead.lastContactAt)}</span>
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Panel>
+
+          <Panel index={6} title="Lead activity" meta="Newest first · last 7 days" flush>
+            {activity.length === 0 ? (
+              <EmptyState title="A quiet week">New inquiries, replies and bookings appear here as they happen.</EmptyState>
+            ) : (
+              <ol className="app-feed">
+                {activity.map((event) => {
+                  const Icon = activityIcon[event.kind]
+                  return (
+                    <li key={event.id}>
+                      <button type="button" className="app-feed__item" onClick={() => openConversation(event.leadId)}>
+                        <span className={cx('app-feed__icon', `is-${event.kind}`)} aria-hidden="true">
+                          <Icon size={15} />
+                        </span>
+                        <span className="app-feed__text">
+                          <span className="app-feed__line">{activityLine(event.kind, event.lead)}</span>
+                          <span className="app-feed__detail">
+                            {event.kind === 'booked' && event.appointment
+                              ? `${event.appointment.type} · ${fmtDayTime(event.appointment.start)}`
+                              : event.body
+                                ? `“${event.body}”`
+                                : sourceLabel[event.source]}
                           </span>
-                        </th>
-                        <td className="ui-num" data-label="Enrolled">
-                          {fmtNumber(stats.enrolled)}
-                        </td>
-                        <td className="ui-num" data-label={reminder ? 'Confirmed' : 'Replied'}>
-                          {stats.enrolled ? fmtPercent(stats.replyRate) : '—'}
-                          {reminder && stats.enrolled ? <span className="app-cell-sub">confirmed</span> : null}
-                        </td>
-                        <td className="ui-num" data-label="Booked">
-                          {reminder ? '—' : fmtNumber(stats.booked)}
-                        </td>
-                        <td className="ui-num" data-label="Recovered">
-                          {stats.recovered ? <span className="app-num-red">{fmtNumber(stats.recovered)}</span> : '—'}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                        </span>
+                        <span className="app-feed__time">{fmtAgo(event.at)}</span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
           </Panel>
         </div>
+
+        <Panel
+          index={7}
+          title="Automation status"
+          meta={`${running} of ${automations.length} running · ${rangeLabel(range)}`}
+          flush
+          className={cx(loading && 'is-refreshing')}
+          actions={
+            <Link href="/demo/automations" className="app-textlink">
+              Automations
+              <ArrowRight aria-hidden="true" size={15} />
+            </Link>
+          }
+        >
+          <div className="app-table-wrap">
+            <table className="ui-table app-table app-table--stack app-statustable">
+              <caption className="app-sr">Automation status and performance, {rangeLabel(range)}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Automation</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" className="ui-num">
+                    Enrolled
+                  </th>
+                  <th scope="col" className="ui-num">
+                    Replies
+                  </th>
+                  <th scope="col" className="ui-num">
+                    Booked
+                  </th>
+                  <th scope="col" className="ui-num">
+                    Recovered
+                  </th>
+                  <th scope="col">Next send</th>
+                </tr>
+              </thead>
+              <tbody>
+                {automationRows.map(({ automation, stats }) => {
+                  const reminder = automation.templateId === 'tpl-reminder'
+                  const review = reviews.get(automation.id)
+                  return (
+                    <tr key={automation.id}>
+                      <th scope="row">
+                        <Link href={`/demo/automations?automation=${automation.id}`} className="app-rowlink">
+                          <span className="app-cell-title">{automation.name}</span>
+                        </Link>
+                        <span className="app-cell-sub">{automation.type === 'campaign' ? 'Campaign' : 'Sequence'}</span>
+                      </th>
+                      <td data-label="Status">
+                        {review ? (
+                          <Badge tone="caution">{automation.enabled ? 'Needs review' : stats.sent || stats.enrolled ? 'Paused' : 'Draft · off'}</Badge>
+                        ) : (
+                          <Badge tone="positive">Running</Badge>
+                        )}
+                      </td>
+                      <td className="ui-num" data-label="Enrolled">
+                        {fmtNumber(stats.enrolled)}
+                      </td>
+                      <td className="ui-num" data-label={reminder ? 'Confirmed' : 'Replies'}>
+                        {stats.enrolled ? (
+                          <>
+                            {fmtNumber(stats.replied)}
+                            <span className="app-cell-sub">{fmtPercent(stats.replyRate)}{reminder ? ' confirmed' : ''}</span>
+                          </>
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td className="ui-num" data-label="Booked">
+                        {reminder ? '—' : fmtNumber(stats.booked)}
+                      </td>
+                      <td className="ui-num" data-label="Recovered">
+                        {stats.recovered ? <span className="app-num-red">{fmtNumber(stats.recovered)}</span> : '—'}
+                      </td>
+                      <td data-label="Next send">
+                        {!automation.enabled ? (
+                          <span className="app-muted">Off</span>
+                        ) : stats.nextSend ? (
+                          <>
+                            <span className="app-cell-title app-cell-title--plain">{fmtUntil(stats.nextSend)}</span>
+                            <span className="app-cell-sub">{stats.queued} queued · 24h</span>
+                          </>
+                        ) : (
+                          <span className="app-muted">When triggered</span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
       </div>
     </>
   )
 }
 
-/** A trailing average, so a stat tile's sparkline shows the trend rather than daily noise. */
-function rolling(values: number[], size = 7): number[] {
-  return values.map((_, index) => {
-    const from = Math.max(0, index - size + 1)
-    const slice = values.slice(from, index + 1)
-    return slice.reduce((sum, value) => sum + value, 0) / slice.length
-  })
+const activityIcon: Record<ActivityKind, LucideIcon> = {
+  inquiry: Inbox,
+  'missed-call': PhoneMissed,
+  reply: MessageSquare,
+  recovered: RotateCcw,
+  booked: CalendarCheck,
+}
+
+function activityLine(kind: ActivityKind, lead: string) {
+  switch (kind) {
+    case 'inquiry':
+      return (
+        <>
+          New inquiry from <strong>{lead}</strong>
+        </>
+      )
+    case 'missed-call':
+      return (
+        <>
+          Missed call from <strong>{lead}</strong>, texted back
+        </>
+      )
+    case 'reply':
+      return (
+        <>
+          <strong>{lead}</strong> replied
+        </>
+      )
+    case 'recovered':
+      return (
+        <>
+          <strong>{lead}</strong> came back
+        </>
+      )
+    case 'booked':
+      return (
+        <>
+          <strong>{lead}</strong> booked
+        </>
+      )
+  }
 }
 
 function TaskList({
@@ -301,21 +469,16 @@ function TaskList({
   onOpen: (leadId: string) => void
 }) {
   return (
-    <ul className="ui-list app-tasks">
+    <ul className="ui-list app-tasks" id="tasks">
       {tasks.map((task) => {
         const overdue = !task.done && task.due < DEMO_NOW
         return (
           <li key={task.id} className={cx('ui-row app-task', task.done && 'is-done')}>
-            <input
-              type="checkbox"
-              id={`task-${task.id}`}
-              className="app-check"
-              checked={task.done}
-              onChange={() => onToggle(task.id)}
-            />
+            <input type="checkbox" id={`task-${task.id}`} className="app-check" checked={task.done} onChange={() => onToggle(task.id)} />
             <label htmlFor={`task-${task.id}`} className="app-task__text">
               <span className="app-task__title">{task.title}</span>
               <span className="app-task__detail">
+                {task.priority === 'high' && !task.done && <span className="app-task__flag">High priority · </span>}
                 <span className={cx('app-task__due', overdue && 'is-overdue')}>
                   {task.done ? 'Done' : overdue ? `Overdue · ${fmtTime(task.due)}` : fmtDayTime(task.due)}
                 </span>
@@ -323,13 +486,9 @@ function TaskList({
                 {task.detail}
               </span>
             </label>
-            <span className="app-task__side">
-              {task.priority === 'high' && !task.done && <Badge tone="red">High</Badge>}
-              <button type="button" className="app-task__open" onClick={() => onOpen(task.leadId)}>
-                Open
-                <span className="app-sr"> conversation for {task.title}</span>
-              </button>
-            </span>
+            <button type="button" className="app-tool app-task__go" onClick={() => onOpen(task.leadId)} aria-label={`Open the conversation for: ${task.title}`}>
+              <ArrowUpRight aria-hidden="true" size={16} />
+            </button>
           </li>
         )
       })}

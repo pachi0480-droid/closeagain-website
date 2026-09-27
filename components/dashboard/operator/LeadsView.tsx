@@ -132,7 +132,7 @@ export function OperatorLeads() {
                       <th scope="col">Source</th>
                       <SortHeader label="Score" sortKey="score" sort={sort} onSort={setSort} />
                       <th scope="col">Status</th>
-                      <SortHeader label="Created" sortKey="created" sort={sort} onSort={setSort} />
+                      <SortHeader label="Created" sortKey="created" sort={sort} onSort={setSort} className="app-col--roomy" />
                       <SortHeader label="Last contact" sortKey="last" sort={sort} onSort={setSort} />
                       <th scope="col">Next action</th>
                     </tr>
@@ -166,7 +166,7 @@ export function OperatorLeads() {
                         <td data-label="Status">
                           <StageBadge stage={lead.stage} outcome={lead.outcome} short />
                         </td>
-                        <td data-label="Created">{fmtAgo(lead.createdAt)}</td>
+                        <td data-label="Created" className="app-col--roomy">{fmtAgo(lead.createdAt)}</td>
                         <td data-label="Last contact">{fmtAgo(lead.lastContactAt)}</td>
                         <td data-label="Next action" className="app-wrap app-nextcell">
                           <span className="app-cell-title app-cell-title--plain">{lead.nextAction}</span>

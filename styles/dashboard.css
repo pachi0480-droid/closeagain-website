@@ -4362,6 +4362,37 @@ html:has(.app-sheet[open]) {
   padding: 0.5rem 0.75rem;
 }
 
+/* Laptop widths: headings may take two lines (“Recovered / leads”), cells
+   sit closer, tags wrap and the least-needed columns step aside, so the wide
+   tables fit their panel at 1280px instead of scrolling sideways. (Below
+   640px tables become one card per row.) */
+@media (min-width: 640px) and (max-width: 1499px) {
+  .app-table thead th {
+    white-space: normal;
+    vertical-align: bottom;
+  }
+
+  .app-table thead .app-sort {
+    text-align: inherit;
+  }
+
+  .app-table :is(td, th):not(:first-child) {
+    padding-inline: 0.55rem;
+  }
+
+  .app-leads-table .app-tags {
+    flex-wrap: wrap;
+  }
+
+  .app-nextcell {
+    min-width: 9.5rem;
+  }
+
+  .app-col--roomy {
+    display: none;
+  }
+}
+
 .op-table {
   font-size: var(--ui-xs);
 }
@@ -4388,6 +4419,13 @@ html:has(.app-sheet[open]) {
   align-items: center;
   gap: 0.45rem;
   font-size: var(--ui-xs);
+}
+
+/* The narrowest phones: the meter gives way before the words do. */
+@media (max-width: 359.98px) {
+  .op-health__track {
+    display: none;
+  }
 }
 
 .op-health__score {

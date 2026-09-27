@@ -1157,6 +1157,12 @@
     border-left-color: var(--vermilion);
   }
 
+  /* The list column is narrow beside the dashboard: “Conversations” must fit
+     on one line from 1024px up. */
+  .tour__label {
+    font-size: clamp(1.6rem, 1rem + 1vw, 2.1rem);
+  }
+
   .tour__item:not([data-active]) :is(.tour__label, .tour__body) {
     color: var(--ink-3);
   }

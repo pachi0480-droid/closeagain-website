@@ -138,7 +138,7 @@ export function ClientsView() {
                     <th scope="col">Status</th>
                     <th scope="col">Plan</th>
                     <SortHeader label="MRR" sortKey="mrr" sort={sort} onSort={setSort} numeric />
-                    <SortHeader label="Client since" sortKey="since" sort={sort} onSort={setSort} />
+                    <SortHeader label="Client since" sortKey="since" sort={sort} onSort={setSort} className="app-col--roomy" />
                     <th scope="col" className="ui-num">
                       Users
                     </th>
@@ -169,7 +169,7 @@ export function ClientsView() {
                       <td className="ui-num" data-label="MRR">
                         {row.mrr ? fmtCurrency(row.mrr) : '—'}
                       </td>
-                      <td data-label="Client since">{fmtDateYear(row.client.since)}</td>
+                      <td data-label="Client since" className="app-col--roomy">{fmtDateYear(row.client.since)}</td>
                       <td className="ui-num" data-label="Users">
                         {row.client.team.length}
                       </td>

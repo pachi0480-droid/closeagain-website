@@ -1,9 +1,16 @@
 /*
  * Design tokens. Colours were sampled from the approved homepage reference
  * and then checked for contrast against the paper.
+ *
+ * Two themes share every token name. Light is the brand: warm paper, black
+ * ink, vermilion. Dark is the same identity at night — warm charcoal and
+ * brown-black layers, cream type, a brighter red — never pure black. The
+ * theme is chosen before first paint (app/layout.tsx) and switched with a
+ * brief cross-fade (ThemeToggle). Components use tokens only.
  */
 
 :root {
+  color-scheme: light;
   /* Surfaces */
   --paper: #f2efe7;
   --paper-lift: #f7f5ef; /* form fields */
@@ -48,6 +55,28 @@
   --radius-lg: 14px; /* framed product previews */
   --shadow-soft: 0 1px 0 rgb(13 13 11 / 0.03), 0 18px 40px -24px rgb(13 13 11 / 0.22);
   --shadow-lift: 0 1px 0 rgb(13 13 11 / 0.04), 0 26px 50px -26px rgb(13 13 11 / 0.3);
+  --shadow-button: 0 4px 10px rgb(13 13 11 / 0.12);
+
+  /* Interaction and accent layers */
+  --btn-hover: #2c2b27;
+  --btn-active: #000;
+  --btn-disabled: #3d3c37;
+  --on-accent: #fff; /* text on a vermilion fill */
+  --accent-hover: #922317;
+  --featured-wash: #f8eee5; /* the recommended plan */
+  --blush-surface: #faf0ea; /* a reply, a highlighted row */
+  --blush-line: #eccabd;
+  --blush-line-2: #e9c3b3;
+  --positive-line: #cbd8c4;
+  --caution-line: #e5d2a8;
+  --ink-hairline: rgb(13 13 11 / 0.14);
+  --header-frost: rgb(242 239 231 / 0.84);
+  --header-clear: rgb(242 239 231 / 0);
+
+  /* How printed-ink colour meets the paper. Multiply lets the grain show
+     through in light; on dark paper it would swallow the red. */
+  --ink-blend: multiply;
+  --paper-blend: normal;
 
   /* Product UI type — the app runs smaller than the editorial site */
   --ui-2xs: 0.75rem; /* 12px: caps labels only */
@@ -99,5 +128,80 @@
 @media (min-width: 960px) {
   :root {
     --header-h: 5.25rem; /* 84px, as in the reference */
+  }
+}
+
+/* ── Dark: warm charcoal, cream type, the same red ─────────────────────── */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #16130f;
+  --paper-lift: #1d1914;
+  --bubble: #2b251e;
+  --bubble-blush: #4b2b21;
+
+  --ink: #f3eee4; /* 16.6:1 on paper */
+  --ink-2: #ddd5c6; /* 13:1 */
+  --ink-3: #aaa090; /* 7.2:1 */
+
+  --vermilion: #e2553f;
+  --vermilion-ink: #f28b73; /* 7:1 */
+
+  --rule: #372f27;
+  --rule-strong: #6f6558; /* 3.2:1 — form borders */
+  --bubble-tail: #6f6558;
+
+  --error: #f28b73;
+  --error-wash: #3a1d17;
+  --notice-wash: #2b251e;
+  --positive: #9fca9c;
+  --positive-wash: #1c2a1c;
+  --caution: #e4ba72;
+  --caution-wash: #33291a;
+
+  --surface: #1e1a15;
+  --surface-2: #26211b;
+  --surface-3: #302921;
+  --surface-ink: #0b0907;
+  --on-ink: #f3eee4;
+  --on-ink-2: #b7ad9c;
+  --line: #2f2922;
+  --line-strong: #4a4137;
+  --shadow-soft: 0 1px 0 rgb(0 0 0 / 0.25), 0 18px 40px -24px rgb(0 0 0 / 0.75);
+  --shadow-lift: 0 1px 0 rgb(0 0 0 / 0.3), 0 26px 50px -26px rgb(0 0 0 / 0.85);
+  --shadow-button: 0 4px 10px rgb(0 0 0 / 0.35);
+
+  --btn-hover: #fffaf0;
+  --btn-active: #e6dfd2;
+  --btn-disabled: #b5ad9f;
+  --on-accent: #16130f;
+  --accent-hover: #f6a48e;
+  --featured-wash: #271a14;
+  --blush-surface: #2c1d17;
+  --blush-line: #5b3427;
+  --blush-line-2: #5b3427;
+  --positive-line: #34472f;
+  --caution-line: #4d3d1f;
+  --ink-hairline: rgb(243 238 228 / 0.16);
+  --header-frost: rgb(22 19 15 / 0.82);
+  --header-clear: rgb(22 19 15 / 0);
+
+  --ink-blend: normal;
+  --paper-blend: multiply;
+}
+
+/* A theme change cross-fades colours for a moment, then gets out of the way. */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-changing,
+  html.theme-changing *,
+  html.theme-changing *::before,
+  html.theme-changing *::after {
+    transition:
+      background-color 320ms var(--ease-ui),
+      color 320ms var(--ease-ui),
+      border-color 320ms var(--ease-ui),
+      fill 320ms var(--ease-ui),
+      box-shadow 320ms var(--ease-ui) !important;
   }
 }

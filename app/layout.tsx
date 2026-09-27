@@ -55,16 +55,18 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#f2efe7',
-  colorScheme: 'light',
+  colorScheme: 'light dark',
 }
 
 /**
  * Runs before first paint:
+ *  - applies the saved theme (light, the brand default, unless the visitor
+ *    chose dark), so the page never flashes the wrong colours
  *  - skips the homepage entrance if it already played this session
  *  - enables scroll reveals only when the browser can run them, with a
  *    failsafe that shows everything if the app script never starts
  */
-const boot = `(function(){var d=document.documentElement;try{if(sessionStorage.getItem('ca:intro'))d.setAttribute('data-intro','seen')}catch(e){}if('IntersectionObserver' in window){d.classList.add('js-reveal');setTimeout(function(){if(!window.__caMotion)d.classList.remove('js-reveal')},4000)}})();`
+const boot = `(function(){var d=document.documentElement;var t='light';try{if(localStorage.getItem('ca:theme')==='dark')t='dark'}catch(e){}d.setAttribute('data-theme',t);if(t==='dark'){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#16130f')}try{if(sessionStorage.getItem('ca:intro'))d.setAttribute('data-intro','seen')}catch(e){}if('IntersectionObserver' in window){d.classList.add('js-reveal');setTimeout(function(){if(!window.__caMotion)d.classList.remove('js-reveal')},4000)}})();`
 
 const structuredData = site.origin
   ? {

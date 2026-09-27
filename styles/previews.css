@@ -66,7 +66,7 @@
 }
 
 .pv-row--fresh {
-  background: #faf0ea;
+  background: var(--blush-surface);
 }
 
 .pv-row__main {
@@ -142,13 +142,13 @@
 
 .pv-icon--red {
   background: var(--bubble-blush);
-  border-color: #e9c3b3;
+  border-color: var(--blush-line-2);
   color: var(--vermilion-ink);
 }
 
 .pv-icon--positive {
   background: var(--positive-wash);
-  border-color: #cbd8c4;
+  border-color: var(--positive-line);
   color: var(--positive);
 }
 
@@ -195,12 +195,12 @@
 .pv-step--reply {
   margin-inline: -1rem;
   padding-inline: 1rem;
-  background: #faf0ea;
-  border-top-color: #eccabd;
+  background: var(--blush-surface);
+  border-top-color: var(--blush-line);
 }
 
 .pv-step--reply + .pv-step {
-  border-top-color: #eccabd;
+  border-top-color: var(--blush-line);
 }
 
 .pv-step--reply .pv-step__title {
@@ -497,7 +497,7 @@
 
 .pv-slot--new {
   background: var(--bubble-blush);
-  border-color: #e9c3b3;
+  border-color: var(--blush-line-2);
   color: var(--vermilion-ink);
   font-weight: 600;
 }

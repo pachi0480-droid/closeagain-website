@@ -3,6 +3,8 @@
 html {
   background: var(--paper) url('/texture/paper.webp') repeat;
   background-size: 192px 192px;
+  /* In dark, the grain multiplies into the charcoal instead of lightening it. */
+  background-blend-mode: var(--paper-blend);
   color: var(--ink);
   font-family: var(--font-text);
   font-size: 100%;

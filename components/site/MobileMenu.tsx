@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { Arrow } from '@/components/ui/links'
 import { billingNote, startingPriceText } from '@/content/pricing'
 import type { NavLink } from '@/content/site'
+import { ThemeToggle } from './ThemeToggle'
 
 const subscribeNoop = () => () => {}
 
@@ -119,6 +120,11 @@ export function MobileMenu({
             <p className="menu__terms">
               {startingPriceText} · {billingNote}
             </p>
+          </div>
+
+          <div className="menu__theme">
+            <span>Dark theme</span>
+            <ThemeToggle />
           </div>
 
           <p className="menu__note" aria-hidden="true">

@@ -537,13 +537,13 @@
 }
 
 .path-step--reply {
-  background: #faf0ea;
-  border-color: #eccabd;
+  background: var(--blush-surface);
+  border-color: var(--blush-line);
 }
 
 .path-step--reply .path-step__icon {
   background: var(--bubble-blush);
-  border-color: #e9c3b3;
+  border-color: var(--blush-line-2);
   color: var(--vermilion-ink);
 }
 
@@ -906,7 +906,7 @@
 .example__status {
   margin-left: auto;
   padding: 0.1rem 0.5rem;
-  border: 1px solid rgb(13 13 11 / 0.14);
+  border: 1px solid var(--ink-hairline);
   border-radius: var(--radius-pill);
   font-size: 0.75rem;
   font-weight: 600;
@@ -952,7 +952,7 @@
   width: min(100%, 34rem);
   margin: 0;
   padding: 0.7rem 0.95rem;
-  border: 1px solid #c9d6c3;
+  border: 1px solid var(--positive-line);
   border-radius: var(--radius-md);
   background: var(--positive-wash);
   color: var(--positive);
@@ -968,7 +968,7 @@
 }
 
 .example__card .example__status {
-  border-color: rgb(54 97 63 / 0.35);
+  border-color: color-mix(in srgb, var(--positive) 35%, transparent);
   color: var(--positive);
 }
 
@@ -979,7 +979,7 @@
 }
 
 .example__card--team .example__status {
-  border-color: rgb(242 239 231 / 0.35);
+  border-color: color-mix(in srgb, var(--paper) 35%, transparent);
   color: var(--paper);
 }
 

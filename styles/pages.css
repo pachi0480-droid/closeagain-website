@@ -561,7 +561,7 @@
   margin: 1.5rem 0 0;
   padding: 0.9rem 1rem;
   border-left: 2px solid var(--vermilion);
-  background: rgb(205 57 38 / 0.04);
+  background: color-mix(in srgb, var(--vermilion) 5%, transparent);
   font-size: 0.9375rem;
   line-height: 1.5;
   color: var(--ink-2);

@@ -40,7 +40,7 @@
   display: block;
   width: var(--rw, 24px);
   background: var(--vermilion);
-  mix-blend-mode: multiply;
+  mix-blend-mode: var(--ink-blend);
   pointer-events: none;
   transform-origin: 50% 0;
   z-index: 0;

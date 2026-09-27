@@ -1005,3 +1005,180 @@
   .hero__actions .text-link { font-size: 1rem; }
   .hero__stage { padding-bottom: 2.5rem; }
 }
+
+/* ── The dashboard, one area at a time ─────────────────────────────────────
+   Phones and tablets: each area's description, then its own card.
+   Wide screens: the dashboard stays in view while the list scrolls past it;
+   the area at the middle of the window is marked in both. */
+
+.tour__layout {
+  display: grid;
+  gap: 0;
+  margin-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+.tour__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tour__item {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-content: start;
+  padding-block: 1.75rem 2.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.tour__num {
+  grid-row: 1 / span 2;
+  padding-top: 0.55rem;
+  font-size: var(--ui-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--vermilion-ink);
+}
+
+.tour__label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.tour__body {
+  margin: 0.55rem 0 0;
+  max-width: 34ch;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.tour__snippet {
+  grid-column: 1 / -1;
+  margin-top: 1.4rem;
+}
+
+.tour__stage {
+  display: none;
+}
+
+.tour__note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.85rem;
+  margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+}
+
+/* Phones: the areas become a row to swipe through, each card peeking at the
+   next, instead of six screens of stacked cards. */
+@media (max-width: 639px) {
+  .tour__list {
+    display: flex;
+    gap: 0.9rem;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0.25rem var(--gutter) 1.25rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .tour__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tour__list:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+  }
+
+  .tour__item {
+    flex: 0 0 min(86%, 22rem);
+    padding-block: 1.25rem 0;
+    scroll-snap-align: start;
+  }
+
+  /* Room for three lines, so every card's view starts at the same height. */
+  .tour__body {
+    min-height: 4.5em;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Tablets: the card sits beside its description. */
+  .tour__item {
+    grid-template-columns: 2.25rem minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 0;
+    align-items: start;
+  }
+
+  .tour__snippet {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    margin: 0 0 0 clamp(1.25rem, 3vw, 2rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tour__layout {
+    grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 2fr);
+    gap: clamp(2.5rem, 4.5vw, 4.5rem);
+    align-items: start;
+  }
+
+  .tour__snippet {
+    display: none;
+  }
+
+  .tour__list {
+    /* The last area reaches the middle of the window while the dashboard is
+       still pinned. */
+    padding-bottom: 12vh;
+  }
+
+  .tour__item {
+    min-height: clamp(10rem, 27vh, 15rem);
+    padding: 1.35rem 0 1.35rem 1.35rem;
+    border-top: 0;
+    border-left: 2px solid var(--rule);
+  }
+
+  .tour__item[data-active] {
+    border-left-color: var(--vermilion);
+  }
+
+  .tour__item:not([data-active]) :is(.tour__label, .tour__body) {
+    color: var(--ink-3);
+  }
+
+  .tour__stage {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h) + clamp(1.5rem, 9vh, 5rem));
+  }
+
+  .tour__note {
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .tour__item {
+    transition: border-color 420ms var(--ease-editorial);
+  }
+
+  .tour__label,
+  .tour__body {
+    transition: color 420ms var(--ease-editorial);
+  }
+}

@@ -5,6 +5,7 @@ import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
 import { LeadFlow } from '@/components/home/LeadFlow'
 import { Paths } from '@/components/home/Paths'
+import { Showcase } from '@/components/home/Showcase'
 import { Automation, SecondChance } from '@/components/home/Stories'
 import { PlanCards } from '@/components/pricing/Plans'
 import { home } from '@/content/home'
@@ -19,8 +20,8 @@ export const metadata: Metadata = pageMetadata({
 
 /**
  * The homepage tells one story with one ribbon: a lead arrives or returns,
- * gets followed up, replies, books, and reaches the team — then the product
- * that runs it, what it costs, and the next step.
+ * gets followed up, replies, books, and reaches the team — then the
+ * dashboard that runs it, what it costs, and the next step.
  */
 export default function HomePage() {
   const { again, pricing, closing } = home
@@ -43,6 +44,7 @@ export default function HomePage() {
       <LeadFlow />
       <Automation />
       <SecondChance />
+      <Showcase />
 
       <section className="section price-band" aria-labelledby="price-band-title">
         <div className="wrap">

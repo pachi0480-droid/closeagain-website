@@ -22,7 +22,7 @@ const TITLE: Record<ShowcaseArea, string> = {
   conversations: 'Conversations',
   leads: 'Leads',
   automations: 'Automations',
-  appointments: 'Upcoming appointments',
+  appointments: 'Upcoming',
   analytics: 'Performance trend',
 }
 

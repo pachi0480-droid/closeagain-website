@@ -6,6 +6,7 @@
  * no results.
  */
 
+import type { ShowcaseArea } from './demo/types.ts'
 import { billingNote, planTerms, startingPriceText } from './pricing.ts'
 import { learnCta, primaryCta, site } from './site.ts'
 
@@ -18,7 +19,8 @@ export type FlowEvent = {
   status: string
 }
 
-export type ShowcaseArea = 'overview' | 'conversations' | 'leads' | 'automations' | 'appointments' | 'analytics'
+/** The dashboard areas the homepage showcase walks through (shared with the demo). */
+export type { ShowcaseArea }
 
 const terms = planTerms.join(' · ')
 

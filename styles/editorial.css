@@ -207,7 +207,7 @@
 
 .closing__body {
   margin: 1.25rem 0 0;
-  max-width: 30rem;
+  max-width: 42rem;
   font-size: var(--text-lede);
   color: var(--ink-2);
 }
@@ -236,13 +236,13 @@
 }
 
 @media (min-width: 900px) {
-  .closing__inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 4rem;
+  /* One column: the line gets the full measure, the decision sits under it. */
+  .closing__title {
+    max-width: 15em;
   }
 
-  .closing__actions {
-    padding-bottom: 0.6rem;
+  .closing__inner {
+    gap: 2.25rem;
   }
 
   .closing--with-art {

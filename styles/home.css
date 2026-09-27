@@ -652,6 +652,29 @@
   color: var(--ink-2);
 }
 
+/* Wide screens: the explanation sits beside the title, as in the two jobs. */
+@media (min-width: 1100px) {
+  .example__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+    column-gap: clamp(3rem, 6vw, 6rem);
+    align-items: end;
+    max-width: none;
+  }
+
+  .example__head .eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .example__title {
+    grid-row: 2 / span 2;
+  }
+
+  .example__lede {
+    margin: 0;
+  }
+}
+
 .example__disclaimer {
   display: flex;
   flex-wrap: wrap;

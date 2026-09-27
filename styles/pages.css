@@ -87,14 +87,40 @@
   display: none;
 }
 
+/* The detail beside the form keeps its own rhythm when it follows the form. */
+.form-page__aside {
+  position: relative;
+  min-width: 0;
+}
+
 @media (min-width: 960px) {
   .form-page__inner {
     grid-template-columns: minmax(0, 1fr) minmax(24rem, 33rem);
+    grid-template-rows: auto 1fr;
     column-gap: clamp(3rem, 6vw, 7rem);
-    align-items: stretch;
+    row-gap: 0;
+    align-items: start;
   }
 
   .form-page__copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .form-page__aside {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    padding-bottom: 14rem;
+  }
+
+  .form-page__form {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  /* Without detail, the intro itself makes room for the ribbon. */
+  .form-page__copy:has(> .form-page__ribbon) {
     padding-bottom: 14rem;
   }
 
@@ -444,6 +470,20 @@
 
 .feature-overview {
   margin-top: clamp(2.25rem, 5vw, 3.5rem);
+}
+
+/* Each job's details run longer than its product view, so on wide screens the
+   view starts level with the title and stays in sight while the details
+   scroll past it — within its own row, so nothing is pinned. */
+@media (min-width: 760px) {
+  .trail-section--features .trail__row {
+    align-items: start;
+  }
+
+  .trail-section--features .trail__visual {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+  }
 }
 
 /* One job on the features page: the problem, the capabilities, the limits. */
@@ -1045,7 +1085,12 @@
 .buy-aside {
   display: grid;
   gap: 2rem;
-  margin-top: 2rem;
+}
+
+@media (min-width: 960px) {
+  .buy-aside {
+    margin-top: 2rem;
+  }
 }
 
 .buy-terms {

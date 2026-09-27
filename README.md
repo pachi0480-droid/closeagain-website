@@ -107,6 +107,11 @@ lib/
   (`inquiry:<plan>`) scoped to `/thank-you`; without it that page is neutral.
   Nothing the visitor typed goes in a URL.
 
+- **Baseline security headers** (`next.config.ts`): no framing, same-origin
+  form posts only, `nosniff`, strict referrer and permissions policies. A
+  script-restricting CSP would need per-request nonces, which means dynamic
+  rendering; the site stays statically prerendered instead.
+
 ## Design and motion
 
 The approved homepage is the reference: warm paper, black editorial serif,

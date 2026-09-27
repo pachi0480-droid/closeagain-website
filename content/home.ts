@@ -94,7 +94,7 @@ export const home = {
     eyebrow: 'A worked example',
     title: 'From inquiry to booked appointment.',
     lede: 'One lead, one thread: what CloseAgain does on its own, and where your team takes over.',
-    note: 'Illustrative example — the lead, the business and the timings are fictional.',
+    note: 'The lead, the business and the timings are fictional.',
     lead: { name: 'Jordan Ellis', initials: 'JE', context: 'Kitchen remodel · Website form' },
     steps: [
       {

@@ -1,6 +1,17 @@
 # CloseAgain delivery notes
 
-This is an improved, isolated copy of the supplied website. It has not been deployed, connected to an external form provider, or used to send email.
+## Launch checklist
+
+The site is ready to publish. One step is required: telling it where to send inquiries.
+
+1. **Create the inbox connection (about 5 minutes, free).** Sign up at [resend.com](https://resend.com) using **Closeagainhq@gmail.com**. Until you verify a domain, Resend's default sender can only email the address the account was opened with, so use that one. Then go to API Keys → Create API key (sending access) and copy the key.
+2. **Deploy on Vercel.** Import the GitHub repository at [vercel.com/new](https://vercel.com/new), or run `npx vercel@latest deploy --prod` from this folder. In Project → Settings → Environment Variables, add `RESEND_API_KEY` with that key for Production, then redeploy.
+3. **Send yourself a test inquiry.** Open `/contact` on the live site, fill the form with your own details, and send it. It should arrive in Gmail within a minute, titled "CloseAgain — … inquiry from …". The first time, check Spam and mark it "Not spam". Replying to the email answers the person who asked.
+4. **Search.** Nothing to configure. A production build on Vercel uses the project's production address, so pages are indexable, the sitemap lists them, and canonical URLs point there; previews stay hidden. Add the site in [Google Search Console](https://search.google.com/search-console) and submit `/sitemap.xml`.
+5. **Later, with your own domain:**
+   - Add it in Vercel → Domains and redeploy; the origin follows automatically.
+   - Verify it in Resend and set `FORMS_EMAIL_FROM` (for example `CloseAgain <inquiries@yourdomain.com>`). You can then also send inquiries to any address with `FORMS_NOTIFY_EMAIL`.
+   - A business address on your own domain will also read better to buyers than a Gmail address.
 
 ## Run locally
 
@@ -11,42 +22,35 @@ npm run dev
 
 For a production server, run `npm run build` followed by `npm start`. The contact route and form API require a Next.js server; this is not a static HTML export. `npm run lint`, `npm run typecheck`, and `npm test` are available for verification.
 
-## Business contact
+## How inquiries reach the business
 
-The confirmed business address is **Closeagainhq@gmail.com**, defined once in `content/site.ts`. It appears on the contact page, in the shared footer, and in the contact sections of the unfinished legal pages.
+The business address is **Closeagainhq@gmail.com**, defined once in `content/site.ts`. It appears on the contact page, in the footer, and in the legal pages.
 
-`/contact` always shows the buying form. What its button does depends on the server's configuration, decided at request time:
+`/contact` always shows the buying form. What its button does is decided on the server at request time:
 
-- **No valid `FORMS_WEBHOOK_URL`:** the button reads "Email my details". After the form validates, it opens a pre-filled draft in the visitor's email app, addressed to the business, with every answer (including the chosen plan) as `Label: value` lines. The visitor sends the draft themselves. The page says the email app should now open and that nothing has been sent yet; it never shows a success message. The draft is built by `lib/forms/email.ts`, which has unit tests.
-- **A valid webhook:** the form posts to `/api/forms/inquiry`, which validates the submission and reports success only after the destination returns a successful response.
+- **With a destination** (`RESEND_API_KEY`, `FORMS_WEBHOOK_URL`, or both): the form posts to `/api/forms/inquiry`, which validates the submission and reports success only after a destination accepts it. With both configured, one acceptance is enough. By email, each inquiry lists every answer, and Reply goes to the prospect.
+- **With neither:** the button reads "Email my details" and opens a pre-filled draft in the visitor's own email app, addressed to the business. The page never claims anything was sent. It works, but a visitor on webmail or on a phone without a mail app may not finish, so configure a destination before sending traffic.
 
-In both modes the address is also shown under the form for anyone who prefers to write directly. No existing email delivery account has been connected or verified.
+In both modes the address is also shown under the form for anyone who prefers to write directly.
 
 ## Environment variables
 
 | Variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Set to the verified public origin only when publishing. Rebuild after changing it. With no value, pages remain `noindex`, robots disallow crawling, canonical links are omitted, and the sitemap is empty. |
-| `FORMS_WEBHOOK_URL` | Optional server-only destination for submitted inquiry JSON. HTTPS is required outside local testing. Leave empty and the form opens a pre-filled email draft instead. |
-| `FORMS_WEBHOOK_SECRET` | Optional server-only bearer secret sent to the webhook. Never use a `NEXT_PUBLIC_` prefix for this secret. |
+| `RESEND_API_KEY` | Server-only. Emails each inquiry to the business through Resend. |
+| `FORMS_NOTIFY_EMAIL` | Optional. Where inquiry emails go. Defaults to the business address. |
+| `FORMS_EMAIL_FROM` | Optional. The sender, once a domain is verified in Resend. Defaults to Resend's `onboarding@resend.dev`. |
+| `FORMS_WEBHOOK_URL` | Optional server-only HTTPS destination for inquiry JSON (a CRM, Zapier or Make, Formspree, or your own endpoint). |
+| `FORMS_WEBHOOK_SECRET` | Optional server-only bearer secret sent to the webhook. Never use a `NEXT_PUBLIC_` prefix for it. |
+| `NEXT_PUBLIC_SITE_URL` | Optional override of the public origin. On Vercel production builds the project's production domain is used automatically. With no origin, pages are `noindex` and the sitemap is empty. |
 
-The webhook payload and timeout behavior are documented in `lib/forms/delivery.ts`. A successful webhook response confirms receipt by that destination; the owner should verify its downstream inbox/CRM behavior before relying on it. `npm run forms:sink` is a local testing sink, not a production delivery service.
+The payloads and timeout behavior are documented in `lib/forms/delivery.ts`. `npm run forms:sink` is a local testing sink, not a production delivery service.
 
-## Before publishing
+## Content notes
 
-- **Privacy and Terms are unfinished.** `content/legal.ts` keeps both documents at `status: 'placeholder'`, without an effective date. They remain visibly marked and excluded from indexing. Obtain the applicable approved text, replace the empty sections, add the effective date, and set the status to `approved`. This package does not invent legal policies.
-- **Verify product statements against the actual service.** The supplied `docs/open-questions.md` still identifies stopping on reply, pausing on human handoff, message approval, channel availability, eligible-lead rules, appointment behavior, integrations, and reporting scope as items to confirm. Illustrative demonstrations are not evidence of a deployed capability.
-- **Confirm commercial details in the proposal.** The supplied plan prices, monthly billing, and setup assistance were retained. Exact usage allowances, overage charges, user counts, location limits, supported integrations, support response times, onboarding timing, additional fees, minimum term, cancellation terms, and Enterprise billing are not established by this website.
-- **Use actual customer evidence when available.** The conversation and dashboard examples are fictional. No customer results, endorsements, or performance guarantees have been added. The industry images are supplied AI-generated editorial illustrations.
-- **Check the production origin and email workflow.** Test the final deployment’s canonical URLs, sitemap, social share image, mailto recipient, and—if enabled—the webhook and confirmation route before pointing visitors at it.
-
-No live domain, hosting account, external inbox, webhook, payment processor, or customer service was changed as part of this local website work.
-
-## Local verification
-
-All 12 marketing routes returned HTTP 200 from the local production server. Their rendered markup had one H1, unique IDs, language metadata, page titles, and preview indexing restrictions. The audit found no missing anchor targets among 446 rendered links and successfully loaded all eight industry images plus the social share image.
-
-Both contact modes were checked against the same production build: direct email with no webhook, and the real form with a temporary local-only webhook URL supplied to a separate server process. Valid plan and industry selections survive in server-rendered markup, including before JavaScript runs. Unknown plans are ignored. No inquiry was submitted during that mode check, and the temporary server was stopped afterward. External delivery remains unverified.
+- **Legal pages** describe what this website actually does: the form fields, hosting logs, the theme and demo storage, the 30-minute confirmation cookie, and no trackers or analytics. They are published and indexable. Have them reviewed, and update them if the site starts collecting more.
+- **Product statements.** `docs/open-questions.md` lists behaviors to confirm against the real service, such as stopping on reply, pausing on handoff and how booking works, plus commercial details the proposal settles: usage allowances, fees and support times.
+- **Evidence.** The conversation and dashboard examples are fictional and labelled as samples. No customer results, endorsements or performance guarantees appear anywhere. Add real ones only when they exist. The industry images are AI-generated editorial illustrations.
 
 ## Final visual and interaction verification
 

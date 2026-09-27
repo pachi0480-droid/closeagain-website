@@ -7,8 +7,9 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { formMessages, goalOptions, industryOptions, inquiryFields, planOptions, unsurePlan } from '../content/forms.ts'
 import { plans } from '../content/pricing.ts'
+import { site } from '../content/site.ts'
 import { readTextWithin } from '../lib/forms/body.ts'
-import { buildPayload, parseWebhookUrl, resolveDelivery, type Delivery } from '../lib/forms/delivery.ts'
+import { buildNotification, buildPayload, parseWebhookUrl, resendEndpoint, resolveDelivery, type Delivery } from '../lib/forms/delivery.ts'
 import { processSubmission } from '../lib/forms/process.ts'
 import { endpointFor, fallbackFor, fallbackIds, formPageFor, redirectPathFor } from '../lib/forms/protocol.ts'
 import { createRateLimiter } from '../lib/forms/rate-limit.ts'
@@ -592,5 +593,67 @@ describe('email hand-off before a destination is connected', () => {
     assert.ok(body.includes('Preferred plan: Growth — '))
     assert.ok(body.includes('Phone: —'))
     assert.ok(body.includes('Message: Quotes go quiet after a week.'))
+  })
+})
+
+describe('email delivery (Resend)', () => {
+  const now = new Date('2026-09-26T12:00:00.000Z')
+  const values = () => {
+    const checked = validateSubmission('inquiry', complete)
+    assert.equal(checked.ok, true)
+    return checked.values
+  }
+
+  it('turns on with an API key alone and emails the business address by default', async () => {
+    let request: { url: string; auth: string | null; body: Record<string, unknown> } | null = null
+    const delivery = resolveDelivery({ RESEND_API_KEY: 're_test' }, (async (url: unknown, init: RequestInit) => {
+      request = { url: String(url), auth: new Headers(init.headers).get('authorization'), body: JSON.parse(String(init.body)) }
+      return json(200, { id: 'email_1' })
+    }) as unknown as typeof fetch)
+    assert.ok(delivery)
+    assert.deepEqual(await delivery.deliver('inquiry', values()), { ok: true })
+    const sent = request as unknown as { url: string; auth: string | null; body: Record<string, unknown> }
+    assert.equal(sent.url, resendEndpoint)
+    assert.equal(sent.auth, 'Bearer re_test')
+    assert.deepEqual(sent.body.to, [site.email])
+    assert.equal(sent.body.reply_to, 'sam@example.com')
+    assert.equal(sent.body.subject, 'CloseAgain — Growth inquiry from Rivera & Co')
+  })
+
+  it('lists every answer and says how to reply', () => {
+    const mail = buildNotification('inquiry', values(), { to: 'owner@example.com', from: 'Site <a@example.com>', now })
+    for (const field of inquiryFields) assert.ok(mail.text.includes(`${field.label}:`), field.name)
+    assert.ok(mail.text.includes('Full name: Sam Rivera'))
+    assert.ok(mail.text.includes('Reply to this email to answer Sam Rivera directly.'))
+    assert.ok(mail.text.includes('Received 2026-09-26 12:00 UTC.'))
+    assert.equal(mail.from, 'Site <a@example.com>')
+  })
+
+  it('honours a custom recipient and sender', async () => {
+    let body: Record<string, unknown> = {}
+    const delivery = resolveDelivery(
+      { RESEND_API_KEY: 're_test', FORMS_NOTIFY_EMAIL: 'sales@example.com', FORMS_EMAIL_FROM: 'CloseAgain <hello@example.com>' },
+      (async (_url: unknown, init: RequestInit) => {
+        body = JSON.parse(String(init.body))
+        return json(200, { id: 'email_2' })
+      }) as unknown as typeof fetch,
+    )
+    await delivery!.deliver('inquiry', values())
+    assert.deepEqual(body.to, ['sales@example.com'])
+    assert.equal(body.from, 'CloseAgain <hello@example.com>')
+  })
+
+  it('reports a refused email as a failure, never a success', async () => {
+    const delivery = resolveDelivery({ RESEND_API_KEY: 're_bad' }, fetchReturning(json(403, { message: 'invalid key' })))
+    assert.deepEqual(await delivery!.deliver('inquiry', values()), { ok: false, reason: 'rejected' })
+  })
+
+  it('with email and a webhook, one acceptance is enough — and both must fail to fail', async () => {
+    const env = { RESEND_API_KEY: 're_test', FORMS_WEBHOOK_URL: 'https://hooks.example.com/in' }
+    const emailOnly = resolveDelivery(env, (async (url: unknown) =>
+      String(url) === resendEndpoint ? json(200, { id: 'x' }) : new Response(null, { status: 500 })) as unknown as typeof fetch)
+    assert.deepEqual(await emailOnly!.deliver('inquiry', values()), { ok: true })
+    const neither = resolveDelivery(env, fetchReturning(() => Promise.resolve(new Response(null, { status: 502 }))))
+    assert.deepEqual(await neither!.deliver('inquiry', values()), { ok: false, reason: 'rejected' })
   })
 })

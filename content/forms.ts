@@ -209,11 +209,11 @@ export const formMessages = {
   invalid: 'Please check the highlighted fields and try again.',
   submitting: 'Sending…',
   success: 'Received. Taking you to the confirmation page…',
-  failed: 'Something went wrong, so we could not confirm your details were received. Everything you entered is still here — please try again.',
+  failed: 'Something went wrong, so we could not confirm your details were received. Everything you entered is still here — please try again, or email us at the address below.',
   // A timeout is not proof of failure, so this message makes no claim either way.
-  timeout: 'We did not get a confirmation in time, so we cannot be sure your details arrived. Everything you entered is still here — please try again in a moment.',
+  timeout: 'We did not get a confirmation in time, so we cannot be sure your details arrived. Everything you entered is still here — please try again in a moment, or email us at the address below.',
   network: 'We could not reach the server. Check your connection and try again. Everything you entered is still here.',
-  unavailable: 'Requests are temporarily unavailable. Please try again later.',
+  unavailable: 'Online requests are temporarily unavailable. Please email us at the address below, or try again later.',
   /**
    * Before a delivery destination is connected, the form hands the details to
    * the visitor's own email app instead. It never claims anything was sent.
@@ -229,7 +229,7 @@ export const formMessages = {
   /** Shown after a no-JavaScript post is sent back to the form. */
   returned: {
     invalid: 'Some details were missing or not quite right, so nothing was sent. Please check the form and try again.',
-    failed: 'Something went wrong, so we could not confirm your details were received. Please try again.',
+    failed: 'Something went wrong, so we could not confirm your details were received. Please try again, or email us at the address below.',
   },
   tooLong: (max: number) => `Please keep this to ${max.toLocaleString('en-US')} characters or fewer.`,
 } as const

@@ -1,13 +1,14 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { shareCard } from '@/lib/share'
 
 /**
- * The share card: the homepage composition — headline, ribbon and the two
- * bubbles — rendered once from the site's own fonts and ribbon geometry and
- * stored as og-card.jpg. Re-render it if the hero changes.
+ * The share card: the homepage composition — headline, ribbon, the one-line
+ * explanation and the two bubbles — captured from the hero itself at
+ * 1200×630 and stored as og-card.jpg. Re-capture it if the hero changes.
  */
-export const alt = 'CloseAgain — The conversation isn’t over. Turn more of the leads you already have into paying customers.'
-export const size = { width: 1200, height: 630 }
+export const alt = shareCard.alt
+export const size = { width: shareCard.size.width, height: shareCard.size.height }
 export const contentType = 'image/jpeg'
 
 export default async function OpengraphImage() {

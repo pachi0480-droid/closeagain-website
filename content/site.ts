@@ -6,7 +6,8 @@
  */
 
 /**
- * The public origin, set per deployment with NEXT_PUBLIC_SITE_URL.
+ * The public origin: NEXT_PUBLIC_SITE_URL, or on a Vercel production build the
+ * project's production domain (next.config.ts fills it in).
  *
  * When it is not set the site treats itself as a preview: no canonical URLs,
  * no sitemap entries, and every page asks search engines not to index it. That

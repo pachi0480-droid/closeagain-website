@@ -59,11 +59,13 @@ and delete the item from this list.
 
 ## Before public launch
 
-- **`FORMS_WEBHOOK_URL`:** where inquiries are delivered. Until it is set, the
-  buying form opens a pre-filled email to the business address instead.
-- **Privacy and Terms:** approved text is needed. Both pages are marked
-  placeholders and are not indexed.
-- **`NEXT_PUBLIC_SITE_URL`:** set on the production deployment only.
+- **Where inquiries go:** set `RESEND_API_KEY` (or `FORMS_WEBHOOK_URL`) on the
+  production deployment, then send one test inquiry. Until then, the buying
+  form can only open a pre-filled email in the visitor's own email app. See the
+  launch checklist in `DEPLOYMENT-NOTES.md`.
+- **Privacy and Terms:** written from what the site actually does and
+  published. Have them reviewed. Add governing law or refund terms if you want
+  them on the website rather than in the proposal.
 - **Fictional names:** check that the names in the sample views and the demo
   don't match real businesses in your market.
 - **Industry images:** these are AI-generated editorial stills, labelled on the

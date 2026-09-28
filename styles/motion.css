@@ -145,31 +145,31 @@
   }
 
   /* A ribbon draws along its curve. Multi-part drawings go in stages. */
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide {
+  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide {
     transition: stroke-dashoffset var(--dur-draw) var(--ease-draw) var(--reveal-delay, 0ms);
   }
 
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__guide--b {
+  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide--b {
     transition-delay: calc(var(--dur-draw) * 0.7);
   }
 
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__guide {
+  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__guide {
     stroke-dashoffset: 1;
   }
 
   /* Arrowheads land as their shaft finishes drawing. */
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__head {
+  .js-reveal .ribbon[data-draw='scroll'] .ribbon__head {
     transition:
       opacity 320ms var(--ease-ui),
       translate 640ms var(--ease-editorial);
     transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 0.84);
   }
 
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__head--b {
+  .js-reveal .ribbon[data-draw='scroll'] .ribbon__head--b {
     transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 1.54);
   }
 
-  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__head {
+  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__head {
     opacity: 0;
     translate: var(--hx) var(--hy);
   }
@@ -286,13 +286,11 @@
 
 /* Timelines own the ribbon pieces as one sequence. CSS is the resilient fallback. */
 .flow-ready :is(.ribbon__guide, .ribbon-band, [data-reveal]) { transition: none !important; }
-.ribbon-band[data-progress],
-.ribbon[data-progress] .ribbon__guide { transition: none !important; }
+.ribbon-band[data-progress] { transition: none !important; }
 
-/* Scroll-drawn ribbons: the arrowhead lands when the stroke reaches the end
-   and draws back in if the visitor scrolls up (MotionController sets
-   data-landed). */
-:is(.ribbon[data-progress], .flow-ready .ribbon) .ribbon__head {
+/* Timeline-drawn ribbons (New + Old): the arrowhead lands when the stroke
+   reaches the end (MotionController sets data-landed). */
+.flow-ready .ribbon .ribbon__head {
   opacity: 0;
   translate: var(--hx) var(--hy);
   transition:
@@ -301,18 +299,11 @@
   transition-delay: 0ms !important;
 }
 
-:is(.ribbon[data-progress], .flow-ready .ribbon) .ribbon__head[data-landed] {
+.flow-ready .ribbon .ribbon__head[data-landed] {
   opacity: 1;
   translate: 0 0;
 }
 
-/* A growing trail: its arrowhead keeps its true shape and leads the line
-   down the page (--p is the band's progress, from MotionController). */
-.trail__band--end[data-progress]::after {
-  opacity: clamp(0, calc(var(--p, 1) * 14), 1);
-  scale: 1 calc(1 / max(var(--p, 1), 0.04));
-  transition: none;
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
   .arrow, .arrow *, .btn, .text-link { transition: none; }

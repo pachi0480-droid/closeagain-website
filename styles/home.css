@@ -759,7 +759,8 @@
   transition:
     background-color var(--dur-state) var(--ease-ui),
     border-color var(--dur-state) var(--ease-ui),
-    color var(--dur-state) var(--ease-ui);
+    color var(--dur-state) var(--ease-ui),
+    scale 480ms var(--ease-editorial);
 }
 
 .flow__event-body {
@@ -770,6 +771,10 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+  transition:
+    translate 520ms var(--ease-editorial),
+    background-color var(--dur-state) var(--ease-ui),
+    border-color var(--dur-state) var(--ease-ui);
 }
 
 .flow__event-title {
@@ -809,15 +814,25 @@
   background: var(--positive-wash);
 }
 
-/* While the scroll story plays, events not reached yet wait quietly. */
+/* While the story plays, events not reached yet wait quietly; each one
+   settles into place as it happens. */
+.flow__event {
+  transition: opacity 420ms var(--ease-ui);
+}
+
 .flow__event[data-pending] {
-  opacity: 0.32;
+  opacity: 0.3;
 }
 
 .flow__event[data-pending] .flow__node {
   border-color: var(--line);
   background: var(--surface-3);
   color: var(--ink-3);
+  scale: 0.82;
+}
+
+.flow__event[data-pending] .flow__event-body {
+  translate: 0 5px;
 }
 
 .flow__handoff {
@@ -863,6 +878,8 @@
 }
 
 .followup__ribbon {
+  /* A long stroke: drawn a little slower, so it reads as one gesture. */
+  --dur-draw: 1700ms;
   display: none;
   position: absolute;
   inset: 0;
@@ -915,6 +932,8 @@
 }
 
 .second__ribbon {
+  /* A long stroke: drawn a little slower, so it reads as one gesture. */
+  --dur-draw: 1700ms;
   position: absolute;
   z-index: -1;
   left: -40%;

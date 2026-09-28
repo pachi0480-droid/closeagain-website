@@ -5,7 +5,8 @@
  *   <1024px:  <DashboardSnippet area={area} />      one readable card per area
  *
  * Both are decorative, share the demo's sample numbers, and load only
- * styles/showcase.css (never the demo's dashboard.css).
+ * styles/showcase.css, part of the site stylesheet (never the demo's
+ * dashboard.css).
  */
 
 export { DashboardShowcase } from './DashboardShowcase'

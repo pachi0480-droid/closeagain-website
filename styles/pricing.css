@@ -346,7 +346,6 @@
 .plan__cta:hover { background: var(--btn-hover); box-shadow: var(--shadow-button); }
 .plan__cta:active { scale: 0.98; }
 .plan__cta .arrow { flex: none; width: 1.15rem; }
-.plan__cta:hover .arrow, .plan__cta:focus-visible .arrow { translate: 3px 0; }
 .plan__includes { margin-top: 1.5rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
 .plan__includes-label { margin: 0 0 0.7rem; font-size: 0.875rem; font-weight: 600; line-height: 1.4; }
 .plan__features { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
@@ -364,7 +363,7 @@
 .plan--featured:hover .plan__card, .plan--featured:focus-within .plan__card { border-color: transparent; box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--vermilion) 80%, transparent); }
 .plan__flag { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% -50%; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.38rem 0.9rem; border-radius: var(--radius-pill); background: var(--vermilion-ink); color: var(--on-accent); white-space: nowrap; font-size: 0.7rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--vermilion) 80%, transparent); }
 /* The ribbon in miniature: its tail runs on when the plan is hovered. */
-.plan__flag-tail { flex: none; width: 1.35rem; height: 0.6rem; transition: translate var(--dur-ui) var(--ease-ui); }
+.plan__flag-tail { flex: none; width: 1.35rem; height: 0.6rem; transition: translate 420ms var(--ease-editorial); }
 .plan--featured:hover .plan__flag-tail, .plan--featured:focus-within .plan__flag-tail { translate: 4px 0; }
 .plan__tagline { margin: 0.4rem 0 0; font-family: var(--font-display); font-size: 1.2rem; line-height: 1.15; letter-spacing: -0.015em; color: var(--ink); }
 .plan--enterprise .plan__tagline { color: var(--on-ink); }

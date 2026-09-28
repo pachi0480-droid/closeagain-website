@@ -43,12 +43,10 @@
   width: 1120px;
   height: 700px;
   transform-origin: 0 0;
-  /* Set by script where CSS can't divide lengths (useScaleFallback). */
+  /* Width ÷ 1120, measured by script (useFitScale). A CSS-only ratio
+     (tan(atan2(100cqw, 1120px))) passed @supports in Safari but computed to
+     nothing there, scaling the whole dashboard away. */
   scale: var(--showcase-scale, 0.8);
-}
-
-@supports (scale: tan(atan2(100cqw, 1120px))) {
-  .showcase__canvas { scale: tan(atan2(100cqw, 1120px)); }
 }
 
 /* ── Sidebar ───────────────────────────────────────────────────────────── */

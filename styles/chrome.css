@@ -70,14 +70,31 @@
   flex: none;
   width: 1.05em;
   height: 1.05em;
-  transition: translate var(--dur-press) var(--ease-ui);
+  overflow: visible;
 }
 
-.btn:hover .arrow,
-.text-link:hover .arrow,
-.btn:focus-visible .arrow,
-.text-link:focus-visible .arrow {
-  translate: 4px 0;
+/* On hover the arrow stretches forward: the head moves on and the shaft
+   grows to meet it, easing out instead of jumping. */
+.arrow__head,
+.arrow__shaft {
+  transition:
+    translate 420ms var(--ease-editorial),
+    scale 420ms var(--ease-editorial);
+}
+
+.arrow__shaft {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+:is(a, button):is(:hover, :focus-visible) .arrow__head,
+.industry:is(:hover, :focus-within) .arrow__head {
+  translate: 3.5px 0;
+}
+
+:is(a, button):is(:hover, :focus-visible) .arrow__shaft,
+.industry:is(:hover, :focus-within) .arrow__shaft {
+  scale: 1.25 1;
 }
 
 .text-link {

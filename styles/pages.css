@@ -667,6 +667,7 @@
   width: calc(var(--rw) * 2.7);
   height: calc(var(--rw) * 1.8);
   translate: -50% 0;
+  transform-origin: 50% 0;
   background: inherit;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
 }
@@ -882,11 +883,6 @@
 .industry:has(.industry__go:focus-visible) {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
-}
-
-.industry:hover .arrow,
-.industry:focus-within .arrow {
-  translate: 4px 0;
 }
 
 .industries__note {

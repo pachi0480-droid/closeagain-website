@@ -57,6 +57,15 @@
   }
 }
 
+/* An arrowhead arriving at the end of its ribbon (--hx/--hy point back
+   along the ribbon's last direction; set per ribbon in Ribbon.tsx). */
+@keyframes head-land {
+  from {
+    opacity: 0;
+    translate: var(--hx) var(--hy);
+  }
+}
+
 /* The ribbon band is solid vermilion; it grows from its top as it draws. */
 .ribbon-band {
   position: absolute;
@@ -88,6 +97,11 @@
   /* Then the ribbon draws across and reaches the conversation. */
   html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
     animation: draw 1500ms cubic-bezier(0.3, 0.05, 0.18, 1) 320ms backwards;
+  }
+
+  /* …and its arrowhead lands as the stroke arrives. */
+  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__head {
+    animation: head-land 540ms var(--ease-editorial) 1440ms backwards;
   }
 
   html:not([data-intro='seen']) .hero__bubble--ask {
@@ -141,6 +155,32 @@
 
   .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__guide {
     stroke-dashoffset: 1;
+  }
+
+  /* Arrowheads land as their shaft finishes drawing. */
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__head {
+    transition:
+      opacity 320ms var(--ease-ui),
+      translate 640ms var(--ease-editorial);
+    transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 0.84);
+  }
+
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']) .ribbon__head--b {
+    transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 1.54);
+  }
+
+  .js-reveal .ribbon:is([data-draw='scroll'], [data-draw='scrub']):not(.is-in) .ribbon__head {
+    opacity: 0;
+    translate: var(--hx) var(--hy);
+  }
+
+  /* The last stretch of a trail keeps its arrowhead hidden until drawn. */
+  .js-reveal .trail__band--end::after {
+    transition: opacity 320ms var(--ease-ui) calc(var(--dur-draw) * 0.8);
+  }
+
+  .js-reveal .trail__band--end:not(.is-in)::after {
+    opacity: 0;
   }
 
   .js-reveal .ribbon-band[data-draw='scroll'] {
@@ -248,7 +288,32 @@
 .flow-ready :is(.ribbon__guide, .ribbon-band, [data-reveal]) { transition: none !important; }
 .ribbon-band[data-progress],
 .ribbon[data-progress] .ribbon__guide { transition: none !important; }
+
+/* Scroll-drawn ribbons: the arrowhead lands when the stroke reaches the end
+   and draws back in if the visitor scrolls up (MotionController sets
+   data-landed). */
+:is(.ribbon[data-progress], .flow-ready .ribbon) .ribbon__head {
+  opacity: 0;
+  translate: var(--hx) var(--hy);
+  transition:
+    opacity 260ms var(--ease-ui),
+    translate 560ms var(--ease-editorial) !important;
+  transition-delay: 0ms !important;
+}
+
+:is(.ribbon[data-progress], .flow-ready .ribbon) .ribbon__head[data-landed] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* A growing trail: its arrowhead keeps its true shape and leads the line
+   down the page (--p is the band's progress, from MotionController). */
+.trail__band--end[data-progress]::after {
+  opacity: clamp(0, calc(var(--p, 1) * 14), 1);
+  scale: 1 calc(1 / max(var(--p, 1), 0.04));
+  transition: none;
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
-  .arrow, .btn, .text-link { transition: none; }
+  .arrow, .arrow *, .btn, .text-link { transition: none; }
 }

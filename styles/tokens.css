@@ -53,6 +53,9 @@
   --radius-sm: 6px; /* chips, inputs inside the app */
   --radius-md: 10px; /* cards, panels */
   --radius-lg: 14px; /* framed product previews */
+  --radius-control: 12px; /* marketing form fields */
+  --radius-card: 22px; /* plan cards, summaries, panels on marketing pages */
+  --ring-accent: 0 0 0 4px color-mix(in srgb, var(--vermilion) 16%, transparent);
   --shadow-soft: 0 1px 0 rgb(13 13 11 / 0.03), 0 18px 40px -24px rgb(13 13 11 / 0.22);
   --shadow-lift: 0 1px 0 rgb(13 13 11 / 0.04), 0 26px 50px -26px rgb(13 13 11 / 0.3);
   --shadow-button: 0 4px 10px rgb(13 13 11 / 0.12);
@@ -73,9 +76,10 @@
   --header-frost: rgb(242 239 231 / 0.84);
   --header-clear: rgb(242 239 231 / 0);
 
-  /* How printed-ink colour meets the paper. Multiply lets the grain show
-     through in light; on dark paper it would swallow the red. */
-  --ink-blend: multiply;
+  /* How printed-ink colour meets the paper. Normal in both themes: a
+     multiplied ribbon let the grain show through, but made Safari re-blend
+     every frame of the scroll-drawn ribbons under the frosted header. */
+  --ink-blend: normal;
   --paper-blend: normal;
 
   /* Product UI type — the app runs smaller than the editorial site */

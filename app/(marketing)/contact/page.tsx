@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { FormPage } from '@/components/forms/FormPage'
 import { LeadForm } from '@/components/forms/LeadForm'
-import { TextLink } from '@/components/ui/links'
+import { OrderSummary } from '@/components/forms/OrderSummary'
 import { contact } from '@/content/contact'
 import { formMessages, industryOptions, inquiryFields } from '@/content/forms'
 import { planById } from '@/content/pricing'
@@ -15,18 +15,20 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Contact to buy: plan terms and what happens next, beside the buying form.
+ * Contact to buy, laid out as a checkout: the form (choose a plan, tell us
+ * about the business, send) beside a live order summary and what happens next.
  * With a delivery destination configured (email through Resend, a webhook, or
- * both), the form submits to it and only confirms after it answers. Without one, the same form hands the details to
- * the visitor's email app, addressed to the business — never a dead end, and
- * never a false “sent”. Nothing is charged here.
+ * both), the form submits to it and only confirms after it answers. Without
+ * one, the same form hands the details to the visitor's email app, addressed
+ * to the business — never a dead end, and never a false “sent”. Nothing is
+ * charged here.
  */
 export default async function ContactPage({
   searchParams,
 }: {
   searchParams: Promise<{ plan?: string | string[]; industry?: string | string[] }>
 }) {
-  const { terms, next, process: processLink, form } = contact
+  const { form } = contact
   // Reading searchParams opts this page into request-time rendering. This
   // decision must use the server's current configuration, never a build-time
   // snapshot or a NEXT_PUBLIC_ variable exposing the delivery destination.
@@ -41,32 +43,8 @@ export default async function ContactPage({
       eyebrow={contact.eyebrow}
       title={contact.title}
       lede={contact.lede}
-      aside={
-        <div className="buy-aside">
-          <ul className="buy-terms">
-            {terms.map((term) => (
-              <li key={term}>{term}</li>
-            ))}
-          </ul>
-          <div className="buy-next">
-            <h2 className="buy-next__title">{next.title}</h2>
-            {/* role="list" keeps list semantics in Safari once markers are removed. */}
-            <ol className="buy-next__steps" role="list">
-              {next.steps.map((step, i) => (
-                <li key={step}>
-                  <span className="buy-next__num" aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  {step}
-                </li>
-              ))}
-            </ol>
-            <TextLink href={processLink.href} arrow className="buy-next__link">
-              {processLink.label}
-            </TextLink>
-          </div>
-        </div>
-      }
+      className="form-page--checkout"
+      aside={<OrderSummary initialPlan={selectedPlan?.id} />}
       form={
         <div className="contact-form">
           <LeadForm

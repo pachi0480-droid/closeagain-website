@@ -29,6 +29,16 @@ export const contact = {
     submit: 'Send my details',
     guidance: 'No payment is taken here. Please don’t include sensitive information.',
   },
+  /** The order summary beside the form; it follows the plan chosen in step 1. */
+  summary: {
+    label: 'Your plan',
+    unsure: {
+      name: 'Not sure yet',
+      tagline: 'We’ll recommend the right plan.',
+      price: startingPriceText,
+    },
+    note: 'Nothing is charged here. Your plan, usage and start date are confirmed in your proposal first.',
+  },
   email: {
     formAlternative: 'Prefer to email us directly?',
     address: site.email,

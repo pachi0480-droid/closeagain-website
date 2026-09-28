@@ -16,6 +16,7 @@ export function FormPage({
   lede,
   aside,
   form,
+  className,
 }: {
   id: string
   eyebrow: string
@@ -23,6 +24,7 @@ export function FormPage({
   lede: string
   aside?: ReactNode
   form: ReactNode
+  className?: string
 }) {
   const ribbon = (
     <Ribbon
@@ -35,7 +37,7 @@ export function FormPage({
     />
   )
   return (
-    <section className="form-page" aria-labelledby="page-title">
+    <section className={['form-page', className].filter(Boolean).join(' ')} aria-labelledby="page-title">
       <div className="form-page__inner wrap">
         <div className="form-page__copy">
           <p className="eyebrow">{eyebrow}</p>

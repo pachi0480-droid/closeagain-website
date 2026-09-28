@@ -1,16 +1,18 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useReducer, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
+import { useEffect, useLayoutEffect, useReducer, useRef, useState, useSyncExternalStore, type FormEvent } from 'react'
 import { flushSync } from 'react-dom'
 import { Arrow } from '@/components/ui/links'
-import { formMessages, inquiryDetails, planNote, type FieldDefinition } from '@/content/forms'
+import { checkoutSteps, formMessages, inquiryDetails, planNote, type FieldDefinition } from '@/content/forms'
 import { planById, planSummary } from '@/content/pricing'
 import { inquiryEmailLink } from '@/lib/forms/email'
 import { endpointFor, fallbackIds, honeypotField } from '@/lib/forms/protocol'
 import { normalizeValue, validateField, validateSubmission, type FormKind } from '@/lib/forms/schema'
 import { formReducer, initialFormState } from '@/lib/forms/state'
 import { sendSubmission } from '@/lib/forms/transport'
+import { PlanPicker } from './PlanPicker'
+import { choosePlan, resetPlan, useChosenPlan } from './selectedPlan'
 
 const subscribeNoop = () => () => {}
 
@@ -56,14 +58,11 @@ export function LeadForm({
 }) {
   const router = useRouter()
   const [state, dispatch] = useReducer(formReducer, initialFormState)
-  // null until the visitor touches the plan picker; until then the plan comes
-  // from the link that brought them here (?plan=growth).
-  const [plan, setPlan] = useState<string | null>(null)
-  const linkedPlan = useSyncExternalStore(
-    subscribeNoop,
-    () => new URLSearchParams(window.location.search).get('plan') ?? initialPlan ?? '',
-    () => initialPlan ?? '',
-  )
+  const planField = fields.find((field) => field.name === 'plan' && field.kind === 'choice')
+  // The plan comes from the link that brought the visitor here (?plan=growth)
+  // until they pick one; the order summary beside the form follows it.
+  const plan = useChosenPlan(initialPlan ?? planField?.defaultValue ?? '')
+  useLayoutEffect(() => resetPlan(), [])
   const [emailOpened, setEmailOpened] = useState(false)
   const inFlight = useRef(false)
   const formRef = useRef<HTMLFormElement>(null)
@@ -157,7 +156,7 @@ export function LeadForm({
 
   // Once a field has been flagged, re-check it as the visitor corrects it.
   const recheck = (field: FieldDefinition, value: string) => {
-    if (field.name === 'plan') setPlan(value)
+    if (field === planField) choosePlan(value)
     if (!(field.name in state.errors)) return
     dispatch({ type: 'field-checked', name: field.name, error: validateField(field, normalizeValue(field, value)) })
   }
@@ -169,7 +168,7 @@ export function LeadForm({
         ? 'idle'
         : 'problem'
 
-  const chosen = planById(plan ?? linkedPlan)
+  const chosen = planById(plan)
 
   const renderField = (field: FieldDefinition) => {
     const error = state.errors[field.name]
@@ -237,15 +236,6 @@ export function LeadForm({
           </p>
         )}
 
-        {field.name === 'plan' && (
-          <p className="field__note" aria-live="polite">
-            {chosen && (
-              <>
-                {planNote.lead} <strong>{planSummary(chosen)}</strong>. {planNote.follow}
-              </>
-            )}
-          </p>
-        )}
       </div>
     )
   }
@@ -278,17 +268,52 @@ export function LeadForm({
         </p>
       </div>
 
-      <div className="form__grid">{mainFields.map(renderField)}</div>
-
-      {detailFields.length > 0 && (
-        <details ref={detailsRef} className="form__details" open={initialIndustry ? true : undefined}>
-          <summary className="form__summary">
-            <span>{inquiryDetails.summary}</span>
-            <span className="form__summary-icon" aria-hidden="true" />
-          </summary>
-          <div className="form__grid form__grid--details">{detailFields.map(renderField)}</div>
-        </details>
+      {planField && (
+        <section className="step" aria-labelledby={`${kind}-step-plan`}>
+          <h2 id={`${kind}-step-plan`} className="step__title">
+            <span className="step__num" aria-hidden="true">
+              1
+            </span>
+            {checkoutSteps.plan.title}
+          </h2>
+          <PlanPicker
+            name={planField.name}
+            value={plan}
+            onChange={(value) => recheck(planField, value)}
+            note={
+              chosen ? (
+                <>
+                  {planNote.lead} <strong>{planSummary(chosen)}</strong>. {planNote.follow}
+                </>
+              ) : plan === planField.defaultValue ? null : (
+                checkoutSteps.plan.note
+              )
+            }
+            error={state.errors[planField.name]}
+            errorId={state.errors[planField.name] ? `${id(planField.name)}-error` : undefined}
+          />
+        </section>
       )}
+
+      <section className="step" aria-labelledby={`${kind}-step-details`}>
+        <h2 id={`${kind}-step-details`} className="step__title">
+          <span className="step__num" aria-hidden="true">
+            {planField ? 2 : 1}
+          </span>
+          {checkoutSteps.details.title}
+        </h2>
+        <div className="form__grid">{mainFields.filter((field) => field !== planField).map(renderField)}</div>
+
+        {detailFields.length > 0 && (
+          <details ref={detailsRef} className="form__details" open={initialIndustry ? true : undefined}>
+            <summary className="form__summary">
+              <span>{inquiryDetails.summary}</span>
+              <span className="form__summary-icon" aria-hidden="true" />
+            </summary>
+            <div className="form__grid form__grid--details">{detailFields.map(renderField)}</div>
+          </details>
+        )}
+      </section>
 
       {/* Honeypot: invisible to people, tempting to form-filling bots. */}
       <div className="form__trap" aria-hidden="true">
@@ -298,20 +323,28 @@ export function LeadForm({
         </label>
       </div>
 
-      <div className="form__submit">
-        <button type="submit" className="btn btn--lg form__button" aria-disabled={submitting || undefined}>
-          <span className="form__button-labels">
-            <span className={submitting ? 'is-hidden' : undefined}>{submitLabel}</span>
-            <span className={submitting ? undefined : 'is-hidden'} aria-hidden={!submitting}>
-              {formMessages.submitting}
-            </span>
+      <section className="step step--send" aria-labelledby={`${kind}-step-send`}>
+        <h2 id={`${kind}-step-send`} className="step__title">
+          <span className="step__num" aria-hidden="true">
+            {planField ? 3 : 2}
           </span>
-          <Arrow />
-        </button>
-        <p id={`${kind}-guidance`} className="form__guidance">
-          {guidance}
-        </p>
-      </div>
+          {checkoutSteps.send.title}
+        </h2>
+        <div className="form__submit">
+          <button type="submit" className="btn btn--lg form__button" aria-disabled={submitting || undefined}>
+            <span className="form__button-labels">
+              <span className={submitting ? 'is-hidden' : undefined}>{submitLabel}</span>
+              <span className={submitting ? undefined : 'is-hidden'} aria-hidden={!submitting}>
+                {formMessages.submitting}
+              </span>
+            </span>
+            <Arrow />
+          </button>
+          <p id={`${kind}-guidance`} className="form__guidance">
+            {guidance}
+          </p>
+        </div>
+      </section>
 
       <div
         ref={statusRef}

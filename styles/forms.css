@@ -82,12 +82,17 @@
   font-size: 1.0625rem;
   line-height: 1.4;
   color: var(--ink);
-  background: var(--paper-lift);
-  border: 1px solid var(--rule-strong);
-  border-radius: 0;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
   transition:
     border-color var(--dur-ui) var(--ease-ui),
-    box-shadow var(--dur-ui) var(--ease-ui);
+    box-shadow var(--dur-state) var(--ease-ui),
+    background-color var(--dur-ui) var(--ease-ui);
+}
+
+.field__control::placeholder {
+  color: var(--ink-3);
 }
 
 textarea.field__control {
@@ -100,11 +105,13 @@ textarea.field__control {
   border-color: var(--ink-3);
 }
 
+/* Focus: the field brightens and a soft vermilion ring settles around it. */
 .field__control:focus,
 .field__control:focus-visible {
   outline: none;
-  border-color: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
+  border-color: var(--vermilion-ink);
+  background: var(--paper-lift);
+  box-shadow: var(--ring-accent);
 }
 
 .field__select {
@@ -153,11 +160,11 @@ textarea.field__control {
 
 .field--invalid .field__control {
   border-color: var(--error);
-  box-shadow: inset 3px 0 0 var(--error);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 14%, transparent);
 }
 
 .field--invalid .field__control:focus {
-  box-shadow: inset 3px 0 0 var(--error), 0 0 0 1px var(--error);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--error) 20%, transparent);
 }
 
 .field__error {
@@ -331,6 +338,7 @@ textarea.field__control {
   gap: 0.65rem;
   margin: 0;
   padding: 0.9rem 1rem;
+  border-radius: var(--radius-control);
   font-size: 1rem;
   line-height: 1.45;
   color: var(--ink);
@@ -339,12 +347,12 @@ textarea.field__control {
 .form-status--problem .form-status__message,
 .form-note--problem {
   background: var(--error-wash);
-  border-left: 3px solid var(--error);
+  border: 1px solid color-mix(in srgb, var(--error) 35%, transparent);
 }
 
 .form-status--progress .form-status__message {
   background: var(--notice-wash);
-  border-left: 3px solid var(--ink);
+  border: 1px solid var(--line-strong);
 }
 
 /* No-JavaScript explanations appear only when the URL points at them. */
@@ -386,4 +394,517 @@ textarea.field__control {
   text-decoration: underline;
   text-underline-offset: 0.25em;
   overflow-wrap: anywhere;
+}
+
+/* ── Contact to buy, as a checkout ─────────────────────────────────────────
+   Three numbered steps on the right (plan, business, send); on the left, an
+   order summary that follows the chosen plan, then what happens next. */
+
+@media (min-width: 960px) {
+  .form-page--checkout .form-page__inner {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
+  }
+
+  .form-page--checkout .summary-wrap {
+    position: sticky;
+    top: calc(var(--header-h) + 1.5rem);
+    margin-top: 2.5rem;
+  }
+}
+
+.step {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+  padding-bottom: 2.25rem;
+}
+
+.step + .step {
+  padding-top: 2.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.step--send {
+  padding-bottom: 0.5rem;
+}
+
+.step__title {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 1.2rem + 0.8vw, 1.85rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.step__num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border: 1.5px solid var(--vermilion-ink);
+  border-radius: 50%;
+  font-family: var(--font-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--vermilion-ink);
+}
+
+.step--send .form__submit {
+  justify-items: stretch;
+}
+
+.step--send .form__button {
+  width: 100%;
+  justify-content: space-between;
+  padding-inline: 1.6rem 1.4rem;
+}
+
+/* ── Step 1: the tiers ─────────────────────────────────────────────────── */
+
+.tiers {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tiers__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tier {
+  position: relative;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.tier--unsure {
+  grid-column: 1 / -1;
+}
+
+/* The real radio stays in the page (focus, arrow keys, form posts); only its
+   drawing is replaced by the card. */
+.tier__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.tier__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  height: 100%;
+  padding: 1.1rem 1.15rem 1.2rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+  background: var(--surface);
+  pointer-events: none;
+  transition:
+    border-color var(--dur-ui) var(--ease-ui),
+    background-color var(--dur-state) var(--ease-ui),
+    box-shadow 320ms var(--ease-editorial),
+    translate 320ms var(--ease-editorial);
+}
+
+.tier:hover .tier__card {
+  border-color: var(--ink-3);
+  translate: 0 -2px;
+  box-shadow: var(--shadow-soft);
+}
+
+.tier__input:focus-visible + .tier__card {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.tier__input:checked + .tier__card {
+  border-color: var(--vermilion-ink);
+  background: var(--featured-wash);
+  translate: 0 -2px;
+  box-shadow:
+    0 0 0 1px var(--vermilion-ink),
+    0 22px 44px -30px color-mix(in srgb, var(--vermilion) 60%, transparent);
+}
+
+.tier__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+/* One bar for Core, four for Enterprise. */
+.tier__meter {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 1.15rem;
+}
+
+.tier__meter i {
+  width: 4px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background-color var(--dur-state) var(--ease-ui);
+}
+
+.tier__meter i:nth-child(2) { height: 10px; }
+.tier__meter i:nth-child(3) { height: 14px; }
+.tier__meter i:nth-child(4) { height: 18px; }
+
+.tier__meter i[data-on] {
+  background: var(--vermilion);
+}
+
+.tier__check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1.45rem;
+  height: 1.45rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--on-accent);
+  transition:
+    background-color var(--dur-ui) var(--ease-ui),
+    border-color var(--dur-ui) var(--ease-ui);
+}
+
+.tier__check svg {
+  scale: 0;
+  transition: scale 260ms var(--ease-editorial);
+}
+
+.tier__input:checked + .tier__card .tier__check {
+  border-color: var(--vermilion-ink);
+  background: var(--vermilion-ink);
+}
+
+.tier__input:checked + .tier__card .tier__check svg {
+  scale: 1;
+}
+
+.tier__name {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.tier__price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  margin-top: 0.2rem;
+}
+
+.tier__amount {
+  font-family: var(--font-display);
+  font-size: 1.95rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.tier__per {
+  font-size: var(--ui-sm);
+  color: var(--ink-3);
+}
+
+.tier__tagline {
+  margin-top: 0.15rem;
+  font-size: var(--ui-sm);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.tier__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.7rem;
+}
+
+.tier__facts span {
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+.tier__input:checked + .tier__card .tier__facts span {
+  background: color-mix(in srgb, var(--vermilion) 12%, var(--surface));
+  color: var(--ink);
+}
+
+.tier__flag {
+  position: absolute;
+  top: -0.7rem;
+  right: 0.9rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--vermilion-ink);
+  color: var(--on-accent);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Enterprise: the dark card, as on the pricing page. */
+.tier--enterprise .tier__card {
+  border-color: var(--surface-ink);
+  background: var(--surface-ink);
+  color: var(--on-ink);
+}
+
+.tier--enterprise:hover .tier__card {
+  border-color: var(--on-ink-2);
+}
+
+.tier--enterprise .tier__tagline {
+  color: var(--on-ink-2);
+}
+
+.tier--enterprise .tier__facts span {
+  background: color-mix(in srgb, var(--on-ink) 10%, transparent);
+  color: var(--on-ink);
+}
+
+.tier--enterprise .tier__meter i:not([data-on]) {
+  background: color-mix(in srgb, var(--on-ink) 20%, transparent);
+}
+
+.tier--enterprise .tier__input:checked + .tier__card {
+  border-color: var(--vermilion);
+  background: var(--surface-ink);
+  box-shadow:
+    0 0 0 1px var(--vermilion),
+    0 22px 44px -30px color-mix(in srgb, var(--vermilion) 60%, transparent);
+}
+
+.tier--enterprise .tier__input:checked + .tier__card .tier__facts span {
+  background: color-mix(in srgb, var(--vermilion) 22%, transparent);
+  color: var(--on-ink);
+}
+
+.tier--enterprise .tier__input:focus-visible + .tier__card {
+  outline-color: var(--vermilion-ink);
+}
+
+/* “Not sure yet”: one slim row. */
+.tier--unsure .tier__card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 0.9rem;
+  row-gap: 0.15rem;
+  align-items: center;
+  padding: 0.95rem 1.15rem;
+}
+
+.tier--unsure .tier__check {
+  grid-row: 1 / span 2;
+}
+
+.tier--unsure .tier__name {
+  font-size: 1.25rem;
+}
+
+.tier--unsure .tier__tagline {
+  margin: 0;
+}
+
+.tiers__note {
+  margin: 0.95rem 0 0;
+}
+
+.tiers__note:empty {
+  display: none;
+}
+
+/* Phones: two compact columns; the facts wait for the summary. */
+@media (max-width: 519px) {
+  .tiers__grid {
+    gap: 0.6rem;
+  }
+
+  .tier__card {
+    padding: 0.95rem 0.95rem 1rem;
+  }
+
+  .tier__facts {
+    display: none;
+  }
+
+  .tier__name {
+    font-size: 1.35rem;
+  }
+
+  .tier__amount {
+    font-size: 1.65rem;
+  }
+}
+
+/* ── The order summary ─────────────────────────────────────────────────── */
+
+.summary-wrap {
+  display: grid;
+  gap: 2rem;
+}
+
+.summary {
+  padding: 1.5rem 1.5rem 1.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.summary__label {
+  margin: 0 0 0.9rem;
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vermilion-ink);
+}
+
+.summary__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summary__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.summary__tagline {
+  margin: 0.4rem 0 0;
+  color: var(--ink-2);
+}
+
+.summary__price {
+  flex: none;
+  margin: 0;
+  text-align: right;
+}
+
+.summary__amount {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.summary__per {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: var(--ui-sm);
+  color: var(--ink-3);
+}
+
+.summary__from {
+  margin: 0.7rem 0 0;
+  font-size: var(--ui-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.summary__facts {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1.15rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.summary__facts li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1rem;
+}
+
+.summary__facts svg {
+  flex: none;
+  color: var(--vermilion-ink);
+}
+
+.summary__terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.15rem 0 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.summary__terms li {
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+.summary__note {
+  margin: 0.95rem 0 0;
+  font-size: var(--ui-sm);
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .summary__plan {
+    animation: summary-in 380ms var(--ease-editorial);
+  }
+}
+
+@keyframes summary-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tier__card,
+  .tier__check,
+  .tier__check svg,
+  .tier__meter i {
+    transition: none;
+  }
+
+  .tier:hover .tier__card,
+  .tier__input:checked + .tier__card {
+    translate: none;
+  }
 }

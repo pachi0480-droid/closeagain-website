@@ -25,20 +25,24 @@ export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }
           data-reveal
           style={delay(i)}
         >
-          <PlanCard plan={plan} variant={variant} />
+          <PlanCard plan={plan} variant={variant} level={i} />
         </li>
       ))}
     </ol>
   )
 }
 
-function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }) {
+function PlanCard({ plan, variant, level }: { plan: Plan; variant: 'full' | 'compact'; level: number }) {
   const headingId = `plan-${plan.id}-${variant}`
   const enterprise = plan.id === 'enterprise'
   const features = variant === 'full' ? plan.features : plan.features.slice(0, 3)
 
   return (
     <article className="plan__card" aria-labelledby={headingId}>
+      {/* Shown when the plan finder above points here (pricing page). */}
+      <span className="plan__match" aria-hidden="true">
+        Best match
+      </span>
       {plan.recommendation && (
         <p className="plan__flag">
           {plan.recommendation.label}
@@ -53,10 +57,11 @@ function PlanCard({ plan, variant }: { plan: Plan; variant: 'full' | 'compact' }
           <h3 id={headingId} className="plan__name">
             {plan.name}
           </h3>
+          {/* The tier meter: one bar for Core, four for Enterprise. */}
           <span className="plan__mark" aria-hidden="true">
-            <i />
-            <i />
-            <i />
+            {[0, 1, 2, 3].map((bar) => (
+              <i key={bar} data-on={bar <= level || undefined} />
+            ))}
           </span>
         </div>
         <p className="plan__tagline">{plan.tagline}</p>

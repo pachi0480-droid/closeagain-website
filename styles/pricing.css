@@ -52,7 +52,8 @@
   gap: 0.6rem;
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
   padding: 1.4rem 1.5rem 1.5rem;
-  border-left: 2px solid var(--vermilion);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
   background: var(--surface);
 }
 
@@ -121,7 +122,7 @@
   gap: 1.5rem;
   padding: clamp(1.25rem, 3vw, 1.75rem);
   border: 1px solid var(--line-strong);
-  border-radius: 4px;
+  border-radius: var(--radius-card);
   background: var(--surface);
 }
 
@@ -151,12 +152,20 @@
   width: 100%;
   min-height: 3rem;
   padding: 0 0.85rem;
-  border: 1px solid var(--rule-strong);
-  border-radius: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
   background: var(--paper-lift);
   font: inherit;
   font-size: 1.0625rem;
   color: var(--ink);
+  transition: border-color var(--dur-ui) var(--ease-ui), box-shadow var(--dur-state) var(--ease-ui);
+}
+
+.breakeven__field select:focus,
+.breakeven__money input:focus {
+  outline: none;
+  border-color: var(--vermilion-ink);
+  box-shadow: var(--ring-accent);
 }
 
 .breakeven__money {
@@ -246,7 +255,7 @@
   margin-bottom: 2rem;
   padding: clamp(1.25rem, 3vw, 2rem);
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: var(--radius-card);
   background: var(--surface);
 }
 
@@ -264,18 +273,25 @@
   height: 100%;
   min-height: 3rem;
   padding: 0.75rem;
-  border: 1px solid var(--rule-strong);
-  border-radius: 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
   font-size: 0.9375rem;
   line-height: 1.3;
-  transition: background-color 180ms, color 180ms, border-color 180ms;
+  padding-inline: 1rem;
+  transition: background-color 200ms, color 200ms, border-color 200ms, scale 150ms;
 }
+.plan-finder__option:active > span { scale: 0.98; }
 .plan-finder__option:hover > span { background: var(--surface-2); }
 .plan-finder__option input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .plan-finder__option input:focus-visible + span { outline: 2px solid var(--vermilion-ink); outline-offset: 3px; }
 .plan-finder__dot { flex: none; width: 0.55rem; height: 0.55rem; border: 1px solid currentColor; border-radius: 50%; }
 .plan-finder__option input:checked + span .plan-finder__dot { background: currentColor; box-shadow: 0 0 0 2px var(--ink) inset; }
 .plan-finder__result { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; min-height: 6rem; padding-top: 1.4rem; }
+.plan-finder__prompt { margin: 0; font-size: 0.9375rem; color: var(--ink-3); }
+@media (prefers-reduced-motion: no-preference) {
+  .plan-finder__answer { animation: finder-in 360ms var(--ease-editorial); }
+}
+@keyframes finder-in { from { opacity: 0; translate: 0 6px; } }
 .plan-finder__match { margin: 0 0 0.25rem; color: var(--vermilion-ink); font-weight: 600; }
 .plan-finder__reason { max-width: 47rem; margin: 0; font-size: 0.9375rem; line-height: 1.45; color: var(--ink-2); }
 .plan-finder__link { flex: none; display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; font-size: 1rem; text-decoration: underline; text-underline-offset: 0.2em; }
@@ -288,23 +304,23 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 2.75rem clamp(1.35rem, 2.8vw, 2rem) 1.75rem;
+  padding: 2.5rem clamp(1.35rem, 2.8vw, 2rem) 1.75rem;
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: var(--radius-card);
   background: var(--surface);
-  transition: translate 350ms var(--ease-editorial), box-shadow 350ms var(--ease-editorial), border-color 200ms;
+  transition: translate 380ms var(--ease-editorial), box-shadow 380ms var(--ease-editorial), border-color 220ms, opacity 300ms var(--ease-ui);
 }
-.plan:hover .plan__card, .plan:focus-within .plan__card { translate: 0 -4px; box-shadow: var(--shadow-soft); border-color: var(--rule-strong); }
+.plan:hover .plan__card, .plan:focus-within .plan__card { translate: 0 -5px; box-shadow: var(--shadow-lift); border-color: var(--ink-3); }
 .plan__audience { margin: 0 0 0.75rem; color: var(--ink-3); font-size: var(--ui-sm); }
 .plan__heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .plan__name { margin: 0; font-family: var(--font-display); font-size: 2.2rem; font-weight: 400; line-height: 1; letter-spacing: -0.035em; }
 .plan__mark { display: inline-flex; align-items: end; gap: 4px; height: 1.65rem; }
-.plan__mark i { width: 5px; height: 9px; border-radius: 1px; background: var(--line); }
-.plan__mark i:nth-child(2) { height: 16px; }
-.plan__mark i:nth-child(3) { height: 24px; }
-.plan--core .plan__mark i:first-child,
-.plan--growth .plan__mark i:not(:last-child),
-.plan--scale .plan__mark i { background: var(--vermilion); }
+.plan__mark i { width: 5px; height: 8px; border-radius: 2px; background: var(--line); }
+.plan__mark i:nth-child(2) { height: 13px; }
+.plan__mark i:nth-child(3) { height: 18px; }
+.plan__mark i:nth-child(4) { height: 23px; }
+.plan__mark i[data-on] { background: var(--vermilion); }
+.plan--enterprise .plan__mark i:not([data-on]) { background: color-mix(in srgb, var(--on-ink) 20%, transparent); }
 .plan__description { margin: 0.85rem 0 0; color: var(--ink-2); font-size: 1rem; line-height: 1.5; }
 .plan__purchase { margin-top: 1.6rem; }
 .plan__price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.45rem; margin: 0; }
@@ -318,9 +334,9 @@
   gap: 0.75rem;
   min-height: 3.25rem;
   margin-top: 1.25rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.1rem 0.75rem 1.3rem;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--paper);
   font-size: 1rem;
@@ -328,6 +344,7 @@
   transition: background-color 180ms, box-shadow 180ms;
 }
 .plan__cta:hover { background: var(--btn-hover); box-shadow: var(--shadow-button); }
+.plan__cta:active { scale: 0.98; }
 .plan__cta .arrow { flex: none; width: 1.15rem; }
 .plan__cta:hover .arrow, .plan__cta:focus-visible .arrow { translate: 3px 0; }
 .plan__includes { margin-top: 1.5rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
@@ -336,9 +353,16 @@
 .plan__features li { display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.9375rem; line-height: 1.4; }
 .plan__tick { flex: none; margin-top: 0.18rem; color: var(--vermilion-ink); }
 .plan__reason { margin: 1.2rem 0 0; padding-top: 0.9rem; border-top: 1px solid color-mix(in srgb, var(--vermilion-ink) 20%, transparent); font-size: 0.875rem; color: var(--vermilion-ink); line-height: 1.45; }
-.plan--featured .plan__card { border-color: var(--vermilion-ink); background: var(--featured-wash); }
-.plan--featured:hover .plan__card, .plan--featured:focus-within .plan__card { border-color: var(--vermilion-ink); box-shadow: 0 15px 36px -25px color-mix(in srgb, var(--vermilion-ink) 40%, transparent); }
-.plan__flag { position: absolute; top: -1px; right: -1px; left: -1px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 0; padding: 0.43rem 1rem; border-radius: 6px 6px 0 0; background: var(--vermilion-ink); color: var(--on-accent); text-align: center; font-size: 0.75rem; line-height: 1.2; letter-spacing: 0.08em; text-transform: uppercase; }
+/* Scale: a vermilion edge that fades down the card, and a warm glow. */
+.plan--featured .plan__card {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--featured-wash), var(--featured-wash)) padding-box,
+    linear-gradient(165deg, var(--vermilion) 0%, color-mix(in srgb, var(--vermilion) 40%, var(--line-strong)) 45%, var(--line-strong) 100%) border-box;
+  box-shadow: 0 34px 64px -44px color-mix(in srgb, var(--vermilion) 75%, transparent);
+}
+.plan--featured:hover .plan__card, .plan--featured:focus-within .plan__card { border-color: transparent; box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--vermilion) 80%, transparent); }
+.plan__flag { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% -50%; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.38rem 0.9rem; border-radius: var(--radius-pill); background: var(--vermilion-ink); color: var(--on-accent); white-space: nowrap; font-size: 0.7rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--vermilion) 80%, transparent); }
 /* The ribbon in miniature: its tail runs on when the plan is hovered. */
 .plan__flag-tail { flex: none; width: 1.35rem; height: 0.6rem; transition: translate var(--dur-ui) var(--ease-ui); }
 .plan--featured:hover .plan__flag-tail, .plan--featured:focus-within .plan__flag-tail { translate: 4px 0; }
@@ -353,10 +377,10 @@
 .plan--featured .plan__cta { border-color: var(--vermilion-ink); background: var(--vermilion-ink); color: var(--on-accent); }
 .plan--featured .plan__cta:hover { background: var(--accent-hover); }
 .plan--enterprise .plan__card { padding-top: 1.75rem; background: var(--surface-ink); border-color: var(--surface-ink); color: var(--on-ink); }
+.plan--enterprise:hover .plan__card, .plan--enterprise:focus-within .plan__card { border-color: color-mix(in srgb, var(--on-ink) 30%, transparent); }
 .plan--enterprise .plan__name { font-size: 1.9rem; color: var(--on-ink); }
 .plan--enterprise .plan__audience, .plan--enterprise .plan__billing { color: var(--on-ink-2); }
 .plan--enterprise .plan__description { color: var(--on-ink); }
-.plan--enterprise .plan__mark { display: none; }
 .plan--enterprise .plan__includes { border-color: #3c3a34; }
 .plan--enterprise .plan__tick { color: #ee8b75; }
 .plan--enterprise .plan__amount { font-size: 2.7rem; }
@@ -471,7 +495,7 @@
 .compare__inner { min-height: 0; overflow: hidden; }
 .compare[data-open='false'] .compare__inner { visibility: hidden; transition: visibility 0s linear 380ms; }
 .compare__hint { margin: 1rem 0; font-size: 0.875rem; color: var(--ink-3); }
-.compare__scroll { position: relative; max-height: min(72vh, 44rem); overflow: auto; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--surface); overscroll-behavior: contain; }
+.compare__scroll { position: relative; max-height: min(72vh, 44rem); overflow: auto; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); overscroll-behavior: contain; }
 .compare__table { width: 100%; min-width: 46rem; border-spacing: 0; font-size: 0.9375rem; }
 .compare__table th, .compare__table td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--line); text-align: center; vertical-align: middle; }
 .compare__table th[scope='row'] { position: sticky; left: 0; z-index: 1; width: 26%; min-width: 12rem; text-align: left; font-weight: 400; background: var(--surface); box-shadow: 1px 0 0 var(--line); }
@@ -497,4 +521,52 @@
 @media (prefers-reduced-motion: reduce) {
   .plan__card, .plan__cta, .plan-finder__option > span, .compare__chevron, .compare__panel, .compare__inner { transition: none !important; }
   .plan:hover .plan__card, .plan:focus-within .plan__card { translate: none; }
+}
+
+/* ── The finder's answer, on the cards ─────────────────────────────────── */
+
+.plan__match {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 1.5rem;
+  translate: 0 -50%;
+  padding: 0.38rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  scale: 0.9;
+  pointer-events: none;
+  transition: opacity 260ms var(--ease-ui), scale 320ms var(--ease-editorial);
+}
+
+.plan--enterprise .plan__match { background: var(--vermilion-ink); color: var(--on-accent); }
+
+.tier-stage[data-match='core'] .plan--core .plan__match,
+.tier-stage[data-match='growth'] .plan--growth .plan__match,
+.tier-stage[data-match='scale'] .plan--scale .plan__match,
+.tier-stage[data-match='enterprise'] .plan--enterprise .plan__match { opacity: 1; scale: 1; }
+
+.tier-stage[data-match='core'] .plan--core .plan__card,
+.tier-stage[data-match='growth'] .plan--growth .plan__card,
+.tier-stage[data-match='scale'] .plan--scale .plan__card,
+.tier-stage[data-match='enterprise'] .plan--enterprise .plan__card {
+  translate: 0 -5px;
+  box-shadow: 0 0 0 2px var(--ink), var(--shadow-lift);
+}
+
+/* The other plans step back until hovered. */
+.tier-stage[data-match='core'] .plan:not(.plan--core):not(:hover) .plan__card,
+.tier-stage[data-match='growth'] .plan:not(.plan--growth):not(:hover) .plan__card,
+.tier-stage[data-match='scale'] .plan:not(.plan--scale):not(:hover) .plan__card,
+.tier-stage[data-match='enterprise'] .plan:not(.plan--enterprise):not(:hover) .plan__card { opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+  .plan__match { transition: none; }
+  .tier-stage[data-match] .plan .plan__card { translate: none; }
 }

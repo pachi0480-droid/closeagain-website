@@ -199,6 +199,22 @@ export const inquiryFields: readonly FieldDefinition[] = [
 export const inquiryDetails = { summary: 'Add details (optional)' } as const
 
 /** Shown under the plan picker once a real plan is chosen. */
+/** The buying form, as three steps. */
+export const checkoutSteps = {
+  plan: {
+    title: 'Choose your plan',
+    note: 'Not sure? Pick “Not sure yet” and we’ll recommend one.',
+  },
+  details: { title: 'Tell us about your business' },
+  send: { title: 'Send your details' },
+} as const
+
+/** The fifth choice in the plan picker. */
+export const unsureChoice = {
+  title: 'Not sure yet',
+  body: 'Tell us about your business and we’ll recommend the right plan.',
+} as const
+
 export const planNote = {
   lead: 'You selected',
   follow: 'We’ll confirm it fits before anything is agreed.',

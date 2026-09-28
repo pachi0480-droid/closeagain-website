@@ -5,7 +5,7 @@ import { ClosingCta } from '@/components/editorial/blocks'
 import { Accordion } from '@/components/editorial/Accordion'
 import { BreakEven } from '@/components/pricing/BreakEven'
 import { CompareMatrix, PlanCards } from '@/components/pricing/Plans'
-import { PlanFinder } from '@/components/pricing/PlanFinder'
+import { TierSystem } from '@/components/pricing/TierSystem'
 import { faqByIds, pricingPage } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -46,21 +46,21 @@ export default function PricingPage() {
             Plans
           </h2>
 
-          <PlanFinder />
+          <TierSystem>
+            <div className="pricing__common">
+              <p className="pricing__common-title">{common.title}</p>
+              <ul className="pricing__common-list">
+                {common.items.map((item) => (
+                  <li key={item}>
+                    <Check size={15} strokeWidth={2} aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          <div className="pricing__common">
-            <p className="pricing__common-title">{common.title}</p>
-            <ul className="pricing__common-list">
-              {common.items.map((item) => (
-                <li key={item}>
-                  <Check size={15} strokeWidth={2} aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <PlanCards />
+            <PlanCards />
+          </TierSystem>
 
           <p className="pricing__decision-note">{proposal}</p>
 

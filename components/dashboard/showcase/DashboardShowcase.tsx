@@ -1,8 +1,5 @@
 'use client'
 
-// The showcase's own small stylesheet: the demo's large dashboard.css never loads on the homepage.
-import '@/styles/showcase.css'
-
 /**
  * The client dashboard, composed on one screen for the homepage.
  *
@@ -76,11 +73,14 @@ function useCountUp(root: RefObject<HTMLDivElement | null>) {
 }
 
 /** Exact scaling where CSS can't divide lengths: sets --showcase-scale from the container width. */
-function useScaleFallback(root: RefObject<HTMLDivElement | null>) {
+/** Scales the 1120px canvas to the frame's width, and keeps it fitted as the frame resizes. */
+function useFitScale(root: RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const node = root.current
-    if (!node || CSS.supports('scale', 'tan(atan2(100cqw, 1120px))')) return
-    const update = () => node.style.setProperty('--showcase-scale', String(node.clientWidth / 1120))
+    if (!node) return
+    const update = () => {
+      if (node.clientWidth > 0) node.style.setProperty('--showcase-scale', String(node.clientWidth / 1120))
+    }
     update()
     const observer = new ResizeObserver(update)
     observer.observe(node)
@@ -101,7 +101,7 @@ function Region({ area, active, panel = true, className, children }: { area: Sho
 export function DashboardShowcase({ active, className }: { active: ShowcaseArea; className?: string }) {
   const root = useRef<HTMLDivElement>(null)
   useCountUp(root)
-  useScaleFallback(root)
+  useFitScale(root)
   const { workspace, kpis, conversations, leads, automations, running, appointments, trend, unread } = showcase
 
   return (

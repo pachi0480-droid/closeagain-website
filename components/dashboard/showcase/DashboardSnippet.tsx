@@ -1,6 +1,3 @@
-// The showcase's own small stylesheet: the demo's large dashboard.css never loads on the homepage.
-import '@/styles/showcase.css'
-
 /**
  * One area of the client dashboard as a compact, readable card for phones and
  * tablets (under 1024px), where the full <DashboardShowcase /> would be too

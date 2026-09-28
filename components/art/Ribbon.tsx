@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { buildRibbon, type RibbonSpec } from '@/lib/ribbon'
 
 /**
@@ -23,8 +24,10 @@ export type RibbonLayer = {
  *
  * The reveal is a mask stroked along each centreline, so a ribbon keeps its
  * full width and tapering at every moment — it is never a thin line that
- * thickens. Without CSS animation (reduced motion, no JavaScript) every mask
- * is already complete and the ribbon is simply there.
+ * thickens. The arrowhead is a separate shape that lands once the shaft has
+ * drawn, sliding in along the ribbon's last direction (see motion.css), so it
+ * is never wiped in slice by slice. Without CSS animation (reduced motion, no
+ * JavaScript) every mask is complete and the ribbon is simply there.
  */
 export function Ribbon({
   id,
@@ -82,14 +85,29 @@ export function Ribbon({
           ))}
         </defs>
       )}
-      {geometries.map((geometry, i) => (
-        <path
-          key={i}
-          className="ribbon__shape"
-          d={geometry.outline}
-          mask={animated ? `url(#${id}-reveal-${i})` : undefined}
-        />
-      ))}
+      {geometries.map((geometry, i) =>
+        animated ? (
+          <g key={i}>
+            <path className="ribbon__shape" d={geometry.shaft} mask={`url(#${id}-reveal-${i})`} />
+            {geometry.head && geometry.headFrom && (
+              <path
+                className={['ribbon__shape', 'ribbon__head', geometry.stage && `ribbon__head--${geometry.stage}`]
+                  .filter(Boolean)
+                  .join(' ')}
+                d={geometry.head}
+                style={
+                  {
+                    '--hx': `${geometry.headFrom[0].toFixed(1)}px`,
+                    '--hy': `${geometry.headFrom[1].toFixed(1)}px`,
+                  } as CSSProperties
+                }
+              />
+            )}
+          </g>
+        ) : (
+          <path key={i} className="ribbon__shape" d={geometry.outline} />
+        ),
+      )}
     </svg>
   )
 }

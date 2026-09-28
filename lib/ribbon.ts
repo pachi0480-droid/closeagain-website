@@ -31,9 +31,18 @@ export type RibbonSpec = {
 }
 
 export type RibbonGeometry = {
-  /** The filled outline: shaft plus arrowhead. */
+  /** The filled outline: shaft plus arrowhead, for a ribbon that is simply there. */
   outline: string
-  /** The centreline, extended through the arrow tip. Used to reveal the ribbon. */
+  /** The shaft alone, for a ribbon that draws itself along `guide`. */
+  shaft: string
+  /**
+   * The arrowhead alone (null without one). It overlaps the shaft's last
+   * stretch slightly, so the two meet without a seam.
+   */
+  head: string | null
+  /** Where the arrowhead starts before it lands: back along the end tangent. */
+  headFrom: readonly [number, number] | null
+  /** The centreline, to the end of the shaft. Used to reveal the ribbon. */
   guide: string
   /** Widest point of the shape, for sizing the reveal mask stroke. */
   maxWidth: number
@@ -191,21 +200,30 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
     maxWidth = Math.max(maxWidth, half * 2)
   }
 
-  const outline =
+  const sides = (between: string) =>
     `M ${pt(left[0])}` +
     left.slice(1).map((v) => ` L ${pt(v)}`).join('') +
-    head +
+    between +
     right
       .slice()
       .reverse()
       .map((v) => ` L ${pt(v)}`)
       .join('') +
     ' Z'
+  const outline = sides(head)
+  const shaft = sides('')
+
+  // The arrowhead as its own shape, reaching a few samples back into the
+  // shaft so the join never shows a hairline.
+  const last = samples.length - 1
+  const back = Math.max(0, last - 3)
+  const headShape = spec.arrow
+    ? `M ${pt(left[back])} L ${pt(left[last])}${head} L ${pt(right[last])} L ${pt(right[back])} Z`
+    : null
+  const headFrom = spec.arrow ? ([-endTangent[0] * endWidth * 1.1, -endTangent[1] * endWidth * 1.1] as const) : null
 
   const guide =
-    `M ${pt(segments[0][0])}` +
-    segments.map((s) => ` C ${pt(s[1])} ${pt(s[2])} ${pt(s[3])}`).join('') +
-    (spec.arrow ? ` L ${pt(tip)}` : '')
+    `M ${pt(segments[0][0])}` + segments.map((s) => ` C ${pt(s[1])} ${pt(s[2])} ${pt(s[3])}`).join('')
 
   const padding = maxWidth * 1.5
   const xs = [...samples.map((p) => p[0]), tip[0]]
@@ -216,5 +234,5 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
     width: Math.max(...xs) - Math.min(...xs) + padding * 2,
     height: Math.max(...ys) - Math.min(...ys) + padding * 2,
   }
-  return { outline, guide, maxWidth, bounds }
+  return { outline, shaft, head: headShape, headFrom, guide, maxWidth, bounds }
 }

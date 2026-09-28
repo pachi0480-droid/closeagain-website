@@ -9,6 +9,9 @@ declare global {
 
 const revealTargets = '[data-reveal], [data-scroll], [data-draw="scroll"], [data-draw="scrub"], .pv-status'
 
+/** Lands (or lifts) a scroll-drawn ribbon's arrowhead; see motion.css. */
+const land = (heads: Element[], landed: boolean) => heads.forEach((head) => head.toggleAttribute('data-landed', landed))
+
 /** Pages with a scroll-driven ribbon story load the timeline library; others never do. */
 const storySelector = '[data-flow], [data-flow-steps], [data-draw="scrub"], .trail'
 
@@ -69,9 +72,12 @@ export function MotionController() {
           const branches = flow.querySelectorAll('.ribbon__guide--a')
           const trunk = flow.querySelectorAll('.ribbon__guide--b')
           const columns = Array.from(flow.querySelectorAll('.paths__col'))
+          const heads = Array.from(flow.querySelectorAll<SVGElement>('.ribbon__head'))
           const timeline = gsap.timeline({
             defaults: { ease: 'none' },
             scrollTrigger: { trigger: flow, start: 'top 78%', end: 'bottom 65%', scrub: 0.4, invalidateOnRefresh: true },
+            // The merged ribbon's arrowhead lands as the trunk finishes.
+            onUpdate: () => land(heads, timeline.progress() > 0.97),
           })
           timeline.fromTo(bands, { scaleY: 0 }, { scaleY: 1, duration: 1.65 }, 0)
           columns.forEach((column) => {
@@ -88,9 +94,12 @@ export function MotionController() {
         rails.forEach((rail) => {
           rail.classList.add('is-in')
           rail.dataset.progress = ''
+          rail.style.setProperty('--p', '0')
           gsap.fromTo(rail, { scaleY: 0 }, {
             scaleY: 1, ease: 'none',
             scrollTrigger: { trigger: rail.parentElement, start: 'top 76%', end: 'bottom 58%', scrub: 0.3 },
+            // The end band's arrowhead counter-scales with this (motion.css).
+            onUpdate() { rail.style.setProperty('--p', this.progress().toFixed(3)) },
           })
         })
         // Ribbons that draw in step with reading: the weave, the loop.
@@ -98,9 +107,11 @@ export function MotionController() {
         scrubbed.forEach((ribbon) => {
           ribbon.classList.add('is-in')
           ribbon.dataset.progress = ''
+          const heads = Array.from(ribbon.querySelectorAll<SVGElement>('.ribbon__head'))
           gsap.fromTo(ribbon.querySelectorAll('.ribbon__guide'), { strokeDashoffset: 1 }, {
             strokeDashoffset: 0, ease: 'none',
             scrollTrigger: { trigger: ribbon.parentElement ?? ribbon, start: 'top 80%', end: 'center 45%', scrub: 0.5 },
+            onUpdate() { land(heads, this.progress() > 0.97) },
           })
         })
 
@@ -146,8 +157,9 @@ export function MotionController() {
         return () => {
           active = false
           flows.forEach((flow) => flow.classList.remove('flow-ready'))
-          rails.forEach((rail) => { delete rail.dataset.progress })
+          rails.forEach((rail) => { delete rail.dataset.progress; rail.style.removeProperty('--p') })
           scrubbed.forEach((ribbon) => { delete ribbon.dataset.progress })
+          document.querySelectorAll('.ribbon__head[data-landed]').forEach((head) => head.removeAttribute('data-landed'))
           stories.forEach((story) => {
             story.querySelectorAll('[data-flow-step]').forEach((event) => event.removeAttribute('data-pending'))
             const rail = story.querySelector<HTMLElement>('.ribbon-band')

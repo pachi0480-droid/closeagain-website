@@ -19,7 +19,7 @@ export function Automation() {
         viewBox={weaveWide.viewBox}
         spec={weaveWide.spec}
         preserveAspectRatio="xMidYMid slice"
-        draw="scrub"
+        draw="scroll"
       />
       <div className="followup__inner wrap">
         <div className="followup__ui" data-reveal>
@@ -60,7 +60,7 @@ export function SecondChance() {
             className="second__ribbon"
             viewBox={secondChanceLoop.viewBox}
             spec={secondChanceLoop.spec}
-            draw="scrub"
+            draw="scroll"
           />
           <ReengagePreview />
         </div>

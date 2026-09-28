@@ -5,12 +5,11 @@ import { buildRibbon, type RibbonSpec } from '@/lib/ribbon'
  * How a ribbon appears:
  *  - `intro`   reveals along its curve once, on the first homepage load of a
  *              session
- *  - `scroll`  reveals along its curve once, as it arrives in view
- *  - `scrub`   draws in step with the visitor's scroll (MotionController);
- *              without that enhancement it behaves like `scroll`
+ *  - `scroll`  reveals along its curve once, when it is well in view, and
+ *              always plays through to the arrowhead
  *  - `static`  never animates
  */
-export type Draw = 'intro' | 'scroll' | 'scrub' | 'static'
+export type Draw = 'intro' | 'scroll' | 'static'
 
 export type RibbonLayer = {
   spec: RibbonSpec

@@ -19,8 +19,6 @@ const pageWords = (industry: (typeof industries)[number]) => [
   industry.title,
   industry.description,
   industry.lede,
-  industry.exchange.ask,
-  industry.exchange.reply,
   industry.leaksTitle,
   ...industry.leaks.flatMap((leak) => [leak.title, leak.body, leak.fix]),
   ...industry.examples.flatMap((example) => [example.moment, example.message, example.reply ?? '']),

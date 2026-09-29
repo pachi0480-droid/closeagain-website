@@ -1,15 +1,14 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Bubble } from '@/components/art/Bubble'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
-import { ClosingCta, revealDelay, SectionHead } from '@/components/editorial/blocks'
-import { IndustryCard } from '@/components/industries/IndustryCard'
+import { Trail } from '@/components/art/Trail'
+import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
 import { PlanCards } from '@/components/pricing/Plans'
 import { ButtonLink, TextLink } from '@/components/ui/links'
-import { includedOn, industries, industryById, industryBySlug, industryPage } from '@/content/industries'
+import { includedOn, industries, industryById, industryBySlug, industryPage, type SampleMessage } from '@/content/industries'
 import { site } from '@/content/site'
 import { pageMetadata } from '@/lib/seo'
 
@@ -28,12 +27,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata({ title: industry.title, description: industry.description, path: industry.path })
 }
 
+/** One sample message, as it would be sent, with the reply that stops the follow-up. */
+function Sample({ sample }: { sample: SampleMessage }) {
+  const { examples } = industryPage
+  return (
+    <figure className="sample ind-sample" aria-label={`${examples.note} ${sample.moment}`}>
+      <p className="sample__moment">{sample.moment}</p>
+      <p className="sample__who">{examples.sent}</p>
+      <Bubble tone="ask" className="sample__bubble">
+        {sample.message}
+      </Bubble>
+      {sample.reply && (
+        <>
+          <Bubble tone="reply" className="sample__bubble sample__bubble--reply">
+            {sample.reply}
+          </Bubble>
+          <p className="sample__stop">{examples.replied}</p>
+        </>
+      )}
+      <figcaption className="ind-sample__note">{examples.note}</figcaption>
+    </figure>
+  )
+}
+
 /**
- * One industry, one page: what CloseAgain does for this kind of business,
- * where its leads slip, sample wording, the part of the product that does
- * the work, the plans, and a way to buy with the industry already chosen.
- * Every word comes from content/industries.ts; plan facts come from
- * content/pricing.ts.
+ * One industry, one page, in the site's editorial layout (as Features and How
+ * it works): the introduction and the way to buy; then one ribbon threading
+ * where this industry's leads slip — each beside the message CloseAgain would
+ * send — and the part of the product that does the work; the plans, with the
+ * industry already chosen; other industries; the next step. Every word comes
+ * from content/industries.ts; plan facts come from content/pricing.ts.
  */
 export default async function IndustryPage({ params }: Props) {
   const industry = industryBySlug((await params).industry)
@@ -55,140 +78,84 @@ export default async function IndustryPage({ params }: Props) {
       }
     : null
 
+  const leakItems = leaks.map((leak, i) => ({
+    key: leak.title,
+    copy: (
+      <div className="trail__anchor">
+        <p className="trail__kicker">
+          {String(i + 1).padStart(2, '0')} · {page.leaks.eyebrow}
+        </p>
+        <h2 className="trail__title">{leak.title}</h2>
+        <p className="trail__body">{leak.body}</p>
+        <p className="ind-fix">
+          <span className="ind-fix__label">{page.leaks.fixLabel}</span> {leak.fix}
+        </p>
+        <p className="trail__plans">
+          <span className="trail__plans-label">{page.leaks.plansLabel}</span> {includedOn(leak.row)}
+        </p>
+      </div>
+    ),
+    visual: examples[i] ? (
+      <Sample sample={examples[i]} />
+    ) : preview.kind === 'reengage' ? (
+      <ReengagePreview />
+    ) : (
+      <ProductPreview kind={preview.kind} />
+    ),
+  }))
+
   return (
     <>
-      <header className="ind-hero">
-        <div className="ind-hero__inner wrap">
-          <div className="ind-hero__copy">
-            <nav className="ind-hero__crumbs" aria-label="Breadcrumb">
-              <ol>
-                <li>
-                  <Link href={page.overview.href}>{page.overview.label}</Link>
-                </li>
-                <li aria-current="page">{industry.name}</li>
-              </ol>
-            </nav>
-            <h1 id="page-title" className="ind-hero__title">
-              <span className="ind-hero__lead">{page.titleLead}</span>{' '}
-              <span className="ind-hero__for">for {industry.audience}</span>
-            </h1>
-            <p className="ind-hero__lede">{industry.lede}</p>
-            <div className="ind-hero__actions">
-              <ButtonLink href={industry.contactHref} size="lg">
-                {page.cta}
-              </ButtonLink>
-              <TextLink href={page.secondary.href}>{page.secondary.label}</TextLink>
-            </div>
-            <p className="ind-hero__terms">
-              {page.terms.map((term, i) => (
-                <span key={term}>
-                  {i > 0 && (
-                    <span className="ind-hero__terms-sep" aria-hidden="true">
-                      ·
-                    </span>
-                  )}
-                  {term}
-                </span>
-              ))}
-            </p>
+      <header className="intro ind-intro">
+        <div className="intro__inner wrap">
+          <nav className="ind-intro__crumbs eyebrow" aria-label="Breadcrumb">
+            <ol>
+              <li>
+                <Link href={page.overview.href}>{page.overview.label}</Link>
+              </li>
+              <li aria-current="page">{industry.name}</li>
+            </ol>
+          </nav>
+          <h1 id="page-title" className="intro__title">
+            {page.titleLead} for {industry.audience}.
+          </h1>
+          <p className="intro__lede">{industry.lede}</p>
+          <div className="ind-intro__actions">
+            <ButtonLink href={industry.contactHref} size="lg">
+              {page.cta}
+            </ButtonLink>
+            <TextLink href={page.secondary.href}>{page.secondary.label}</TextLink>
           </div>
-
-          <figure className="ind-hero__figure">
-            <div className="ind-hero__frame">
-              <div className="ind-hero__media">
-                <Image
-                  src={industry.image}
-                  alt=""
-                  fill
-                  sizes="(min-width: 960px) 32rem, 92vw"
-                  className="ind-hero__image"
-                  loading="eager"
-                  fetchPriority="high"
-                />
-              </div>
-              {/* Decoration: the real sample wording has its own section below. */}
-              <div className="ind-hero__exchange" aria-hidden="true">
-                <Bubble tone="ask" className="ind-hero__bubble ind-hero__bubble--ask">
-                  {industry.exchange.ask}
-                </Bubble>
-                <Bubble tone="reply" className="ind-hero__bubble ind-hero__bubble--reply">
-                  {industry.exchange.reply}
-                </Bubble>
-              </div>
-            </div>
-            <figcaption className="ind-hero__note">{page.imageNote}</figcaption>
-          </figure>
+          <p className="ind-intro__terms">{page.terms.join(' · ')}</p>
         </div>
       </header>
 
-      <section className="section slips" aria-labelledby="leaks-title">
+      <section className="trail-section ind-trail" aria-label={industry.leaksTitle}>
         <div className="wrap">
-          <SectionHead id="leaks-title" eyebrow={page.leaks.eyebrow} title={industry.leaksTitle} />
-          <ol className="slips__list">
-            {leaks.map((leak, i) => (
-              <li key={leak.title} className="slip" data-reveal style={revealDelay(i)}>
-                <span className="slip__num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <h3 className="slip__title">{leak.title}</h3>
-                <p className="slip__body">{leak.body}</p>
-                <div className="slip__fix">
-                  <p className="slip__fix-label">{page.leaks.fixLabel}</p>
-                  <p className="slip__fix-body">{leak.fix}</p>
-                  <p className="slip__plans">
-                    {page.leaks.plansLabel} {includedOn(leak.row)}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="section samples" aria-labelledby="samples-title">
-        <div className="wrap">
-          <SectionHead id="samples-title" eyebrow={page.examples.eyebrow} title={page.examples.title} />
-          <p className="samples__note">{page.examples.note}</p>
-          <ul className="samples__list">
-            {examples.map((example, i) => (
-              <li key={example.moment} className="sample" data-reveal style={revealDelay(i)}>
-                <p className="sample__moment">{example.moment}</p>
-                <p className="sample__who">{page.examples.sent}</p>
-                <Bubble tone="ask" className="sample__bubble">
-                  {example.message}
-                </Bubble>
-                {example.reply && (
-                  <>
-                    <Bubble tone="reply" className="sample__bubble sample__bubble--reply">
-                      {example.reply}
-                    </Bubble>
-                    <p className="sample__stop">{page.examples.replied}</p>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="section ind-view" aria-labelledby="view-title">
-        <div className="ind-view__inner wrap">
-          <div className="ind-view__copy" data-reveal>
-            <p className="eyebrow">{page.preview.eyebrow}</p>
-            <h2 id="view-title" className="ind-view__title">
-              {preview.title}
-            </h2>
-            <p className="ind-view__body">{preview.body}</p>
-            <p className="trail__plans">
-              <span className="trail__plans-label">{page.leaks.plansLabel}</span> {includedOn(preview.row)}
-            </p>
-            <TextLink href={page.preview.link.href} arrow className="ind-view__link">
-              {page.preview.link.label}
-            </TextLink>
-          </div>
-          <div className="ind-view__visual" data-reveal style={revealDelay(1)}>
-            {preview.kind === 'reengage' ? <ReengagePreview /> : <ProductPreview kind={preview.kind} />}
-          </div>
+          <Trail
+            id={`industry-${industry.slug}`}
+            label={industry.leaksTitle}
+            items={[
+              ...leakItems,
+              {
+                key: 'inside',
+                copy: (
+                  <div className="trail__anchor">
+                    <p className="trail__kicker">{page.preview.eyebrow}</p>
+                    <h2 className="trail__title">{preview.title}</h2>
+                    <p className="trail__body">{preview.body}</p>
+                    <p className="trail__plans">
+                      <span className="trail__plans-label">{page.leaks.plansLabel}</span> {includedOn(preview.row)}
+                    </p>
+                    <TextLink href={page.preview.link.href} arrow className="ind-inside__link">
+                      {page.preview.link.label}
+                    </TextLink>
+                  </div>
+                ),
+                visual: preview.kind === 'reengage' ? <ReengagePreview /> : <ProductPreview kind={preview.kind} />,
+              },
+            ]}
+          />
         </div>
       </section>
 
@@ -200,23 +167,23 @@ export default async function IndustryPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="section related" aria-labelledby="related-title">
-        <div className="wrap">
-          <SectionHead id="related-title" eyebrow={page.related.eyebrow} title={page.related.title} link={page.related.link} />
-          <ul className="industries__grid industries__grid--related">
-            {related.map((other, i) => (
-              <IndustryCard
-                key={other.id}
-                industry={other}
-                label={page.related.go}
-                headingLevel="h3"
-                index={i}
-                sizes="(min-width: 700px) 30vw, 8rem"
-              />
-            ))}
-          </ul>
-        </div>
-      </section>
+      <nav className="ind-related wrap" aria-labelledby="related-title">
+        <p id="related-title" className="ind-related__title">
+          {page.related.lead}
+        </p>
+        <ul className="ind-related__list">
+          {related.map((other) => (
+            <li key={other.id}>
+              <TextLink href={other.path} arrow>
+                {other.name}
+              </TextLink>
+            </li>
+          ))}
+          <li>
+            <TextLink href={page.related.link.href}>{page.related.link.label}</TextLink>
+          </li>
+        </ul>
+      </nav>
 
       <ClosingCta
         id="closing-title"

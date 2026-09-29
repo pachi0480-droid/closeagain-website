@@ -125,7 +125,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
       {
         title: 'Listing inquiries that wait until evening',
         body: 'A buyer asks about a home while you’re at a showing. By the time you call back, they’ve already talked to another agent.',
-        fix: 'CloseAgain answers the inquiry while you’re busy and keeps following up until they reply.',
+        fix: 'CloseAgain answers the inquiry while you’re busy and follows up on schedule, stopping as soon as they reply.',
         row: 'Automated follow-up',
       },
       {
@@ -232,7 +232,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
     audience: 'med spas',
     description:
       'CloseAgain follows up with every consultation inquiry and checks back with past clients, automatically — so more of your med spa inquiries become booked treatments.',
-    lede: 'CloseAgain answers consultation inquiries, follows up until they reply, and checks back with past clients who are due for another visit — so more inquiries become booked treatments.',
+    lede: 'CloseAgain answers consultation inquiries, follows up on schedule, and checks back with past clients who are due for another visit — so more inquiries become booked treatments.',
     exchange: { ask: 'Still interested?', reply: 'Yes — is Friday open?' },
     leaksTitle: 'Where med spa bookings slip away.',
     leaks: [
@@ -286,8 +286,8 @@ const copy: Record<IndustryId, IndustryCopy> = {
     slug: 'law-firms',
     audience: 'law firms',
     description:
-      'CloseAgain answers new client inquiries, follows up until they reply and checks back with the ones who went quiet — so more of your law firm’s inquiries become clients.',
-    lede: 'CloseAgain answers new inquiries, including the ones that arrive after hours, and follows up until they reply — so more of the people who contact your firm become clients.',
+      'CloseAgain answers new client inquiries, follows up on schedule and checks back with the ones who went quiet — so more of your law firm’s inquiries become clients.',
+    lede: 'CloseAgain answers new inquiries, including the ones that arrive after hours, and follows up on schedule — so more of the people who contact your firm become clients.',
     exchange: { ask: 'Still need to talk?', reply: 'Yes, tomorrow works.' },
     leaksTitle: 'Where potential clients slip away.',
     leaks: [
@@ -300,7 +300,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
       {
         title: 'Consultations that never get scheduled',
         body: 'An interested caller says they’ll check their calendar and get back to you. Then no one follows up, and the matter goes elsewhere.',
-        fix: 'CloseAgain keeps following up until they reply, and every reply lands in one inbox for your intake team.',
+        fix: 'CloseAgain follows up on schedule and stops when they reply; every reply lands in one inbox for your intake team.',
         row: 'Unified conversation inbox',
       },
       {
@@ -518,7 +518,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
       {
         title: 'Inquiries that arrive at a bad time',
         body: 'Leads don’t wait for a quiet moment. The ones that come in while you’re busy are the ones that go cold.',
-        fix: 'CloseAgain replies to every new lead and keeps following up until they answer.',
+        fix: 'CloseAgain replies to every new lead and follows up on schedule until they answer or the sequence ends.',
         row: 'Automated follow-up',
       },
       {

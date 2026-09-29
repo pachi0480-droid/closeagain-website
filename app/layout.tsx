@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Serif_Display, Source_Serif_4 } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 import { MotionController } from '@/components/site/MotionController'
 import { home } from '@/content/home'
-import { isIndexable, site } from '@/content/site'
+import { analyticsEnabled, isIndexable, site } from '@/content/site'
 import './globals.css'
 
 /**
@@ -102,6 +103,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         {children}
         <MotionController />
+        {/* Cookieless page views, only when switched on (see content/site.ts). */}
+        {analyticsEnabled && <Analytics />}
         {structuredData && (
           <script
             type="application/ld+json"

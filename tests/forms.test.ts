@@ -9,7 +9,7 @@ import { formMessages, goalOptions, industryOptions, inquiryFields, planOptions,
 import { plans } from '../content/pricing.ts'
 import { site } from '../content/site.ts'
 import { readTextWithin } from '../lib/forms/body.ts'
-import { buildNotification, buildPayload, parseWebhookUrl, resendEndpoint, resolveDelivery, type Delivery } from '../lib/forms/delivery.ts'
+import { buildConfirmation, buildNotification, buildPayload, parseWebhookUrl, resendEndpoint, resolveConfirmation, resolveDelivery, type Delivery } from '../lib/forms/delivery.ts'
 import { processSubmission } from '../lib/forms/process.ts'
 import { endpointFor, fallbackFor, fallbackIds, formPageFor, redirectPathFor } from '../lib/forms/protocol.ts'
 import { createRateLimiter } from '../lib/forms/rate-limit.ts'
@@ -431,8 +431,9 @@ describe('server decision', () => {
         { FORMS_WEBHOOK_URL: 'https://hooks.example.com/in' },
         fetchReturning(new Response(null, { status })),
       )
-      const result = await processSubmission('inquiry', complete, delivery)
+      const { values, ...result } = await processSubmission('inquiry', complete, delivery)
       assert.deepEqual(result, { outcome: { status: 'ok' }, delivered: true, receipt: { kind: 'inquiry', plan: 'growth' } }, String(status))
+      assert.equal(values?.business, 'Rivera & Co', String(status))
     }
     for (const status of [301, 400, 401, 404, 429, 500, 503]) {
       const delivery = resolveDelivery(
@@ -655,5 +656,56 @@ describe('email delivery (Resend)', () => {
     assert.deepEqual(await emailOnly!.deliver('inquiry', values()), { ok: true })
     const neither = resolveDelivery(env, fetchReturning(() => Promise.resolve(new Response(null, { status: 502 }))))
     assert.deepEqual(await neither!.deliver('inquiry', values()), { ok: false, reason: 'rejected' })
+  })
+})
+
+describe('confirmation email to the prospect', () => {
+  const values = () => {
+    const checked = validateSubmission('inquiry', complete)
+    assert.equal(checked.ok, true)
+    return checked.values
+  }
+
+  it('stays off without a sender on the owner’s own domain, or when switched off', () => {
+    assert.equal(resolveConfirmation({ RESEND_API_KEY: 're_test' }), null)
+    assert.equal(resolveConfirmation({ FORMS_EMAIL_FROM: 'CloseAgain <hi@example.com>' }), null)
+    assert.equal(
+      resolveConfirmation({ RESEND_API_KEY: 're_test', FORMS_EMAIL_FROM: 'CloseAgain <hi@example.com>', FORMS_CONFIRM_PROSPECT: 'off' }),
+      null,
+    )
+    assert.ok(resolveConfirmation({ RESEND_API_KEY: 're_test', FORMS_EMAIL_FROM: 'CloseAgain <hi@example.com>' }))
+  })
+
+  it('goes to the prospect, replies to the business, names the plan and claims no payment', async () => {
+    let body: Record<string, unknown> = {}
+    const confirmation = resolveConfirmation(
+      { RESEND_API_KEY: 're_test', FORMS_EMAIL_FROM: 'CloseAgain <hi@example.com>' },
+      (async (_url: unknown, init: RequestInit) => {
+        body = JSON.parse(String(init.body))
+        return json(200, { id: 'c1' })
+      }) as unknown as typeof fetch,
+    )
+    assert.deepEqual(await confirmation!.send(values()), { ok: true })
+    assert.deepEqual(body.to, ['sam@example.com'])
+    assert.equal(body.reply_to, site.email)
+    assert.equal(body.from, 'CloseAgain <hi@example.com>')
+    const text = String(body.text)
+    assert.ok(text.startsWith('Hi Sam,'))
+    assert.ok(text.includes('the Growth plan'))
+    assert.ok(text.includes('No payment has been taken.'))
+    assert.ok(!/\bsent\b.*\binvoice\b|\bcharged\b/i.test(text))
+  })
+
+  it('says nothing about a plan when the visitor wasn’t sure', () => {
+    const mail = buildConfirmation({ ...values(), plan: unsurePlan }, { from: 'a@example.com', replyTo: 'b@example.com' })
+    assert.ok(mail.text.includes('Thanks for getting in touch about CloseAgain. Your details reached us.'))
+  })
+
+  it('is only returned for a delivered lead', async () => {
+    const delivered = await processSubmission('inquiry', complete, resolveDelivery({ RESEND_API_KEY: 're_test' }, fetchReturning(json(200, { id: 'x' }))))
+    assert.equal(delivered.outcome.status, 'ok')
+    assert.equal(delivered.values?.email, 'sam@example.com')
+    const refused = await processSubmission('inquiry', complete, resolveDelivery({ RESEND_API_KEY: 're_test' }, fetchReturning(json(500, {}))))
+    assert.equal(refused.values, undefined)
   })
 })

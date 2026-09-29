@@ -44,6 +44,7 @@
  */
 
 import { site } from '../../content/site.ts'
+import { planById } from '../../content/pricing.ts'
 import { inquiryLines, inquirySubject } from './email.ts'
 import { fieldsFor, type FieldValues, type FormKind } from './schema.ts'
 
@@ -163,6 +164,57 @@ export function resolveDelivery(
     async deliver(kind, fields) {
       const results = await Promise.all(destinations.map((send) => send(kind, fields)))
       return results.find((result) => result.ok) ?? results[0]
+    },
+  }
+}
+
+/**
+ * The “we got your details” email to the person who asked.
+ *
+ * Needs email delivery (RESEND_API_KEY) and a sender on the owner's own
+ * verified domain (FORMS_EMAIL_FROM) — Resend's shared test sender can only
+ * email the account owner, so without one this stays off. Turn it off with
+ * FORMS_CONFIRM_PROSPECT=off. It is sent after the lead has been delivered:
+ * if it fails, the lead is still delivered and the visitor sees no error.
+ */
+export function buildConfirmation(
+  fields: FieldValues,
+  { from, replyTo }: { from: string; replyTo: string },
+) {
+  const values = buildPayload('inquiry', fields).fields
+  const first = (values.name ?? '').trim().split(/\s+/)[0] || 'there'
+  const plan = planById(values.plan)
+  const text = [
+    `Hi ${first},`,
+    '',
+    `Thanks for getting in touch about CloseAgain${plan ? ` and the ${plan.name} plan` : ''}. Your details reached us.`,
+    '',
+    'What happens next:',
+    '1. We review what you sent.',
+    '2. We reply to this address to confirm the right plan and setup.',
+    '3. You review everything before CloseAgain goes live.',
+    '',
+    'No payment has been taken. If you have a question in the meantime, just reply to this email.',
+    '',
+    '— CloseAgain',
+    replyTo,
+  ].join('\n')
+  return { from, to: [values.email], reply_to: replyTo, subject: 'We got your details — CloseAgain', text }
+}
+
+export function resolveConfirmation(
+  env: Env = process.env,
+  fetchImpl: typeof fetch = fetch,
+  timeoutMs = 8000,
+): { send(fields: FieldValues): Promise<DeliveryResult> } | null {
+  const apiKey = env.RESEND_API_KEY?.trim()
+  const from = env.FORMS_EMAIL_FROM?.trim()
+  if (!apiKey || !from || env.FORMS_CONFIRM_PROSPECT?.trim() === 'off') return null
+  const replyTo = env.FORMS_NOTIFY_EMAIL?.trim() || site.email
+  return {
+    async send(fields) {
+      if (!emailPattern.test(fields.email ?? '')) return { ok: false, reason: 'rejected' }
+      return post(fetchImpl, resendEndpoint, { authorization: `Bearer ${apiKey}` }, buildConfirmation(fields, { from, replyTo }), timeoutMs)
     },
   }
 }

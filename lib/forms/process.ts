@@ -6,7 +6,7 @@
 import type { Delivery } from './delivery.ts'
 import { honeypotField, type ServerStatus } from './protocol.ts'
 import { receiptFor, type Receipt } from './receipt.ts'
-import { validateSubmission, type FormKind } from './schema.ts'
+import { validateSubmission, type FieldValues, type FormKind } from './schema.ts'
 
 export type ProcessResult = {
   outcome: ServerStatus
@@ -14,6 +14,8 @@ export type ProcessResult = {
   delivered: boolean
   /** For the confirmation page; present exactly when `delivered` is true. */
   receipt: Receipt | null
+  /** The checked answers, when delivered (for the prospect's confirmation email). */
+  values?: FieldValues
 }
 
 const refused = (outcome: ServerStatus): ProcessResult => ({ outcome, delivered: false, receipt: null })
@@ -38,5 +40,5 @@ export async function processSubmission(
   const sent = await delivery.deliver(kind, result.values)
   if (!sent.ok) return refused({ status: 'failed' })
 
-  return { outcome: { status: 'ok' }, delivered: true, receipt: receiptFor(kind, result.values) }
+  return { outcome: { status: 'ok' }, delivered: true, receipt: receiptFor(kind, result.values), values: result.values }
 }

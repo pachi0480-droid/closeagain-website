@@ -8,9 +8,13 @@ The site is ready to publish. One step is required: telling it where to send inq
 2. **Deploy on Vercel.** Import the GitHub repository at [vercel.com/new](https://vercel.com/new), or run `npx vercel@latest deploy --prod` from this folder. In Project → Settings → Environment Variables, add `RESEND_API_KEY` with that key for Production, then redeploy.
 3. **Send yourself a test inquiry.** Open `/contact` on the live site, fill the form with your own details, and send it. It should arrive in Gmail within a minute, titled "CloseAgain — … inquiry from …". The first time, check Spam and mark it "Not spam". Replying to the email answers the person who asked.
 4. **Search.** Nothing to configure. A production build on Vercel uses the project's production address, so pages are indexable, the sitemap lists them, and canonical URLs point there; previews stay hidden. Add the site in [Google Search Console](https://search.google.com/search-console) and submit `/sitemap.xml`.
-5. **Later, with your own domain:**
+5. **See who visits (optional, free).** In Vercel → Analytics, click Enable, then add `VERCEL_WEB_ANALYTICS=on` and redeploy. Visits to `/thank-you` are your sent inquiries. The privacy policy switches its wording by itself.
+6. **Let buyers book a call (optional).** Add `NEXT_PUBLIC_BOOKING_URL` with your Calendly or Cal.com link and redeploy. Contact to buy then offers "Pick a time for a call".
+7. **Put a face on it.** Add your name, role, photo and a few words to `content/people.ts`, and the About page shows "Who's behind CloseAgain".
+8. **Add proof as it arrives.** When a customer gives you a real result and written permission, add it to `content/proof.ts`, and the homepage shows it. Never before.
+9. **Later, with your own domain:**
    - Add it in Vercel → Domains and redeploy; the origin follows automatically.
-   - Verify it in Resend and set `FORMS_EMAIL_FROM` (for example `CloseAgain <inquiries@yourdomain.com>`). You can then also send inquiries to any address with `FORMS_NOTIFY_EMAIL`.
+   - Verify it in Resend and set `FORMS_EMAIL_FROM` (for example `CloseAgain <inquiries@yourdomain.com>`). Every prospect then also gets a "we got your details" email that replies to you, and you can send inquiries to any address with `FORMS_NOTIFY_EMAIL`.
    - A business address on your own domain will also read better to buyers than a Gmail address.
 
 ## Run locally
@@ -39,7 +43,10 @@ In both modes the address is also shown under the form for anyone who prefers to
 | --- | --- |
 | `RESEND_API_KEY` | Server-only. Emails each inquiry to the business through Resend. |
 | `FORMS_NOTIFY_EMAIL` | Optional. Where inquiry emails go. Defaults to the business address. |
-| `FORMS_EMAIL_FROM` | Optional. The sender, once a domain is verified in Resend. Defaults to Resend's `onboarding@resend.dev`. |
+| `FORMS_EMAIL_FROM` | Optional. The sender, once a domain is verified in Resend. Defaults to Resend's `onboarding@resend.dev`. With it set, prospects also get a confirmation email. |
+| `FORMS_CONFIRM_PROSPECT` | Optional. `off` stops the prospect confirmation email. |
+| `VERCEL_WEB_ANALYTICS` | Optional. `on` adds Vercel Web Analytics (enable it in the dashboard first). |
+| `NEXT_PUBLIC_BOOKING_URL` | Optional. An https scheduling link shown on Contact to buy. |
 | `FORMS_WEBHOOK_URL` | Optional server-only HTTPS destination for inquiry JSON (a CRM, Zapier or Make, Formspree, or your own endpoint). |
 | `FORMS_WEBHOOK_SECRET` | Optional server-only bearer secret sent to the webhook. Never use a `NEXT_PUBLIC_` prefix for it. |
 | `NEXT_PUBLIC_SITE_URL` | Optional override of the public origin. On Vercel production builds the project's production domain is used automatically. With no origin, pages are `noindex` and the sitemap is empty. |

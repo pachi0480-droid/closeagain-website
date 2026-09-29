@@ -5,6 +5,7 @@ import { OrderSummary } from '@/components/forms/OrderSummary'
 import { contact } from '@/content/contact'
 import { formMessages, industryOptions, inquiryFields } from '@/content/forms'
 import { planById } from '@/content/pricing'
+import { booking } from '@/content/site'
 import { resolveDelivery } from '@/lib/forms/delivery'
 import { pageMetadata } from '@/lib/seo'
 
@@ -56,6 +57,14 @@ export default async function ContactPage({
             initialIndustry={selectedIndustry}
             emailTo={canSubmit ? undefined : contact.email.address}
           />
+          {booking && (
+            <p className="contact-form__email contact-form__booking">
+              {booking.lead}{' '}
+              <a href={booking.href} target="_blank" rel="noopener noreferrer">
+                {booking.label}
+              </a>
+            </p>
+          )}
           <p className="contact-form__email">
             {contact.email.formAlternative} <a href={`mailto:${contact.email.address}`}>{contact.email.address}</a>
           </p>

@@ -45,8 +45,6 @@ type IndustryCopy = {
   /** Meta description: about 150 characters, plain, money first. */
   description: string
   lede: string
-  /** Two short bubbles beside the image. Decoration, so keep them short. */
-  exchange: { ask: string; reply: string }
   leaksTitle: string
   leaks: readonly [IndustryLeak, IndustryLeak, IndustryLeak]
   examples: readonly SampleMessage[]
@@ -77,7 +75,6 @@ export const industryPage = {
   cta: primaryCta.label,
   secondary: { label: 'See pricing', href: '/pricing' },
   terms: [startingPriceText, billingNote],
-  imageNote: 'Editorial image, generated for this site — not customer photography.',
   leaks: {
     eyebrow: 'Where leads slip',
     fixLabel: 'With CloseAgain',
@@ -101,9 +98,9 @@ export const industryPage = {
     link: { label: 'Compare all plans', href: '/pricing' },
   },
   related: {
-    eyebrow: 'Who it’s for',
-    title: 'More businesses that live on follow‑up.',
+    lead: 'CloseAgain also works for',
     link: { label: 'All industries', href: '/who-its-for' },
+    /** The link on each card on the /who-its-for overview. */
     go: 'See how it works',
   },
   closing: {
@@ -119,7 +116,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain follows up with every buyer and seller inquiry automatically and checks back with past leads — so more of your real estate leads become clients.',
     lede: 'CloseAgain follows up with every buyer and seller inquiry automatically, and checks back with the people who weren’t ready yet — so more of your leads become clients.',
-    exchange: { ask: 'Still looking?', reply: 'Yes — this weekend?' },
     leaksTitle: 'Where real estate leads slip away.',
     leaks: [
       {
@@ -176,7 +172,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain answers new service requests and follows up on estimates that went quiet, automatically — so more of your home service quotes become booked jobs.',
     lede: 'CloseAgain answers new service requests, follows up on every estimate you send and brings back the ones that were never accepted — so more of your quotes become booked jobs.',
-    exchange: { ask: 'Still thinking it over?', reply: 'Yes — can you come Tuesday?' },
     leaksTitle: 'Where home service jobs slip away.',
     leaks: [
       {
@@ -233,7 +228,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain follows up with every consultation inquiry and checks back with past clients, automatically — so more of your med spa inquiries become booked treatments.',
     lede: 'CloseAgain answers consultation inquiries, follows up on schedule, and checks back with past clients who are due for another visit — so more inquiries become booked treatments.',
-    exchange: { ask: 'Still interested?', reply: 'Yes — is Friday open?' },
     leaksTitle: 'Where med spa bookings slip away.',
     leaks: [
       {
@@ -288,7 +282,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain answers new client inquiries, follows up on schedule and checks back with the ones who went quiet — so more of your law firm’s inquiries become clients.',
     lede: 'CloseAgain answers new inquiries, including the ones that arrive after hours, and follows up on schedule — so more of the people who contact your firm become clients.',
-    exchange: { ask: 'Still need to talk?', reply: 'Yes, tomorrow works.' },
     leaksTitle: 'Where potential clients slip away.',
     leaks: [
       {
@@ -343,7 +336,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain follows up with new inquiries and sent proposals automatically, and reopens old prospects — so more of your agency’s prospects become signed clients.',
     lede: 'CloseAgain replies to new inquiries, follows up on the proposals you send and reopens prospects who went quiet — so more conversations turn into signed clients.',
-    exchange: { ask: 'Still considering us?', reply: 'Yes — can we talk Friday?' },
     leaksTitle: 'Where agency prospects slip away.',
     leaks: [
       {
@@ -399,7 +391,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain follows up on demo requests and quiet trials automatically, and reopens stalled opportunities — so more of your SaaS sign-ups become paying customers.',
     lede: 'CloseAgain follows up on demo requests, checks in on trials that went quiet and reopens stalled opportunities — so more of your sign-ups become paying customers.',
-    exchange: { ask: 'How’s the trial going?', reply: 'Good — can we see a demo?' },
     leaksTitle: 'Where trials and demos slip away.',
     leaks: [
       {
@@ -455,7 +446,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'CloseAgain answers wholesale, bulk and custom-order inquiries and follows up on quotes automatically — so more of your e-commerce inquiries become orders.',
     lede: 'Not every sale goes through the cart. CloseAgain follows up on wholesale, bulk and custom-order inquiries, and checks back on quotes that went quiet — so more of them become orders.',
-    exchange: { ask: 'Still planning the order?', reply: 'Yes — send the quote?' },
     leaksTitle: 'Where the bigger orders slip away.',
     leaks: [
       {
@@ -512,7 +502,6 @@ const copy: Record<IndustryId, IndustryCopy> = {
     description:
       'If your business runs on inquiries, quotes and callbacks, CloseAgain follows up with every lead automatically — so more of them become paying customers.',
     lede: 'Event venues, tutoring centers, fitness studios, contractors, consultants: if leads come in and go quiet, CloseAgain follows up with every one and brings old leads back — so more of them become paying customers.',
-    exchange: { ask: 'Is this still on your list?', reply: 'It is. Let’s talk.' },
     leaksTitle: 'Where leads slip away.',
     leaks: [
       {

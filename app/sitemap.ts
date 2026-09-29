@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { industries } from '@/content/industries'
 import { privacy, terms } from '@/content/legal'
 import { isIndexable, site } from '@/content/site'
 
@@ -9,6 +10,7 @@ const routes: Array<{ path: string; priority: number }> = [
   { path: '/how-it-works', priority: 0.9 },
   { path: '/features', priority: 0.9 },
   { path: '/who-its-for', priority: 0.8 },
+  ...industries.map((industry) => ({ path: industry.path, priority: 0.7 })),
   { path: '/contact', priority: 0.8 },
   { path: '/after-you-buy', priority: 0.6 },
   { path: '/faq', priority: 0.6 },

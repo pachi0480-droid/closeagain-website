@@ -258,7 +258,7 @@ export const whoItsFor = {
     {
       id: 'other',
       formValue: 'Other lead-driven business',
-      name: 'Other Lead-Driven Businesses',
+      name: 'Other Lead‑Driven Businesses',
       outcome: 'If leads come in and go quiet, CloseAgain keeps them moving.',
       image: '/industries/other.webp',
     },

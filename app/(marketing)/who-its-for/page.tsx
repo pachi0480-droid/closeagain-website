@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import type { CSSProperties } from 'react'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
-import { Arrow } from '@/components/ui/links'
+import { IndustryCard } from '@/components/industries/IndustryCard'
+import { industries, industryPage } from '@/content/industries'
 import { whoItsFor } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -15,11 +13,11 @@ export const metadata: Metadata = pageMetadata({
 
 /**
  * Eight kinds of lead-driven business, each with one line on what CloseAgain
- * does for it. The whole card is the target and opens the buying form with
- * that industry already chosen.
+ * does for it. The whole card is the target and opens that industry's own
+ * page; the closing call to action opens the buying form.
  */
 export default function WhoItsForPage() {
-  const { industries, closing } = whoItsFor
+  const { closing } = whoItsFor
 
   return (
     <>
@@ -29,34 +27,14 @@ export default function WhoItsForPage() {
         <div className="wrap">
           <ul className="industries__grid">
             {industries.map((industry, i) => (
-              <li
+              <IndustryCard
                 key={industry.id}
-                className="industry"
-                data-reveal
-                style={{ '--reveal-delay': `${(i % 4) * 70}ms` } as CSSProperties}
-              >
-                <span className="industry__media">
-                  <Image
-                    src={industry.image}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1180px) 300px, (min-width: 560px) 45vw, 92vw"
-                    className="industry__image"
-                    loading={i < 4 ? 'eager' : 'lazy'}
-                    fetchPriority={i === 0 ? 'high' : undefined}
-                  />
-                </span>
-                <div className="industry__text">
-                  <h2 className="industry__name">{industry.name}</h2>
-                  <p className="industry__outcome">{industry.outcome}</p>
-                  <Link href={`/contact?industry=${encodeURIComponent(industry.formValue)}`} className="industry__go">
-                    <span>
-                      Talk to us<span className="sr-only"> about {industry.name.toLowerCase()}</span>
-                    </span>
-                    <Arrow />
-                  </Link>
-                </div>
-              </li>
+                industry={industry}
+                label={industryPage.related.go}
+                index={i}
+                eager={i < 4}
+                sizes="(min-width: 1180px) 300px, (min-width: 560px) 45vw, 92vw"
+              />
             ))}
           </ul>
           <p className="industries__note">{whoItsFor.imageNote}</p>

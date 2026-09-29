@@ -42,7 +42,10 @@ for current delivery behavior, verification and launch requirements.
 3. **Legal copy.** `/privacy` and `/terms` describe what this site actually
    does (`content/legal.ts`). Have them reviewed, and update them if the site
    starts collecting more (for example analytics).
-4. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
+4. **Optional switches.** Analytics (`VERCEL_WEB_ANALYTICS`), a booking link
+   (`NEXT_PUBLIC_BOOKING_URL`) and prospect confirmation emails (with
+   `FORMS_EMAIL_FROM`) are explained in `.env.example` and `DEPLOYMENT-NOTES.md`.
+5. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
    confirmed and what is still open — Core's channel, usage allowances and
    fees, the Scale badge, how appointments are booked — and how each is worded
    meanwhile. Answer them there, then update `content/`.
@@ -54,7 +57,8 @@ for current delivery behavior, verification and launch requirements.
 | `/` | Hero · Again · New + Old opportunities · From lead to customer · follow-up automation · old lead recovery · dashboard showcase · pricing · next step |
 | `/how-it-works` | Six steps on one ribbon, each labelled automatic or your team, then what stays in your hands |
 | `/features` | Nine capabilities, each with its product view and the plans that include it |
-| `/who-its-for` | Eight lead-driven industries, each with a one-line value statement |
+| `/who-its-for` | Eight lead-driven industries, each with a one-line value statement, linking to its own page |
+| `/who-its-for/<industry>` | One landing page per industry (`real-estate`, `home-services`, `med-spas`, `law-firms`, `agencies`, `saas-technology`, `e-commerce`, `lead-driven-businesses`): where its leads slip, sample wording, a product view, plans, and Contact to buy with the industry pre-selected |
 | `/pricing` | Core · Growth · Scale · Enterprise, a plan finder, what every plan shares, the full comparison and a break-even check |
 | `/after-you-buy` | What happens after you buy: six steps to go live (`/getting-started` redirects here) |
 | `/faq`, `/about` | Eleven buying questions; the short brand story |
@@ -73,7 +77,11 @@ content/          Shared public copy and data
   pricing.ts      the ONLY place prices and plan facts live
   home.ts         homepage copy: hero, paths, the lead-to-customer flow, showcase
   pages.ts        supporting pages; FAQ (by id, reused on home and pricing)
+  industries.ts   the industry landing pages (names and images from pages.ts)
   contact.ts      the buying page and confirmation copy
+  industries.ts   the eight industry landing pages
+  people.ts       who's behind CloseAgain (About shows it once filled in)
+  proof.ts        real customer stories, with permission (homepage shows them once added)
   forms.ts        buying-form fields, options and messages
   legal.ts        privacy and terms (placeholders)
   demo/           sample data for the demo

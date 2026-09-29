@@ -26,24 +26,56 @@ const terms = planTerms.join(' · ')
 
 export const home = {
   meta: {
-    title: 'CloseAgain — The conversation isn’t over',
+    title: 'CloseAgain — Turn more of your leads into paying customers',
     description: site.description,
   },
 
   hero: {
-    category: site.category,
+    category: 'Automatic lead follow-up',
     /** Rendered as three spans so small screens can break after “The”. */
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
+    /** What the business gets, in one line, before how it works. */
+    promise: 'More of your leads become paying customers.',
     /** Three lines on wide screens, as in the approved composition. */
     lede: [
-      'CloseAgain captures new leads, follows up automatically,',
-      'and re‑engages old opportunities —',
-      'so more conversations become customers.',
+      'CloseAgain follows up with every new lead automatically,',
+      'chases the ones that go quiet and brings old leads back —',
+      'so fewer sales slip away.',
     ],
     primary: primaryCta,
     secondary: learnCta,
     terms: [startingPriceText, billingNote],
     exchange: { ask: 'Still interested?', reply: 'Yes. Let’s talk.' },
+  },
+
+  /** Right under the hero: where the money is, and whether it pays. */
+  payoff: {
+    eyebrow: 'Why it pays',
+    title: 'Every lead that goes quiet is a sale you already paid for.',
+    points: [
+      {
+        title: 'Leads you already paid for',
+        body: 'Ads, referrals and your website bring people in. The ones nobody gets back to buy from someone else. CloseAgain follows up with every one, automatically.',
+      },
+      {
+        title: 'Old leads, new revenue',
+        body: 'Quotes that went quiet are people who already wanted what you sell. CloseAgain reaches back out, so some of them come back.',
+      },
+      {
+        title: 'Your team talks to buyers',
+        body: 'Replies and booked appointments land in one inbox, so your people spend their time closing — not chasing.',
+      },
+    ],
+    calculator: {
+      title: 'Does it pay for itself?',
+      label: 'What is one new customer worth to you?',
+      hint: 'The profit from one sale or job',
+      placeholder: '1,500',
+      prompt: 'Type your number to see how many extra customers a month cover each plan.',
+      invalid: 'Enter an amount in dollars, like 1,500.',
+      note: 'Your number, not a forecast. CloseAgain can’t promise any particular result.',
+      link: { label: 'Compare the plans', href: '/pricing' },
+    },
   },
 
   again: {

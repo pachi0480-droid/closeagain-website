@@ -114,8 +114,12 @@
 
   /* The explanation and the calls to action settle into place — moved, never
      hidden, so they are readable and clickable from the first frame. */
-  html:not([data-intro='seen']) :is(.hero__category, .hero__lede, .hero__actions, .hero__terms) {
+  html:not([data-intro='seen']) :is(.hero__category, .hero__promise, .hero__lede, .hero__actions, .hero__terms) {
     animation: settle-in 820ms var(--ease-editorial) 360ms backwards;
+  }
+
+  html:not([data-intro='seen']) .hero__lede {
+    animation-delay: 400ms;
   }
 
   html:not([data-intro='seen']) .hero__actions {

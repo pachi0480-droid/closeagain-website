@@ -25,7 +25,7 @@ export const site = {
   promise:
     'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
   description:
-    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
+    'CloseAgain follows up with every lead automatically — new inquiries and old ones that went quiet — so more of them become paying customers.',
   origin: configuredOrigin || null,
 } as const
 

@@ -5,6 +5,7 @@ import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
 import { LeadFlow } from '@/components/home/LeadFlow'
 import { Paths } from '@/components/home/Paths'
+import { Payoff } from '@/components/home/Payoff'
 import { Showcase } from '@/components/home/Showcase'
 import { Automation, SecondChance } from '@/components/home/Stories'
 import { PlanCards } from '@/components/pricing/Plans'
@@ -30,7 +31,7 @@ export default function HomePage() {
     <>
       <Hero />
 
-      <hr className="rule" />
+      <Payoff />
 
       <WordSplit word={again.word} id="again" className="word-split--home">
         <p className="word-split__lines">

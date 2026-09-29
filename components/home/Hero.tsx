@@ -12,13 +12,15 @@ import { IntroMark } from './IntroMark'
  * screens get their own art direction: three lines, left-aligned, and a
  * ribbon that threads between the last two lines and lands beside the reply.
  *
- * The headline, the explanation and both calls to action are there on first
- * paint and never wait for motion. Only the decoration moves: on the first
+ * Under the headline, the promise says what the business gets (more paying
+ * customers) before the explanation says how. The headline, promise,
+ * explanation and both calls to action are there on first paint and never
+ * wait for motion. Only the decoration moves: on the first
  * visit of a session the ribbon draws through and the two bubbles follow it
  * (motion.css).
  */
 export function Hero() {
-  const { category, headline, lede, primary, secondary, terms, exchange } = home.hero
+  const { category, headline, promise, lede, primary, secondary, terms, exchange } = home.hero
 
   return (
     <section className="hero" aria-labelledby="hero-title">
@@ -51,6 +53,8 @@ export function Hero() {
             draw="intro"
           />
         </div>
+
+        <p className="hero__promise">{promise}</p>
 
         <p className="hero__lede">
           {lede.map((line) => (

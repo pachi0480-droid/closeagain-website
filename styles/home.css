@@ -94,13 +94,26 @@
   right: 0.35em;
 }
 
-.hero__lede {
+/* The promise: what the business gets, in the display face. */
+.hero__promise {
   order: 3;
   margin: 0.25rem 0 0;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.35rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.hero__lede {
+  order: 3;
+  margin: 0.85rem 0 0;
   max-width: 31rem;
   font-size: var(--text-lede);
   line-height: 1.42;
-  color: var(--ink);
+  color: var(--ink-2);
 }
 
 .hero__actions {
@@ -175,8 +188,15 @@
     margin-top: 0;
   }
 
-  .hero__lede {
+  .hero__promise {
     margin-top: calc(var(--hs) * 0.133);
+    max-width: none;
+    /* Sized with the composition, so it always clears the ribbon's descent. */
+    font-size: min(2.35rem, calc(var(--hs) * 0.3));
+  }
+
+  .hero__lede {
+    margin-top: 0.75rem;
     /* Scales with the composition so it always clears the ribbon's descent. */
     max-width: min(40rem, 58vw);
     line-height: 1.35;
@@ -1205,5 +1225,256 @@
   .tour__label,
   .tour__body {
     transition: color 420ms var(--ease-editorial);
+  }
+}
+
+/* ── Why it pays ───────────────────────────────────────────────────────────
+   Right under the hero: where the money is, and a pays-for-itself check
+   with the visitor's own number. */
+
+.payoff {
+  padding-block: clamp(3.5rem, 2rem + 5vw, 6.5rem);
+  border-block: 1px solid var(--rule);
+}
+
+.payoff__inner {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.payoff__title {
+  margin: 0;
+  max-width: 17ch;
+  font-size: var(--display-m);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.payoff__points {
+  display: grid;
+  margin: clamp(1.75rem, 4vw, 2.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.payoff__point {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-block: 1.3rem;
+  border-top: 1px solid var(--rule);
+}
+
+.payoff__icon {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  background: var(--featured-wash);
+  color: var(--vermilion-ink);
+}
+
+.payoff__point-title {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1.15rem + 0.5vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.payoff__point-body {
+  margin: 0.4rem 0 0;
+  max-width: 36rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+@media (min-width: 1024px) {
+  .payoff__inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(24rem, 0.9fr);
+    column-gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+  }
+}
+
+/* The pays-for-itself check. */
+.payback {
+  display: grid;
+  gap: 0.9rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-lift);
+}
+
+.payback__title {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: var(--display-xs);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.payback__label {
+  display: grid;
+  gap: 0.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.payback__hint {
+  font-size: var(--ui-sm);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.payback__money {
+  position: relative;
+}
+
+.payback__money > span {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  translate: 0 -50%;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+.payback__money input {
+  width: 100%;
+  min-height: 3.6rem;
+  padding: 0 1rem 0 2.2rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--paper-lift);
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  transition:
+    border-color var(--dur-ui) var(--ease-ui),
+    box-shadow var(--dur-state) var(--ease-ui);
+}
+
+.payback__money input::placeholder {
+  color: var(--ink-3);
+  opacity: 0.6;
+}
+
+.payback__money input:focus {
+  outline: none;
+  border-color: var(--vermilion-ink);
+  box-shadow: var(--ring-accent);
+}
+
+.payback__money input[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.payback__plans {
+  display: grid;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.payback__plan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.payback__plan-name {
+  display: grid;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.payback__plan-price {
+  margin-top: 0.15rem;
+  font-family: var(--font-text);
+  font-size: var(--ui-sm);
+  letter-spacing: 0;
+  color: var(--ink-3);
+}
+
+.payback__plan--featured .payback__plan-name {
+  color: var(--vermilion-ink);
+}
+
+.payback__plan-result {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  text-align: right;
+}
+
+.payback__count {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.payback__plan-result[data-empty] .payback__count {
+  color: var(--ink-3);
+}
+
+.payback__unit {
+  max-width: 7.5rem;
+  font-size: var(--ui-xs);
+  line-height: 1.3;
+  color: var(--ink-3);
+  text-align: left;
+}
+
+.payback__summary {
+  margin: 0.3rem 0 0;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.payback__summary[data-invalid] {
+  color: var(--error);
+}
+
+.payback__note {
+  margin: 0;
+  font-size: var(--ui-sm);
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+
+.payback__link {
+  justify-self: start;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .payback__count {
+    animation: count-in 360ms var(--ease-editorial);
+  }
+}
+
+@keyframes count-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
   }
 }

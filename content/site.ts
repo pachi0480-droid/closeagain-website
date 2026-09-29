@@ -31,6 +31,34 @@ export const site = {
 
 export const isIndexable = Boolean(site.origin)
 
+/**
+ * Visitor analytics: Vercel Web Analytics — cookieless page views, nothing that
+ * follows a person to other sites. Off unless the deployment sets
+ * VERCEL_WEB_ANALYTICS=on (after Web Analytics is enabled in the Vercel
+ * dashboard), so a site without it never requests a script that isn't there.
+ * Read on the server at build time; the privacy policy follows this switch.
+ */
+export const analyticsEnabled = process.env.VERCEL_WEB_ANALYTICS === 'on'
+
+/**
+ * A scheduling page (Calendly, Cal.com, …) for buyers who want to talk first.
+ * Set NEXT_PUBLIC_BOOKING_URL to its https address; without it nothing shows.
+ */
+const bookingUrl = (() => {
+  const raw = process.env.NEXT_PUBLIC_BOOKING_URL?.trim()
+  if (!raw) return null
+  try {
+    const url = new URL(raw)
+    return url.protocol === 'https:' ? url.toString() : null
+  } catch {
+    return null
+  }
+})()
+
+export const booking = bookingUrl
+  ? { lead: 'Prefer to talk first?', label: 'Pick a time for a call', href: bookingUrl }
+  : null
+
 export type NavLink = { label: string; href: string }
 
 /** Desktop header. */

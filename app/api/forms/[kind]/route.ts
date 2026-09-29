@@ -1,6 +1,6 @@
-import { NextResponse, type NextRequest } from 'next/server'
+import { after, NextResponse, type NextRequest } from 'next/server'
 import { readTextWithin } from '@/lib/forms/body'
-import { resolveDelivery } from '@/lib/forms/delivery'
+import { resolveConfirmation, resolveDelivery } from '@/lib/forms/delivery'
 import { processSubmission } from '@/lib/forms/process'
 import {
   httpStatusFor,
@@ -77,7 +77,17 @@ export async function POST(request: NextRequest, context: { params: Promise<{ ki
   }
 
   const delivery = resolveDelivery()
-  const { outcome, receipt } = await processSubmission(kind, raw, delivery)
+  const { outcome, receipt, values } = await processSubmission(kind, raw, delivery)
+
+  // Once the lead is safely delivered, tell the person who asked that it
+  // arrived — after the response, so it never slows or fails their request.
+  const confirmation = outcome.status === 'ok' && values ? resolveConfirmation() : null
+  if (confirmation && values) {
+    after(async () => {
+      const sent = await confirmation.send(values)
+      if (!sent.ok) console.warn(`[forms] ${kind} confirmation email not sent (${sent.reason})`)
+    })
+  }
 
   // Operational signal only — never the visitor's details.
   if (outcome.status === 'unavailable') {

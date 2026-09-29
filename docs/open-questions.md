@@ -55,7 +55,19 @@ and delete the item from this list.
 4. **Pausing on handoff.** Does automation pause when a person takes over? The
    sample handoff view shows it doing so.
 5. **Consent and compliance.** Who is responsible for text-message consent and
-   carrier registration (A2P 10DLC)?
+   carrier registration (A2P 10DLC)? Before sending business texts in the US,
+   carriers require registration through your texting provider (for example
+   Twilio). They typically ask for:
+   - your legal business name and EIN (the brand);
+   - the use case, such as follow-up with people who asked about a service;
+   - two or three sample messages;
+   - how people opt in, and the opt-out wording ("Reply STOP to opt out");
+   - a privacy policy saying mobile numbers and consent aren't shared for
+     marketing. `/privacy` already says this.
+
+   Each customer business must also have consent from the leads it texts.
+   Confirm the exact requirements with your texting provider; this list is a
+   starting point, not legal advice.
 
 ## Before public launch
 

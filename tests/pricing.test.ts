@@ -142,3 +142,15 @@ describe('break-even check', () => {
     assert.deepEqual(breakEven({ price: 'abc', other: '', profit: '300' }), { status: 'invalid', field: 'price' })
   })
 })
+
+describe('customer stories', () => {
+  it('are published only with the customer’s permission and full attribution', async () => {
+    const { stories } = await import('../content/proof.ts')
+    for (const story of stories) {
+      assert.equal(story.permission, true, story.business)
+      for (const field of ['business', 'person', 'role', 'quote'] as const) {
+        assert.ok(story[field].trim().length > 0, `${story.business}: ${field}`)
+      }
+    }
+  })
+})

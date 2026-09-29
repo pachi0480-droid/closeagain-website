@@ -112,7 +112,7 @@
   --gutter: clamp(1.25rem, 0.45rem + 4vw, 4.5rem); /* 20 → 72 */
   --reading: 38rem;
   --header-h: 4rem;
-  --section-y: clamp(4rem, 2.25rem + 6.5vw, 8.5rem);
+  --section-y: clamp(3.5rem, 2rem + 5vw, 7rem);
   --radius-pill: 999px;
 
   /* Motion — one vocabulary for the whole site */

@@ -85,21 +85,25 @@ function PlanCard({ plan, variant, level }: { plan: Plan; variant: 'full' | 'com
         </Link>
       </div>
 
-      <div className="plan__includes">
-        <p className="plan__includes-label">{plan.includesLabel}</p>
-        <ul className="plan__features">
-          {features.map((feature) => (
-            <li key={feature}>
-              <Check className="plan__tick" size={15} strokeWidth={2} aria-hidden="true" />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-        {variant === 'compact' && plan.features.length > features.length && (
-          <p className="plan__more">+ {plan.features.length - features.length} more</p>
-        )}
-        {variant === 'full' && plan.recommendation && <p className="plan__reason">{plan.recommendation.basis}</p>}
-      </div>
+      {/* The homepage's compact cards stop at the headline facts; the pricing
+          page (and the dark Enterprise band) list everything. */}
+      {(variant === 'full' || enterprise) && (
+        <div className="plan__includes">
+          <p className="plan__includes-label">{plan.includesLabel}</p>
+          <ul className="plan__features">
+            {features.map((feature) => (
+              <li key={feature}>
+                <Check className="plan__tick" size={15} strokeWidth={2} aria-hidden="true" />
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+          {variant === 'compact' && plan.features.length > features.length && (
+            <p className="plan__more">+ {plan.features.length - features.length} more</p>
+          )}
+          {variant === 'full' && plan.recommendation && <p className="plan__reason">{plan.recommendation.basis}</p>}
+        </div>
+      )}
     </article>
   )
 }

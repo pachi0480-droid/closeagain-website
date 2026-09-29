@@ -569,3 +569,9 @@
   .plan__match { transition: none; }
   .tier-stage[data-match] .plan .plan__card { translate: none; }
 }
+
+/* Homepage cards on phones and tablets: Enterprise stops at its headline
+   facts too (its feature list only serves the wide dark band). */
+@media (max-width: 879px) {
+  .plans--compact .plan--enterprise .plan__includes { display: none; }
+}

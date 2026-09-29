@@ -1209,3 +1209,46 @@
     transition: none;
   }
 }
+
+/* ── Who's behind CloseAgain (About; shown once content/people.ts names someone) ── */
+
+.founder__inner {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+.founder__photo {
+  width: min(100%, 20rem);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+}
+
+.founder__name {
+  margin: 0;
+  font-size: var(--display-s);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.founder__role {
+  margin: 0.4rem 0 0;
+  color: var(--ink-3);
+}
+
+.founder__story {
+  margin: 1rem 0 0;
+  max-width: 38rem;
+  font-size: var(--text-lede);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+@media (min-width: 820px) {
+  .founder__inner {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+  }
+}

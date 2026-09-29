@@ -379,6 +379,13 @@ textarea.field__control {
   color: var(--ink-2);
 }
 
+/* With a booking link, the email line follows it without a second rule. */
+.contact-form__booking + .contact-form__email {
+  margin-top: 0.6rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
 .contact-form__email a {
   display: inline-block;
   text-decoration: underline;

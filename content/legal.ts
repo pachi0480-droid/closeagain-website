@@ -15,7 +15,7 @@
  * and indexing all follow from this object.
  */
 
-import { site } from './site.ts'
+import { analyticsEnabled, site } from './site.ts'
 
 export type LegalSection = {
   id: string
@@ -57,7 +57,9 @@ export const privacy: LegalDocument = {
         'What you send us. When you use the Contact to buy form we receive what you enter: your name, business name, work email, phone number, industry, monthly lead volume, current CRM, preferred plan, main goal and any message. If you email us, we receive your message and address.',
         'What your browser sends. Like any website, our hosting provider receives standard request details — IP address, browser type, the page requested and the time — to deliver and protect the site. We also use your IP address briefly to limit repeated form submissions.',
         'What stays in your browser. The site remembers your light or dark theme choice on your device. For the current tab only, it remembers whether the homepage opening has played and any changes you make in the sample dashboard. After you send the form, a cookie lasting 30 minutes lets the confirmation page show that your request arrived.',
-        'We do not use advertising cookies, tracking pixels or third-party analytics on this website.',
+        analyticsEnabled
+          ? 'We count visits with Vercel Web Analytics, which records the pages viewed and general details such as country and device type — without cookies, without identifying you, and without following you to other sites. We do not use advertising cookies or tracking pixels.'
+          : 'We do not use advertising cookies, tracking pixels or third-party analytics on this website.',
       ],
     },
     {
@@ -73,7 +75,8 @@ export const privacy: LegalDocument = {
       id: 'sharing',
       heading: 'Sharing and service providers',
       body: [
-        'We share information only with service providers that help us run this website and deliver your inquiry to us — for example our hosting and email providers — and only so they can provide that service.',
+        'We share information only with service providers that help us run this website and deliver your inquiry to us — for example our hosting, email and analytics providers — and only so they can provide that service.',
+        'We do not sell, rent or share mobile phone numbers or text-message consent with anyone for their marketing.',
         'We may also disclose information when the law requires it, to protect our rights or the safety of others, or as part of a merger or sale of the business, in which case this policy continues to apply to it.',
       ],
     },

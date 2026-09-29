@@ -1182,11 +1182,11 @@
   .tour__list {
     /* The last area reaches the middle of the window while the dashboard is
        still pinned. */
-    padding-bottom: 12vh;
+    padding-bottom: 6vh;
   }
 
   .tour__item {
-    min-height: clamp(10rem, 27vh, 15rem);
+    min-height: clamp(8.5rem, 19vh, 12rem);
     padding: 1.35rem 0 1.35rem 1.35rem;
     border-top: 0;
     border-left: 2px solid var(--rule);
@@ -1477,4 +1477,65 @@
     opacity: 0;
     translate: 0 6px;
   }
+}
+
+/* ── From CloseAgain customers (shown once content/proof.ts has a story) ── */
+
+.proof__list {
+  display: grid;
+  gap: 1rem;
+  margin: clamp(1.75rem, 4vw, 2.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 820px) {
+  .proof__list {
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  }
+}
+
+.proof__figure {
+  display: grid;
+  gap: 1rem;
+  height: 100%;
+  margin: 0;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.proof__result {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--display-xs);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--vermilion-ink);
+}
+
+.proof__quote {
+  margin: 0;
+}
+
+.proof__quote p {
+  margin: 0;
+  font-size: var(--text-lede);
+  line-height: 1.45;
+}
+
+.proof__who {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: auto;
+}
+
+.proof__person {
+  font-weight: 600;
+}
+
+.proof__meta {
+  font-size: var(--ui-sm);
+  color: var(--ink-3);
 }

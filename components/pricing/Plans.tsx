@@ -14,7 +14,14 @@ const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }
  * (users, locations, the defining extra) before the full feature list.
  * Scale carries the emphasis: a vermilion edge, a lift, and the ribbon.
  */
-export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }) {
+export function PlanCards({
+  variant = 'full',
+  industry,
+}: {
+  variant?: 'full' | 'compact'
+  /** A contact-form industry value. Each plan's button then opens the form with it chosen too. */
+  industry?: string
+}) {
   return (
     <ol className={['plans', `plans--${variant}`].join(' ')}>
       {plans.map((plan, i) => (
@@ -25,14 +32,28 @@ export function PlanCards({ variant = 'full' }: { variant?: 'full' | 'compact' }
           data-reveal
           style={delay(i)}
         >
-          <PlanCard plan={plan} variant={variant} level={i} />
+          <PlanCard plan={plan} variant={variant} level={i} industry={industry} />
         </li>
       ))}
     </ol>
   )
 }
 
-function PlanCard({ plan, variant, level }: { plan: Plan; variant: 'full' | 'compact'; level: number }) {
+/** A plan's button link, with the industry added when there is one. */
+const ctaHref = (href: string, industry?: string) =>
+  industry ? `${href}${href.includes('?') ? '&' : '?'}industry=${encodeURIComponent(industry)}` : href
+
+function PlanCard({
+  plan,
+  variant,
+  level,
+  industry,
+}: {
+  plan: Plan
+  variant: 'full' | 'compact'
+  level: number
+  industry?: string
+}) {
   const headingId = `plan-${plan.id}-${variant}`
   const enterprise = plan.id === 'enterprise'
   const features = variant === 'full' ? plan.features : plan.features.slice(0, 3)
@@ -79,7 +100,7 @@ function PlanCard({ plan, variant, level }: { plan: Plan; variant: 'full' | 'com
             <li key={highlight}>{highlight}</li>
           ))}
         </ul>
-        <Link href={plan.cta.href} className="plan__cta">
+        <Link href={ctaHref(plan.cta.href, industry)} className="plan__cta">
           <span>{plan.cta.label}</span>
           <Arrow />
         </Link>

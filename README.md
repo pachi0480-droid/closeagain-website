@@ -42,7 +42,10 @@ for current delivery behavior, verification and launch requirements.
 3. **Legal copy.** `/privacy` and `/terms` describe what this site actually
    does (`content/legal.ts`). Have them reviewed, and update them if the site
    starts collecting more (for example analytics).
-4. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
+4. **Optional switches.** Analytics (`VERCEL_WEB_ANALYTICS`), a booking link
+   (`NEXT_PUBLIC_BOOKING_URL`) and prospect confirmation emails (with
+   `FORMS_EMAIL_FROM`) are explained in `.env.example` and `DEPLOYMENT-NOTES.md`.
+5. **Unconfirmed facts.** `docs/open-questions.md` lists what the owner has
    confirmed and what is still open — Core's channel, usage allowances and
    fees, the Scale badge, how appointments are booked — and how each is worded
    meanwhile. Answer them there, then update `content/`.
@@ -76,6 +79,9 @@ content/          Shared public copy and data
   pages.ts        supporting pages; FAQ (by id, reused on home and pricing)
   industries.ts   the industry landing pages (names and images from pages.ts)
   contact.ts      the buying page and confirmation copy
+  industries.ts   the eight industry landing pages
+  people.ts       who's behind CloseAgain (About shows it once filled in)
+  proof.ts        real customer stories, with permission (homepage shows them once added)
   forms.ts        buying-form fields, options and messages
   legal.ts        privacy and terms (placeholders)
   demo/           sample data for the demo

@@ -1,13 +1,14 @@
 import Link from 'next/link'
 import { home } from '@/content/home'
 import { industries } from '@/content/industries'
+import { TickerEase } from './TickerEase'
 
 /**
  * Who it is for, said in the first screen: the industries run past in the
  * display face, each linking to its own page. The list is written twice so
  * the loop is seamless; the copy is hidden from assistive technology and
- * the keyboard. Hovering or focusing holds it still, and with reduced
- * motion it is simply a wrapped line (home.css).
+ * the keyboard. Hovering or focusing eases it to a stop (TickerEase), and
+ * with reduced motion it is simply a wrapped line (home.css).
  */
 export function IndustryTicker() {
   const { lead, label } = home.ticker
@@ -36,6 +37,7 @@ export function IndustryTicker() {
           </div>
         </div>
       </div>
+      <TickerEase />
     </nav>
   )
 }

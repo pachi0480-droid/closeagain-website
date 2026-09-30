@@ -81,9 +81,12 @@
 @media (prefers-reduced-motion: no-preference) {
   /* ── 1. The homepage opening, once per session ───────────────────────── */
 
-  /* Navigation and the headline arrive first, line by line. */
-  html:not([data-intro='seen']) body:has(.hero) .site-header__inner {
-    animation: header-in 520ms var(--ease-editorial) both;
+  /* Navigation and the headline arrive first, line by line. The entrance
+     runs on the header itself, leaving the bar inside free to gather into
+     its pill with the scroll (chrome.css) even mid-entrance; it fills
+     backwards only, so nothing lingers on the header once it is done. */
+  html:not([data-intro='seen']) body:has(.hero) .site-header {
+    animation: header-in 520ms var(--ease-editorial) backwards;
   }
 
   html:not([data-intro='seen']) .hero__row--1 {

@@ -273,6 +273,12 @@
   padding-block: clamp(0.9rem, 0.6rem + 1vw, 1.4rem);
 }
 
+/* Room inside the clipped line for a focused name's outline. */
+.ticker__viewport {
+  padding-block: 6px;
+  margin-block: -6px;
+}
+
 /* Phones: the label lines up with the page; the names run edge to edge. */
 .ticker__lead {
   width: min(100% - 2 * var(--gutter), var(--measure-max));
@@ -291,8 +297,9 @@
   animation: ticker-run 52s linear infinite;
 }
 
-/* Hovering or focusing a name holds the line still. */
-.ticker:is(:hover, :focus-within) .ticker__track {
+/* Hovering or focusing a name holds the line still. With script it eases
+   to a stop instead (TickerEase sets data-eased). */
+.ticker:not([data-eased]):is(:hover, :focus-within) .ticker__track {
   animation-play-state: paused;
 }
 
@@ -410,8 +417,8 @@
 @media (prefers-reduced-motion: reduce) and (min-width: 960px) {
   .ticker__viewport {
     width: auto;
-    margin: 0;
-    padding: 0 max(var(--gutter), (100vw - var(--measure-max)) / 2) 0 1.5rem;
+    margin: -6px 0;
+    padding: 6px max(var(--gutter), (100vw - var(--measure-max)) / 2) 6px 1.5rem;
   }
 }
 

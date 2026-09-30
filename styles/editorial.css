@@ -182,11 +182,21 @@
 
 /* ── Closing call to action ────────────────────────────────────────────── */
 
+/* Every page ends on black paper (.band-ink): the one decision, set apart. */
 .closing {
-  position: relative;
   overflow: clip;
-  border-top: 1px solid var(--rule);
-  padding-block: var(--section-y) calc(var(--section-y) * 1.15);
+  margin-block: clamp(0.5rem, 2vw, 1.5rem) var(--band-inset);
+  padding-block: calc(var(--section-y) * 1.05) calc(var(--section-y) * 1.15);
+}
+
+/* The page's last word sits under the sheet, not against it. */
+.closing + .big-word--end {
+  margin-top: clamp(1.5rem, 4vw, 3.5rem);
+}
+
+/* When the sheet ends the page, the footer needs no rule of its own. */
+#main:has(.closing:last-child) + .site-footer {
+  border-top-color: transparent;
 }
 
 .closing__inner {

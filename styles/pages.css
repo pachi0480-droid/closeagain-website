@@ -782,87 +782,103 @@
   padding-bottom: var(--section-y);
 }
 
-.industries__grid {
-  display: grid;
-  gap: 1rem;
+/* An editorial index: number, name, outcome, and one sample exchange. */
+.ind-index {
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--rule);
 }
 
-.industry {
+.ind-row {
   position: relative;
+  isolation: isolate;
   display: grid;
-  grid-template-rows: auto 1fr;
-  overflow: hidden;
-  border: 1px solid var(--line);
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  row-gap: 1.5rem;
+  padding: clamp(1.75rem, 1.2rem + 2vw, 2.75rem) 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The hover wash: a soft panel that settles in behind the row. */
+.ind-row::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -1px calc(-1 * clamp(0.75rem, 0.4rem + 1.5vw, 1.75rem));
   border-radius: var(--radius-card);
   background: var(--surface);
-  transition:
-    border-color var(--dur-ui) var(--ease-ui),
-    box-shadow 360ms var(--ease-editorial),
-    translate 360ms var(--ease-editorial);
-}
-
-.industry:hover,
-.industry:focus-within {
-  border-color: var(--ink-3);
   box-shadow: var(--shadow-lift);
-  translate: 0 -4px;
+  opacity: 0;
+  scale: 0.985;
+  transition:
+    opacity 320ms var(--ease-editorial),
+    scale 480ms var(--ease-editorial);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .industry:hover,
-  .industry:focus-within {
-    translate: none;
-  }
+.ind-row:is(:hover, :focus-within)::before {
+  opacity: 1;
+  scale: 1;
 }
 
-.industry__media {
-  position: relative;
-  display: block;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: var(--surface-3);
+.ind-row:has(.ind-row__link:focus-visible)::before {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
-.industry__image {
-  object-fit: cover;
-  transition: scale 900ms var(--ease-editorial);
+.ind-row__num {
+  padding-top: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--vermilion-ink);
 }
 
-.industry:hover .industry__image,
-.industry:focus-within .industry__image {
-  scale: 1.035;
-}
-
-.industry__text {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 0.8rem;
-  padding: 1.1rem 1.15rem 1.1rem;
-}
-
-.industry__name {
+.ind-row__name {
   margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 1.35rem + 2.6vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  transition: translate 480ms var(--ease-editorial);
 }
 
-.industry__outcome {
-  margin: 0;
-  font-size: 0.9375rem;
+.ind-row:is(:hover, :focus-within) .ind-row__name {
+  translate: 0.3rem 0;
+}
+
+/* The whole row is the target; the name is the one link. */
+.ind-row__link {
+  color: inherit;
+}
+
+.ind-row__link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.ind-row__link:focus-visible {
+  outline: none;
+}
+
+.ind-row__outcome {
+  max-width: 32rem;
+  margin: 0.9rem 0 0;
+  font-size: var(--text-base);
   line-height: 1.5;
   color: var(--ink-2);
 }
 
-/* The whole card is the target; the link text names it. */
-.industry__go {
+.ind-row__go {
+  grid-column: 2;
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  min-height: 44px;
+  margin: -0.25rem 0 0;
   font-size: 1rem;
   color: var(--vermilion-ink);
   text-decoration: underline;
@@ -870,42 +886,110 @@
   text-underline-offset: 0.3em;
 }
 
-.industry__go::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+/* The sample: the follow-up CloseAgain sends, and the reply that stops it. */
+.ind-row__sample {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  max-width: 30rem;
+  margin: 0;
 }
 
-.industry__go:focus-visible {
-  outline: none;
+.ind-row__moment {
+  margin: 0 0 0.7rem;
+  font-size: var(--ui-2xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 
-.industry:has(.industry__go:focus-visible) {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+.ind-row__bubble {
+  display: block;
+  max-width: 100%;
+  padding: 0.75rem 1rem 0.8rem;
+  border-radius: 1.1rem 1.1rem 1.1rem 0.3rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  white-space: normal;
+  transition: translate 480ms var(--ease-editorial);
+}
+
+.ind-row__bubble--reply {
+  align-self: flex-end;
+  max-width: 80%;
+  margin-top: 1.6rem;
+  border-radius: 1.1rem 1.1rem 0.3rem 1.1rem;
+}
+
+.ind-row:is(:hover, :focus-within) .ind-row__bubble--reply {
+  translate: 0 -3px;
+}
+
+.ind-row__cue {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .ind-row {
+    grid-template-columns: 3.5rem minmax(0, 1fr) minmax(0, 25rem) 3.5rem;
+    column-gap: clamp(1.5rem, 0.5rem + 2vw, 3rem);
+    align-items: start;
+  }
+
+  .ind-row__num {
+    padding-top: 0.9rem;
+    font-size: 1.375rem;
+  }
+
+  .ind-row__go {
+    display: none;
+  }
+
+  .ind-row__sample {
+    grid-column: 3;
+    max-width: none;
+  }
+
+  .ind-row__cue {
+    grid-column: 4;
+    align-self: center;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px solid var(--rule-strong);
+    border-radius: 50%;
+    color: var(--ink);
+    transition:
+      background-color var(--dur-ui) var(--ease-ui),
+      border-color var(--dur-ui) var(--ease-ui),
+      color var(--dur-ui) var(--ease-ui);
+  }
+
+  .ind-row:is(:hover, :focus-within) .ind-row__cue {
+    border-color: var(--vermilion);
+    background: var(--vermilion);
+    color: var(--on-accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ind-row::before {
+    scale: none;
+  }
+
+  .ind-row:is(:hover, :focus-within) :is(.ind-row__name, .ind-row__bubble--reply) {
+    translate: none;
+  }
 }
 
 .industries__note {
   margin: 1.5rem 0 0;
   font-size: var(--text-xs);
   color: var(--ink-3);
-}
-
-@media (min-width: 560px) {
-  .industries__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .industry__media {
-    aspect-ratio: 4 / 3;
-  }
-}
-
-@media (min-width: 1180px) {
-  .industries__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.25rem;
-  }
 }
 
 

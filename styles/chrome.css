@@ -88,12 +88,12 @@
 }
 
 :is(a, button):is(:hover, :focus-visible) .arrow__head,
-.industry:is(:hover, :focus-within) .arrow__head {
+.ind-row:is(:hover, :focus-within) .arrow__head {
   translate: 3.5px 0;
 }
 
 :is(a, button):is(:hover, :focus-visible) .arrow__shaft,
-.industry:is(:hover, :focus-within) .arrow__shaft {
+.ind-row:is(:hover, :focus-within) .arrow__shaft {
   scale: 1.25 1;
 }
 
@@ -130,54 +130,86 @@
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 
+/* The header floats: at rest it is just the wordmark and links on the
+   paper; once the page moves beneath it, the bar gathers into a frosted
+   pill that hovers a little below the top edge. The header's own height
+   never changes, so nothing under it moves. */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 40;
-  /* Transparent at rest so the paper shows through; frosted cream once the
-     page moves beneath it. */
-  background-color: var(--header-clear);
-  box-shadow: 0 1px 0 transparent;
-  transition:
-    background-color var(--dur-ui) var(--ease-ui),
-    box-shadow var(--dur-ui) var(--ease-ui);
-}
-
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .site-header {
-    -webkit-backdrop-filter: blur(14px) saturate(1.1);
-    backdrop-filter: blur(14px) saturate(1.1);
-  }
-}
-
-/* Where scroll-driven animation exists, the sticky state is pure CSS. */
-@supports (animation-timeline: scroll()) {
-  .site-header {
-    animation: header-settle linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 48px;
-  }
-}
-
-/* Elsewhere the motion controller sets data-scrolled on <html>. */
-[data-scrolled] .site-header {
-  background-color: var(--header-frost);
-  box-shadow: 0 1px 0 var(--rule);
-}
-
-@keyframes header-settle {
-  to {
-    background-color: var(--header-frost);
-    box-shadow: 0 1px 0 var(--rule);
-  }
+  height: var(--header-h);
 }
 
 .site-header__inner {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
   height: var(--header-h);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background-color: var(--header-clear);
+  transition:
+    background-color var(--dur-state) var(--ease-ui),
+    border-color var(--dur-state) var(--ease-ui),
+    box-shadow var(--dur-state) var(--ease-ui),
+    height var(--dur-settle) var(--ease-editorial),
+    padding var(--dur-settle) var(--ease-editorial),
+    translate var(--dur-settle) var(--ease-editorial);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .site-header__inner {
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+  }
+}
+
+/* Where scroll-driven animation exists, the pill forms with the scroll. */
+@supports (animation-timeline: scroll()) {
+  .site-header__inner {
+    transition: none;
+    animation: header-settle linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 64px;
+  }
+}
+
+/* Elsewhere the motion controller sets data-scrolled on <html>. */
+[data-scrolled] .site-header__inner {
+  height: calc(var(--header-h) - var(--pill-shrink));
+  padding-inline: var(--pill-pad-start) var(--pill-pad-end);
+  translate: 0 calc(var(--pill-shrink) / 2);
+  border-color: var(--ink-hairline);
+  background-color: var(--header-frost);
+  box-shadow: var(--shadow-soft);
+}
+
+@keyframes header-settle {
+  to {
+    height: calc(var(--header-h) - var(--pill-shrink));
+    padding-inline: var(--pill-pad-start) var(--pill-pad-end);
+    translate: 0 calc(var(--pill-shrink) / 2);
+    border-color: var(--ink-hairline);
+    background-color: var(--header-frost);
+    box-shadow: var(--shadow-soft);
+  }
+}
+
+.site-header {
+  --pill-shrink: 0.75rem;
+  --pill-pad-start: 1.05rem;
+  --pill-pad-end: 0.4rem;
+}
+
+@media (min-width: 960px) {
+  .site-header {
+    --pill-shrink: 1.5rem;
+    --pill-pad-start: 1.6rem;
+    --pill-pad-end: 0.45rem;
+  }
 }
 
 .site-nav {

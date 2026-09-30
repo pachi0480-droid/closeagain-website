@@ -49,6 +49,11 @@ export const home = {
   },
 
   /** Right under the hero: where the money is, and whether it pays. */
+  /** Under the hero: the kinds of business it is for, each linking to its page. */
+  ticker: {
+    lead: 'Built for',
+    label: 'Industries CloseAgain is built for',
+  },
   payoff: {
     eyebrow: 'Why it pays',
     title: 'Every lead that goes quiet is a sale you already paid for.',

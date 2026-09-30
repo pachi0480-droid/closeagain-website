@@ -99,7 +99,7 @@ export function ClosingCta({
   art?: ReactNode
 }) {
   return (
-    <section className={['closing', art && 'closing--with-art'].filter(Boolean).join(' ')} aria-labelledby={id}>
+    <section className={['closing', 'band-ink', art && 'closing--with-art'].filter(Boolean).join(' ')} aria-labelledby={id}>
       {art}
       <div className="closing__inner wrap">
         <div className="closing__copy" data-reveal>

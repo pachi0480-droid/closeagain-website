@@ -2,8 +2,9 @@ import { Check, Minus } from 'lucide-react'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { Arrow } from '@/components/ui/links'
-import { billingNote, commitmentNote, comparison, plans, priceLabel, type Plan } from '@/content/pricing'
+import { billingNote, commitmentNote, comparison, planSpecs, plans, priceLabel, type Plan } from '@/content/pricing'
 import { CompareToggle } from './CompareToggle'
+import { PlanFeatures } from './PlanFeatures'
 
 const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }) as CSSProperties
 
@@ -11,7 +12,8 @@ const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }
  * The four plans, every word from content/pricing.ts. Core, Growth and Scale
  * sit side by side with prices and buttons aligned; Enterprise is the dark
  * band beneath. Each card leads with who it is for and its headline facts
- * (users, locations, the defining extra) before the full feature list.
+ * (users, locations, the defining extra), then the same fact sheet on every
+ * card, then the full feature list.
  * Scale carries the emphasis: a vermilion edge, a lift, and the ribbon.
  */
 export function PlanCards({
@@ -56,7 +58,6 @@ function PlanCard({
 }) {
   const headingId = `plan-${plan.id}-${variant}`
   const enterprise = plan.id === 'enterprise'
-  const features = variant === 'full' ? plan.features : plan.features.slice(0, 3)
 
   return (
     <article className="plan__card" aria-labelledby={headingId}>
@@ -106,24 +107,48 @@ function PlanCard({
         </Link>
       </div>
 
-      {/* The homepage's compact cards stop at the headline facts; the pricing
-          page (and the dark Enterprise band) list everything. */}
-      {(variant === 'full' || enterprise) && (
+      {/* The same fact sheet on every card, read from the comparison. */}
+      <dl className="plan__specs">
+        {planSpecs(plan.id).map((spec) => (
+          <div key={spec.label} className="plan__spec">
+            <dt>{spec.label}</dt>
+            <dd data-none={spec.value === null || undefined}>
+              {spec.value ?? (
+                <>
+                  <span aria-hidden="true">—</span>
+                  <span className="sr-only">Not included</span>
+                </>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      {/* The pricing page lists every feature; the compact cards (homepage,
+          industry pages) open theirs in place, so every plan is detailed
+          everywhere without the overview growing tall. */}
+      {variant === 'full' ? (
         <div className="plan__includes">
           <p className="plan__includes-label">{plan.includesLabel}</p>
           <ul className="plan__features">
-            {features.map((feature) => (
+            {plan.features.map((feature) => (
               <li key={feature}>
                 <Check className="plan__tick" size={15} strokeWidth={2} aria-hidden="true" />
                 <span>{feature}</span>
               </li>
             ))}
           </ul>
-          {variant === 'compact' && plan.features.length > features.length && (
-            <p className="plan__more">+ {plan.features.length - features.length} more</p>
-          )}
-          {variant === 'full' && plan.recommendation && <p className="plan__reason">{plan.recommendation.basis}</p>}
+          {plan.recommendation && <p className="plan__reason">{plan.recommendation.basis}</p>}
         </div>
+      ) : (
+        <PlanFeatures
+          plan={plan.name}
+          label={plan.includesLabel}
+          features={plan.features}
+          shown={enterprise ? 3 : 0}
+          additive={plan.includesLabel !== 'Includes'}
+          linked={!enterprise}
+        />
       )}
     </article>
   )

@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { ButtonLink, TextLink } from '@/components/ui/links'
+import { Words } from './Words'
 
 /** Stagger for a group of reveals — small, and capped so nothing waits long. */
 export const revealDelay = (index: number): CSSProperties =>
@@ -140,7 +141,7 @@ export function PageIntro({
       <div className="intro__inner wrap">
         <p className="eyebrow">{eyebrow}</p>
         <h1 id={id} className="intro__title">
-          {title}
+          <Words text={title} />
         </h1>
         {lede && <p className="intro__lede">{lede}</p>}
         {children}

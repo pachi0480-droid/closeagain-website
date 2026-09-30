@@ -53,13 +53,13 @@ export function IndustryIndex({
             </div>
 
             {sample && (
-              <figure className="ind-row__sample" aria-label={`${moment}: ${sample.moment}`}>
+              <figure className="ind-row__sample" aria-label={`${moment}: ${sample.moment}`} data-chat>
                 <figcaption className="ind-row__moment">{sample.moment}</figcaption>
                 <Bubble tone="ask" className="ind-row__bubble">
                   {sample.message}
                 </Bubble>
                 {sample.reply && (
-                  <Bubble tone="reply" className="ind-row__bubble ind-row__bubble--reply">
+                  <Bubble tone="reply" className="ind-row__bubble ind-row__bubble--reply" typing>
                     {sample.reply}
                   </Bubble>
                 )}

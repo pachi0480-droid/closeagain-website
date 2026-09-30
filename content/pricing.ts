@@ -330,3 +330,20 @@ export function availability(label: string): { summary: string; levels?: string[
     : undefined
   return { summary, levels }
 }
+
+/** The facts every plan card lists in the same order, read from the comparison. */
+export const specLabels = ['Users', 'Locations', 'Usage', 'Integrations', 'AI personalization', 'Setup', 'Support'] as const
+
+/**
+ * One plan's fact sheet: each row's value from the comparison, so a card can
+ * never disagree with the table. `null` means not included.
+ */
+export function planSpecs(id: PlanId): Array<{ label: string; value: string | null }> {
+  const rows = comparison.flatMap((group) => group.rows)
+  return specLabels.map((label) => {
+    const row = rows.find((candidate) => candidate.label === label)
+    if (!row) throw new Error(`No comparison row named “${label}”`)
+    const value = row.values[id]
+    return { label, value: value === false ? null : value === true ? 'Included' : value }
+  })
+}

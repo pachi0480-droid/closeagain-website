@@ -5,6 +5,7 @@ import { Bubble } from '@/components/art/Bubble'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
+import { Words } from '@/components/editorial/Words'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
 import { PlanCards } from '@/components/pricing/Plans'
 import { ButtonLink, TextLink } from '@/components/ui/links'
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 function Sample({ sample }: { sample: SampleMessage }) {
   const { examples } = industryPage
   return (
-    <figure className="sample ind-sample" aria-label={`${examples.note} ${sample.moment}`}>
+    <figure className="sample ind-sample" aria-label={`${examples.note} ${sample.moment}`} data-chat>
       <p className="sample__moment">{sample.moment}</p>
       <p className="sample__who">{examples.sent}</p>
       <Bubble tone="ask" className="sample__bubble">
@@ -39,7 +40,7 @@ function Sample({ sample }: { sample: SampleMessage }) {
       </Bubble>
       {sample.reply && (
         <>
-          <Bubble tone="reply" className="sample__bubble sample__bubble--reply">
+          <Bubble tone="reply" className="sample__bubble sample__bubble--reply" typing>
             {sample.reply}
           </Bubble>
           <p className="sample__stop">{examples.replied}</p>
@@ -117,7 +118,7 @@ export default async function IndustryPage({ params }: Props) {
             </ol>
           </nav>
           <h1 id="page-title" className="intro__title">
-            {page.titleLead} for {industry.audience}.
+            <Words text={`${page.titleLead} for ${industry.audience}.`} />
           </h1>
           <p className="intro__lede">{industry.lede}</p>
           <div className="ind-intro__actions">

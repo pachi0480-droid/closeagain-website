@@ -10,6 +10,8 @@ import { join, relative } from 'node:path'
 import { describe, it } from 'node:test'
 import {
   availability,
+  planSpecs,
+  specLabels,
   comparison,
   formatPrice,
   planById,
@@ -97,6 +99,17 @@ describe('plans are compared honestly', () => {
     for (const row of comparison.flatMap((group) => group.rows)) {
       for (const plan of plans) assert.ok(plan.id in row.values, `${row.label} has no value for ${plan.name}`)
     }
+  })
+
+  it('gives every plan the same fact sheet, read from the comparison', () => {
+    for (const plan of plans) {
+      const specs = planSpecs(plan.id)
+      assert.deepEqual(specs.map((spec) => spec.label), [...specLabels])
+    }
+    assert.deepEqual(planSpecs('core').find((spec) => spec.label === 'Users'), { label: 'Users', value: '1' })
+    assert.equal(planSpecs('core').find((spec) => spec.label === 'AI personalization')?.value, null)
+    assert.equal(planSpecs('scale').find((spec) => spec.label === 'AI personalization')?.value, 'Advanced')
+    assert.equal(planSpecs('enterprise').find((spec) => spec.label === 'Setup')?.value, 'Dedicated onboarding')
   })
 
   it('derives plan availability from the comparison', () => {

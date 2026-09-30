@@ -651,6 +651,28 @@
   stroke: var(--vermilion);
 }
 
+/* The typing indicator a reply shows before its words arrive. It is only
+   ever seen during that moment (motion.css); otherwise it stays invisible. */
+.bubble__typing {
+  position: absolute;
+  /* Centred in a one-line pill at the bubble's lower right, however many
+     lines the reply itself runs to. */
+  bottom: min(50%, 1.3rem);
+  right: 0.9rem;
+  display: inline-flex;
+  gap: 4px;
+  translate: 0 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bubble__typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vermilion-ink);
+}
+
 .example-label {
   display: block;
   margin-bottom: 0.6rem;

@@ -315,3 +315,189 @@
   *, *::before, *::after { scroll-behavior: auto !important; }
   .arrow, .arrow *, .btn, .text-link { transition: none; }
 }
+
+/* ── 4. Details that make the pages feel alive ─────────────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Page headlines rise in word by word, softly coming into focus; the
+     line under them settles after. Painted from the first frame (0.01). */
+  .intro__title .word {
+    display: inline-block;
+    animation: word-rise 900ms var(--ease-editorial) calc(60ms + var(--w, 0) * 55ms) backwards;
+  }
+
+  .intro :is(.eyebrow, .intro__lede, .ind-intro__actions, .ind-intro__terms) {
+    animation: settle-in 820ms var(--ease-editorial) 320ms backwards;
+  }
+
+  .intro .eyebrow {
+    animation-delay: 0ms;
+  }
+
+  .intro :is(.ind-intro__actions, .ind-intro__terms) {
+    animation-delay: 420ms;
+  }
+
+  /* A sample conversation arrives like a live chat: the follow-up lands,
+     the reply types for a moment, then opens into its words. */
+  .js-reveal [data-chat] :is(.sample__moment, .sample__who, .ind-row__moment) {
+    transition: opacity 420ms var(--ease-ui);
+  }
+
+  .js-reveal [data-chat]:not(.is-in) :is(.sample__moment, .sample__who, .ind-row__moment) {
+    opacity: 0;
+  }
+
+  .js-reveal [data-chat] .bubble--ask {
+    transform-origin: 0 100%;
+    transition:
+      opacity 380ms var(--ease-ui) 80ms,
+      translate 620ms var(--ease-editorial) 80ms,
+      scale 620ms var(--ease-editorial) 80ms;
+  }
+
+  .js-reveal [data-chat]:not(.is-in) .bubble--ask {
+    opacity: 0;
+    translate: 0 14px;
+    scale: 0.95;
+  }
+
+  .js-reveal [data-chat] .bubble--reply {
+    clip-path: inset(-3em -1em -1em -1em round 0);
+    transition:
+      opacity 260ms var(--ease-ui) 620ms,
+      clip-path 560ms var(--ease-editorial) 1560ms,
+      color 320ms var(--ease-ui) 1700ms,
+      translate 480ms var(--ease-editorial);
+  }
+
+  .js-reveal [data-chat]:not(.is-in) .bubble--reply {
+    clip-path: inset(max(0px, 100% - 2.6rem) 0 0 calc(100% - 3.5rem) round 999px);
+    color: transparent;
+    opacity: 0;
+  }
+
+  .js-reveal [data-chat].is-in .bubble__typing {
+    animation: typing-show 1000ms var(--ease-ui) 640ms both;
+  }
+
+  .js-reveal [data-chat].is-in .bubble__typing i {
+    animation: typing-dot 560ms var(--ease-ui) calc(700ms + var(--d, 0ms)) 2 both;
+  }
+
+  .js-reveal [data-chat] .bubble__typing i:nth-child(2) {
+    --d: 120ms;
+  }
+
+  .js-reveal [data-chat] .bubble__typing i:nth-child(3) {
+    --d: 240ms;
+  }
+
+  .js-reveal [data-chat] .sample__stop {
+    transition: opacity 420ms var(--ease-ui) 2050ms;
+  }
+
+  .js-reveal [data-chat]:not(.is-in) .sample__stop {
+    opacity: 0;
+  }
+
+  /* The oversized words (Again., Clarity., Reconnect.) rise out of a line
+     as they arrive: the top of the letters shows first, as if lifting from
+     behind the rule. A mask, not split letters, so the kerning is intact. */
+  .js-reveal :is(.word-split__word, .big-word)[data-reveal] {
+    clip-path: inset(-25% -6% -35% -6%);
+    transition:
+      clip-path 1150ms var(--ease-editorial),
+      translate 1150ms var(--ease-editorial),
+      opacity 200ms var(--ease-ui);
+  }
+
+  .js-reveal :is(.word-split__word, .big-word)[data-reveal]:not(.is-in) {
+    clip-path: inset(-25% -6% 100% -6%);
+    translate: 0 0.28em;
+    opacity: 1;
+  }
+
+  /* Plan cards: the tier meter fills bar by bar, the fact sheet fills in
+     row by row, and the recommendation badge arrives last. */
+  .js-reveal .plan .plan__mark i[data-on] {
+    transform-origin: 50% 100%;
+    transition: scale 560ms var(--ease-editorial) calc(var(--reveal-delay, 0ms) + 260ms + var(--b, 0ms));
+  }
+
+  .js-reveal .plan:not(.is-in) .plan__mark i[data-on] {
+    scale: 1 0;
+  }
+
+  .plan__mark i:nth-child(2) { --b: 90ms; }
+  .plan__mark i:nth-child(3) { --b: 180ms; }
+  .plan__mark i:nth-child(4) { --b: 270ms; }
+
+  .js-reveal .plan .plan__spec {
+    transition:
+      opacity 380ms var(--ease-ui) calc(var(--reveal-delay, 0ms) + 220ms + var(--r, 0ms)),
+      translate 520ms var(--ease-editorial) calc(var(--reveal-delay, 0ms) + 220ms + var(--r, 0ms));
+  }
+
+  .js-reveal .plan:not(.is-in) .plan__spec {
+    opacity: 0;
+    translate: 0 6px;
+  }
+
+  .plan__spec:nth-child(2) { --r: 40ms; }
+  .plan__spec:nth-child(3) { --r: 80ms; }
+  .plan__spec:nth-child(4) { --r: 120ms; }
+  .plan__spec:nth-child(5) { --r: 160ms; }
+  .plan__spec:nth-child(6) { --r: 200ms; }
+  .plan__spec:nth-child(7) { --r: 240ms; }
+
+  .js-reveal .plan .plan__flag {
+    transition:
+      opacity 320ms var(--ease-ui) calc(var(--reveal-delay, 0ms) + 380ms),
+      scale 620ms var(--ease-editorial) calc(var(--reveal-delay, 0ms) + 380ms);
+  }
+
+  .js-reveal .plan:not(.is-in) .plan__flag {
+    opacity: 0;
+    scale: 0.82;
+  }
+}
+
+/* Black-paper sheets widen into place as they come up the screen, tied to
+   the scroll so they never wait or overshoot. Only the sheet behind the
+   content scales (a compositor-only change); the words never move. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  @supports (animation-timeline: view()) {
+    .band-ink::before {
+      animation: sheet-open linear both;
+      animation-timeline: --sheet;
+      animation-range: entry 0% entry 75%;
+    }
+  }
+}
+
+@keyframes word-rise {
+  from {
+    opacity: 0.01;
+    translate: 0 0.32em;
+    filter: blur(10px);
+  }
+}
+
+@keyframes typing-show {
+  0% { opacity: 0; scale: 0.6; }
+  18% { opacity: 1; scale: 1; }
+  82% { opacity: 1; scale: 1; }
+  100% { opacity: 0; scale: 0.8; }
+}
+
+@keyframes typing-dot {
+  0%, 100% { translate: 0 0; opacity: 0.45; }
+  45% { translate: 0 -3px; opacity: 1; }
+}
+
+@keyframes sheet-open {
+  from {
+    scale: 0.93 1;
+  }
+}

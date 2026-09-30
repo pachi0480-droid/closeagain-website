@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta } from '@/components/editorial/blocks'
 import { Accordion } from '@/components/editorial/Accordion'
+import { Words, wordCount } from '@/components/editorial/Words'
 import { BreakEven } from '@/components/pricing/BreakEven'
 import { CompareMatrix, PlanCards } from '@/components/pricing/Plans'
 import { TierSystem } from '@/components/pricing/TierSystem'
@@ -30,9 +31,9 @@ export default function PricingPage() {
         <div className="intro__inner wrap">
           <p className="eyebrow">{pricingPage.eyebrow}</p>
           <h1 id="page-title" className="intro__title">
-            {title.map((line) => (
+            {title.map((line, i) => (
               <span key={line} className="intro__line">
-                {line}{' '}
+                <Words text={line} start={title.slice(0, i).reduce((sum, before) => sum + wordCount(before), 0)} />{' '}
               </span>
             ))}
           </h1>

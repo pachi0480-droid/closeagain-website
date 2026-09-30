@@ -7,10 +7,10 @@ declare global {
   interface Window { __caMotion?: boolean }
 }
 
-const revealTargets = '[data-reveal], [data-scroll], [data-draw="scroll"], .pv-status'
+const revealTargets = '[data-reveal], [data-scroll], [data-draw="scroll"], .pv-status, [data-chat]'
 
-/** Drawings wait until they are well in view, so the whole stroke is seen. */
-const drawTargets = '[data-draw="scroll"]'
+/** Drawings and conversations wait until they are well in view, so the whole stroke (or exchange) is seen. */
+const drawTargets = '[data-draw="scroll"], [data-chat]'
 
 /** Lands (or lifts) a timeline-drawn ribbon's arrowhead; see motion.css. */
 const land = (heads: Element[], landed: boolean) => heads.forEach((head) => head.toggleAttribute('data-landed', landed))

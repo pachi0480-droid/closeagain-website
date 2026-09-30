@@ -204,10 +204,22 @@
   --pill-pad-end: 0.4rem;
 }
 
+/* Where the worded Menu button ends the bar, it needs room from the edge. */
+@media (min-width: 560px) and (max-width: 1119px) {
+  .site-header {
+    --pill-pad-end: 1.1rem;
+  }
+}
+
 @media (min-width: 960px) {
   .site-header {
     --pill-shrink: 1.5rem;
     --pill-pad-start: 1.6rem;
+  }
+}
+
+@media (min-width: 1120px) {
+  .site-header {
     --pill-pad-end: 0.45rem;
   }
 }

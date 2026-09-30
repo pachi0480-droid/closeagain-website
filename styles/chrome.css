@@ -655,11 +655,13 @@
    ever seen during that moment (motion.css); otherwise it stays invisible. */
 .bubble__typing {
   position: absolute;
-  top: 50%;
+  /* Centred in a one-line pill at the bubble's lower right, however many
+     lines the reply itself runs to. */
+  bottom: min(50%, 1.3rem);
   right: 0.9rem;
   display: inline-flex;
   gap: 4px;
-  translate: 0 -50%;
+  translate: 0 50%;
   opacity: 0;
   pointer-events: none;
 }

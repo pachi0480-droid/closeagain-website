@@ -372,7 +372,7 @@
   }
 
   .js-reveal [data-chat]:not(.is-in) .bubble--reply {
-    clip-path: inset(0 0 0 calc(100% - 3.5rem) round 999px);
+    clip-path: inset(max(0px, 100% - 2.6rem) 0 0 calc(100% - 3.5rem) round 999px);
     color: transparent;
     opacity: 0;
   }

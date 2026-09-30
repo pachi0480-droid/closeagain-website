@@ -13,6 +13,7 @@ The site is ready to publish. One step is required: telling it where to send inq
 7. **Put a face on it.** Add your name, role, photo and a few words to `content/people.ts`, and the About page shows "Who's behind CloseAgain".
 8. **Add proof as it arrives.** When a customer gives you a real result and written permission, add it to `content/proof.ts`, and the homepage shows it. Never before.
 9. **Later, with your own domain:**
+   - Candidates that were unregistered when checked with the registries on 30 September 2026 (check again before buying): **closeagainhq.com** (matches the current Gmail handle), trycloseagain.com, usecloseagain.com, closeagain.io, closeagain.ai, closeagain.net. Already registered by someone: closeagain.com (since 2019), closeagain.co ("launching soon" page), getcloseagain.com, closeagain.online.
    - Add it in Vercel → Domains and redeploy; the origin follows automatically.
    - Verify it in Resend and set `FORMS_EMAIL_FROM` (for example `CloseAgain <inquiries@yourdomain.com>`). Every prospect then also gets a "we got your details" email that replies to you, and you can send inquiries to any address with `FORMS_NOTIFY_EMAIL`.
    - A business address on your own domain will also read better to buyers than a Gmail address.

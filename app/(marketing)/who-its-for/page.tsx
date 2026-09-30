@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
-import { IndustryCard } from '@/components/industries/IndustryCard'
+import { IndustryIndex } from '@/components/industries/IndustryIndex'
 import { industries, industryPage } from '@/content/industries'
 import { whoItsFor } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
@@ -12,36 +12,31 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Eight kinds of lead-driven business, each with one line on what CloseAgain
- * does for it. The whole card is the target and opens that industry's own
- * page; the closing call to action opens the buying form.
+ * Eight kinds of lead-driven business, as an index in the site's editorial
+ * layout (as the industry pages): each row names the industry, says what
+ * CloseAgain does for it and shows one sample exchange from its page, and
+ * opens that page. The closing call to action opens the buying form.
  */
 export default function WhoItsForPage() {
-  const { closing } = whoItsFor
+  const { closing, index } = whoItsFor
 
   return (
     <>
       <PageIntro eyebrow={whoItsFor.eyebrow} title={whoItsFor.title} lede={whoItsFor.lede} />
 
-      <section className="industries" aria-label="Industries">
+      <section className="industries" aria-label={index.label}>
         <div className="wrap">
-          <ul className="industries__grid">
-            {industries.map((industry, i) => (
-              <IndustryCard
-                key={industry.id}
-                industry={industry}
-                label={industryPage.related.go}
-                index={i}
-                eager={i < 4}
-                sizes="(min-width: 1180px) 300px, (min-width: 560px) 45vw, 92vw"
-              />
-            ))}
-          </ul>
-          <p className="industries__note">{whoItsFor.imageNote}</p>
+          <IndustryIndex industries={industries} label={index.label} go={industryPage.related.go} moment={index.moment} />
+          <p className="industries__note">{index.note}</p>
         </div>
       </section>
 
-      <ClosingCta id="closing-title" title={closing.title} body={closing.body} cta={closing.cta} />
+      <ClosingCta
+        id="closing-title"
+        title={closing.title}
+        body={closing.body}
+        cta={closing.cta}
+      />
 
       <p className="big-word big-word--end wrap" aria-hidden="true" data-reveal>
         {whoItsFor.word}

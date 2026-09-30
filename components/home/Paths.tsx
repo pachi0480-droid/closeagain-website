@@ -22,7 +22,7 @@ export function Paths() {
   const { eyebrow, title, lede, fresh, old, outcome } = home.paths
 
   return (
-    <section className="paths" aria-labelledby="paths-title">
+    <section className="paths band-ink" aria-labelledby="paths-title">
       <div className="wrap paths__head">
         <p className="eyebrow">{eyebrow}</p>
         <h2 id="paths-title" className="paths__title">

@@ -1,7 +1,7 @@
 /**
  * One landing page per industry, at /who-its-for/<slug>.
  *
- * Names, images, one-line outcomes and the contact-form value come from
+ * Names, one-line outcomes and the contact-form value come from
  * `whoItsFor` in pages.ts, so the overview and these pages can never
  * disagree. Everything else here is written for the industry: where its leads
  * slip, what CloseAgain does about it, and sample follow-up wording.
@@ -57,7 +57,6 @@ type IndustryCopy = {
 export type Industry = IndustryCopy & {
   id: IndustryId
   name: string
-  image: string
   outcome: string
   /** The contact form’s industry option (content/forms.ts). */
   industryValue: string
@@ -557,7 +556,6 @@ export const industries: readonly Industry[] = whoItsFor.industries.map((base) =
     ...page,
     id: base.id,
     name: base.name,
-    image: base.image,
     outcome: base.outcome,
     industryValue: base.formValue,
     title: `${industryPage.titleLead} for ${page.audience}`,

@@ -80,6 +80,31 @@ a {
   margin-inline: auto;
 }
 
+/* A section set on black paper: a rounded sheet inset from the window
+   edges, with the same grain as the page. Its colours come from the dark
+   palette (tokens.css). It isolates, so art set beneath its type
+   (z-index -1) still paints above the sheet. */
+.band-ink {
+  --band-inset: clamp(0.5rem, 0.15rem + 1vw, 1rem);
+  position: relative;
+  isolation: isolate;
+  margin-inline: var(--band-inset);
+  border-radius: clamp(1.5rem, 0.9rem + 2.2vw, 2.75rem);
+  background: var(--paper) url('/texture/paper.webp') repeat;
+  background-size: 192px 192px;
+  background-blend-mode: multiply;
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] .band-ink {
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+/* The sheet is its own divider: whatever follows drops its top rule. */
+.band-ink + :is(section, div, nav, aside, p) {
+  border-top-color: transparent;
+}
+
 /* ── Skip link ─────────────────────────────────────────────────────────── */
 
 .skip-link {

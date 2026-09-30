@@ -260,6 +260,161 @@
 }
 
 
+/* ── Built for: the industries running past under the hero ────────────── */
+
+.ticker {
+  border-top: 1px solid var(--rule);
+  overflow: clip;
+}
+
+.ticker__inner {
+  display: grid;
+  gap: 0.5rem;
+  padding-block: clamp(0.9rem, 0.6rem + 1vw, 1.4rem);
+}
+
+/* Phones: the label lines up with the page; the names run edge to edge. */
+.ticker__lead {
+  width: min(100% - 2 * var(--gutter), var(--measure-max));
+  margin: 0 auto;
+}
+
+.ticker__viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+
+.ticker__track {
+  display: flex;
+  width: max-content;
+  animation: ticker-run 52s linear infinite;
+}
+
+/* Hovering or focusing a name holds the line still. */
+.ticker:is(:hover, :focus-within) .ticker__track {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-run {
+  to {
+    translate: -50% 0;
+  }
+}
+
+.ticker__list {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ticker__item {
+  display: flex;
+  align-items: center;
+}
+
+/* Every name carries its own dot, so the two copies meet seamlessly. */
+.ticker__item::after {
+  content: '';
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin-inline: clamp(1.1rem, 0.6rem + 2vw, 2.6rem);
+  border-radius: 50%;
+  background: var(--vermilion);
+}
+
+.ticker__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.4rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: color var(--dur-ui) var(--ease-ui);
+}
+
+.ticker__link:hover {
+  color: var(--vermilion-ink);
+}
+
+@media (min-width: 960px) {
+  /* Wide: the label holds the page's left edge, the names run off the right. */
+  .ticker__inner {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0;
+    padding-left: max(var(--gutter), (100% - var(--measure-max)) / 2);
+  }
+
+  .ticker__lead {
+    width: auto;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  /* A fine rule between the label and the names. */
+  .ticker__lead::after {
+    content: '';
+    width: 1px;
+    height: 2.5rem;
+    background: var(--rule);
+  }
+}
+
+/* Reduced motion: the names hold still and wrap, once. */
+@media (prefers-reduced-motion: reduce) {
+  .ticker__viewport {
+    -webkit-mask-image: none;
+    mask-image: none;
+    width: min(100% - 2 * var(--gutter), var(--measure-max));
+    margin-inline: auto;
+  }
+
+  .ticker__track {
+    width: auto;
+    animation: none;
+  }
+
+  .ticker__list {
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .ticker__list[aria-hidden] {
+    display: none;
+  }
+
+  .ticker__item:last-child::after {
+    display: none;
+  }
+
+  /* Held still, the names wrap: smaller, so phones get two or three lines. */
+  .ticker__link {
+    font-size: clamp(1.25rem, 0.95rem + 1.3vw, 2.4rem);
+  }
+
+  .ticker__item::after {
+    margin-inline: clamp(0.7rem, 0.4rem + 1.6vw, 2.6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 960px) {
+  .ticker__viewport {
+    width: auto;
+    margin: 0;
+    padding: 0 max(var(--gutter), (100vw - var(--measure-max)) / 2) 0 1.5rem;
+  }
+}
+
 /* ── The oversized word ────────────────────────────────────────────────── */
 
 .word-split {
@@ -383,10 +538,10 @@
 
 /* ── The two jobs: new inquiries and older leads, one system ────────────── */
 
+/* Set on black paper (.band-ink): the red merge reads brightest there. */
 .paths {
   overflow-x: clip;
-  padding-top: var(--section-y);
-  border-top: 1px solid var(--rule);
+  padding-block: calc(var(--section-y) * 1.1) calc(var(--section-y) * 0.7);
 }
 
 .paths__title {

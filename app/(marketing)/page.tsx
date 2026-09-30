@@ -3,6 +3,7 @@ import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
+import { IndustryTicker } from '@/components/home/IndustryTicker'
 import { LeadFlow } from '@/components/home/LeadFlow'
 import { Paths } from '@/components/home/Paths'
 import { Payoff } from '@/components/home/Payoff'
@@ -31,6 +32,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <IndustryTicker />
 
       <Payoff />
       <Proof />

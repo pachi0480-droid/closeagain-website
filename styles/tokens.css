@@ -73,7 +73,7 @@
   --positive-line: #cbd8c4;
   --caution-line: #e5d2a8;
   --ink-hairline: rgb(13 13 11 / 0.14);
-  --header-frost: rgb(242 239 231 / 0.84);
+  --header-frost: rgb(242 239 231 / 0.9);
   --header-clear: rgb(242 239 231 / 0);
 
   /* How printed-ink colour meets the paper. Normal in both themes: a
@@ -137,7 +137,10 @@
 
 /* ── Dark: warm charcoal, cream type, the same red ─────────────────────── */
 
-:root[data-theme='dark'] {
+/* An ink band (.band-ink) borrows the whole dark palette, so a section on
+   the light page can be set on black paper with nothing inside it knowing. */
+:root[data-theme='dark'],
+.band-ink {
   color-scheme: dark;
 
   --paper: #16130f;
@@ -188,11 +191,18 @@
   --positive-line: #34472f;
   --caution-line: #4d3d1f;
   --ink-hairline: rgb(243 238 228 / 0.16);
-  --header-frost: rgb(22 19 15 / 0.82);
+  --header-frost: rgb(22 19 15 / 0.88);
   --header-clear: rgb(22 19 15 / 0);
 
   --ink-blend: normal;
   --paper-blend: multiply;
+}
+
+/* At night the page is already charcoal, so a band goes a shade deeper. */
+:root[data-theme='dark'] .band-ink {
+  --paper: #0c0a08;
+  --surface: #191510;
+  --surface-2: #211c16;
 }
 
 /* A theme change cross-fades colours for a moment, then gets out of the way. */

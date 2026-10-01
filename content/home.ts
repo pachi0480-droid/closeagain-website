@@ -56,7 +56,7 @@ export const home = {
       reply: {
         title: 'CloseAgain replies',
         detail: 'Automatically',
-        message: 'Thanks for reaching out! Want to set up a quick call this week?',
+        message: 'Thanks for reaching out! Can we set up a quick call?',
         meta: 'Sent automatically',
       },
       again: {

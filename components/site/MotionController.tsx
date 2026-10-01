@@ -48,11 +48,15 @@ export function MotionController() {
     const content = watch(24)
     // Conversations and views start once their top is about a third of the way up the screen.
     const drawings = watch(Math.round(window.innerHeight * 0.3))
+    // How far the page can still scroll: something near the end of a short
+    // page may never rise as high as the drawing line.
+    const scrollLeft = document.documentElement.scrollHeight - window.innerHeight - window.scrollY
     targets.forEach((target) => {
-      const drawing = target.matches(drawTargets)
+      const top = target.getBoundingClientRect().top
+      const drawing = target.matches(drawTargets) && top - scrollLeft < window.innerHeight * 0.7
       const margin = drawing ? window.innerHeight * 0.3 : 24
       // A selected anchor or restored scroll position never leaves content hidden.
-      if (target.getBoundingClientRect().top < window.innerHeight - margin) reveal(target)
+      if (top < window.innerHeight - margin) reveal(target)
       else (drawing ? drawings : content).observe(target)
     })
 

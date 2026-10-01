@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 /**
  * A small conversation bubble. `ask` is the follow-up, `reply` the answer.
@@ -9,15 +9,17 @@ export function Bubble({
   children,
   className,
   typing = false,
+  style,
 }: {
   tone: 'ask' | 'reply'
   children: ReactNode
   className?: string
   /** Show a typing indicator before the words arrive (in a [data-chat] sample; motion.css). */
   typing?: boolean
+  style?: CSSProperties
 }) {
   return (
-    <p className={['bubble', `bubble--${tone}`, className].filter(Boolean).join(' ')}>
+    <p className={['bubble', `bubble--${tone}`, className].filter(Boolean).join(' ')} style={style}>
       {typing && (
         <span className="bubble__typing" aria-hidden="true">
           <i />

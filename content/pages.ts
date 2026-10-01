@@ -31,6 +31,21 @@ export const howItWorks = {
   eyebrow: 'How it works',
   title: 'One path from first message to customer.',
   lede: 'CloseAgain captures new leads, follows up automatically, and re‑engages old opportunities — so more conversations become customers.',
+  /** Beside the title: one lead's path, ticking through the six steps. Sample wording. */
+  moment: {
+    label: 'One lead’s path through CloseAgain',
+    title: 'A new lead',
+    detail: 'Website form · just now',
+    status: { from: 'New', to: 'Booked' },
+    rows: [
+      { label: 'Lead captured', meta: 'Website form', who: 'Auto' },
+      { label: 'Follow-up sent', meta: 'On your schedule', who: 'Auto' },
+      { label: 'Lead replied', meta: '“Thursday works.”', who: 'Auto' },
+      { label: 'Appointment booked', meta: 'Thursday', who: 'Auto' },
+      { label: 'Your team takes over', meta: 'Whole conversation in view', who: 'Team' },
+      { label: 'Added to your reports', meta: 'By source', who: 'Auto' },
+    ],
+  },
   steps: [
     {
       number: '01',
@@ -114,6 +129,14 @@ export const features = {
   eyebrow: 'Features',
   title: 'Everything a lead needs to keep moving.',
   lede: 'Capture every new lead, follow up without thinking about it, and bring old opportunities back — from one place.',
+  /** Beside the title: a workspace with its features switching on, one by one. */
+  moment: {
+    label: 'CloseAgain features switching on in a sample workspace',
+    title: 'Your follow-up',
+    tag: 'Sample workspace',
+    running: 'Running',
+    shown: 6,
+  },
   items: [
     {
       id: 'capture',
@@ -205,6 +228,13 @@ export const whoItsFor = {
   eyebrow: 'Who it’s for',
   title: 'For businesses that live on conversations.',
   lede: 'If leads come in, go quiet and come back, CloseAgain keeps them moving.',
+  /** Beside the title: replies arriving from different industries (sample wording from each page). */
+  moment: {
+    label: 'Sample replies from different industries',
+    title: 'New replies',
+    time: 'now',
+    shown: 4,
+  },
   industries: [
     {
       id: 'real-estate',
@@ -277,6 +307,12 @@ export const pricingPage = {
   eyebrow: 'Pricing',
   title: ['Simple pricing.', 'Clear differences.'],
   lede: `Choose the plan that fits your business. ${billingNote}. ${commitmentNote}. ${setupNote}.`,
+  /** Beside the title: the four plans as a tier meter, each bar a link to its card. */
+  moment: {
+    label: 'Jump to a plan',
+    title: 'More automation at every level',
+    recommended: 'Recommended',
+  },
   common: {
     title: 'Every plan includes',
     items: ['New lead capture and automated follow-up', 'Old lead re-engagement', 'A unified conversation inbox', setupNote],
@@ -310,6 +346,12 @@ export const afterYouBuy = {
   eyebrow: 'After you buy',
   title: 'What happens after you buy.',
   lede: 'A short, guided setup. Nothing goes live until you’ve reviewed it, and setup assistance is included on every plan.',
+  /** Beside the title: the setup, ticking through to live. */
+  moment: {
+    label: 'The setup, step by step, to live',
+    title: 'Your setup',
+    status: { from: 'In setup', to: 'Live' },
+  },
   steps: [
     { number: '01', title: 'Choose your plan', body: 'Pick the plan that fits your leads and goals — or ask us to recommend one.' },
     { number: '02', title: 'Tell us about your business', body: 'Your lead sources, the tools you use and how follow-up works today.' },
@@ -346,6 +388,16 @@ export const about = {
   eyebrow: 'About CloseAgain',
   title: 'Good opportunities shouldn’t disappear.',
   lede: 'Most opportunities aren’t lost because people stop caring. They’re lost because people get busy, follow-up slips, and conversations stop.',
+  /** Beside the title: a conversation that went quiet, coming back. Sample wording. */
+  moment: {
+    label: 'A quiet conversation coming back',
+    title: 'A quote from the spring',
+    detail: 'Last contact 92 days ago',
+    status: { from: 'Cold', to: 'Reopened' },
+    message: 'Hi — are you still thinking about the project we quoted?',
+    meta: 'Re-engagement sent automatically',
+    reply: 'Yes! Still interested. Can we talk next week?',
+  },
   statement: {
     word: 'Again.',
     title: 'Why CloseAgain exists.',
@@ -376,6 +428,13 @@ export const faq = {
   eyebrow: 'Questions, answered',
   title: 'Before you buy.',
   lede: 'The things people usually ask about CloseAgain.',
+  /** Beside the title: two real questions, answered in a chat (the answers' opening sentences). */
+  moment: {
+    label: 'Two questions, answered',
+    title: 'Ask us anything',
+    ids: ['annual-contract', 'setup'],
+    sentences: 2,
+  },
   items: [
     {
       id: 'what',

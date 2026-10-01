@@ -5,6 +5,7 @@ import { Bubble } from '@/components/art/Bubble'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { Words } from '@/components/editorial/Words'
+import { IndustryInboxMoment } from '@/components/moments/Moments'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
 import { PlanCards } from '@/components/pricing/Plans'
 import { ButtonLink, TextLink } from '@/components/ui/links'
@@ -24,7 +25,11 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const industry = industryBySlug((await params).industry)
   if (!industry) return {}
-  return pageMetadata({ title: industry.title, description: industry.description, path: industry.path })
+  return pageMetadata({
+    title: industry.title,
+    description: industry.description,
+    path: industry.path,
+  })
 }
 
 /** One sample message, as it would be sent, with the reply that stops the follow-up. */
@@ -72,8 +77,18 @@ export default async function IndustryPage({ params }: Props) {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: page.overview.label, item: `${site.origin}${page.overview.href}` },
-          { '@type': 'ListItem', position: 2, name: industry.name, item: `${site.origin}${industry.path}` },
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: page.overview.label,
+            item: `${site.origin}${page.overview.href}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: industry.name,
+            item: `${site.origin}${industry.path}`,
+          },
         ],
       }
     : null
@@ -106,27 +121,33 @@ export default async function IndustryPage({ params }: Props) {
 
   return (
     <>
-      <header className="intro ind-intro">
+      <header className="intro intro--stage ind-intro">
         <div className="intro__inner wrap">
-          <nav className="ind-intro__crumbs eyebrow" aria-label="Breadcrumb">
-            <ol>
-              <li>
-                <Link href={page.overview.href}>{page.overview.label}</Link>
-              </li>
-              <li aria-current="page">{industry.name}</li>
-            </ol>
-          </nav>
-          <h1 id="page-title" className="intro__title">
-            <Words text={`${page.titleLead} for ${industry.audience}.`} />
-          </h1>
-          <p className="intro__lede">{industry.lede}</p>
-          <div className="ind-intro__actions">
-            <ButtonLink href={industry.contactHref} size="lg">
-              {page.cta}
-            </ButtonLink>
-            <TextLink href={page.secondary.href}>{page.secondary.label}</TextLink>
+          <div className="intro__copy">
+            <nav className="ind-intro__crumbs eyebrow" aria-label="Breadcrumb">
+              <ol>
+                <li>
+                  <Link href={page.overview.href}>{page.overview.label}</Link>
+                </li>
+                <li aria-current="page">{industry.name}</li>
+              </ol>
+            </nav>
+            <h1 id="page-title" className="intro__title">
+              {/* Non-breaking hyphens keep “follow-up” and “lead-driven” whole when the title wraps. */}
+              <Words text={`${page.titleLead} for ${industry.audience}.`.replaceAll('-', '\u2011')} />
+            </h1>
+            <p className="intro__lede">{industry.lede}</p>
+            <div className="ind-intro__actions">
+              <ButtonLink href={industry.contactHref} size="lg">
+                {page.cta}
+              </ButtonLink>
+              <TextLink href={page.secondary.href}>{page.secondary.label}</TextLink>
+            </div>
+            <p className="ind-intro__terms">{page.terms.join(' · ')}</p>
           </div>
-          <p className="ind-intro__terms">{page.terms.join(' · ')}</p>
+          <div className="intro__visual">
+            <IndustryInboxMoment industry={industry} />
+          </div>
         </div>
       </header>
 
@@ -196,7 +217,9 @@ export default async function IndustryPage({ params }: Props) {
         <script
           type="application/ld+json"
           // Static, author-controlled object — no visitor input reaches this.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs).replace(/</g, '\\u003c') }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbs).replace(/</g, '\\u003c'),
+          }}
         />
       )}
     </>

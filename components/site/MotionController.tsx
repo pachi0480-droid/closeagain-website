@@ -7,10 +7,10 @@ declare global {
   interface Window { __caMotion?: boolean }
 }
 
-const revealTargets = '[data-reveal], [data-scroll], .pv-status, [data-chat], [data-lift]'
+const revealTargets = '[data-reveal], [data-scroll], .pv-status, [data-chat], [data-lift], [data-moment]'
 
 /** Conversations and product views wait until they are well in view, so the whole exchange (or rise) is seen. */
-const drawTargets = '[data-chat], [data-lift]'
+const drawTargets = '[data-chat], [data-lift], [data-moment]'
 
 /** Pages with a timed story (the homepage) load the timeline library; others never do. */
 const storySelector = '[data-flow], [data-flow-steps]'

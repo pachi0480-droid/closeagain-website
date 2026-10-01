@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { ClosingCta, PageIntro, Trio } from '@/components/editorial/blocks'
 import { WordSplit } from '@/components/editorial/WordSplit'
+import { ComebackMoment } from '@/components/moments/Moments'
 import { about } from '@/content/pages'
 import { founder } from '@/content/people'
 import { pageMetadata } from '@/lib/seo'
@@ -18,7 +19,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <PageIntro eyebrow={about.eyebrow} title={about.title} lede={about.lede} />
+      <PageIntro eyebrow={about.eyebrow} title={about.title} lede={about.lede} visual={<ComebackMoment />} />
 
       <hr className="rule" />
 

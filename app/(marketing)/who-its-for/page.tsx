@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
 import { IndustryIndex } from '@/components/industries/IndustryIndex'
+import { RepliesMoment } from '@/components/moments/Moments'
 import { industries, industryPage } from '@/content/industries'
 import { whoItsFor } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
@@ -22,7 +23,7 @@ export default function WhoItsForPage() {
 
   return (
     <>
-      <PageIntro eyebrow={whoItsFor.eyebrow} title={whoItsFor.title} lede={whoItsFor.lede} />
+      <PageIntro eyebrow={whoItsFor.eyebrow} title={whoItsFor.title} lede={whoItsFor.lede} visual={<RepliesMoment />} />
 
       <section className="industries" aria-label={index.label}>
         <div className="wrap">

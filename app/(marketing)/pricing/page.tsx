@@ -6,6 +6,7 @@ import { Words, wordCount } from '@/components/editorial/Words'
 import { BreakEven } from '@/components/pricing/BreakEven'
 import { CompareMatrix, PlanCards } from '@/components/pricing/Plans'
 import { TierSystem } from '@/components/pricing/TierSystem'
+import { TiersMoment } from '@/components/moments/Moments'
 import { faqByIds, pricingPage } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -26,17 +27,22 @@ export default function PricingPage() {
 
   return (
     <>
-      <header className="intro intro--pricing">
+      <header className="intro intro--stage intro--pricing">
         <div className="intro__inner wrap">
-          <p className="eyebrow">{pricingPage.eyebrow}</p>
-          <h1 id="page-title" className="intro__title">
-            {title.map((line, i) => (
-              <span key={line} className="intro__line">
-                <Words text={line} start={title.slice(0, i).reduce((sum, before) => sum + wordCount(before), 0)} />{' '}
-              </span>
-            ))}
-          </h1>
-          <p className="intro__lede">{lede}</p>
+          <div className="intro__copy">
+            <p className="eyebrow">{pricingPage.eyebrow}</p>
+            <h1 id="page-title" className="intro__title">
+              {title.map((line, i) => (
+                <span key={line} className="intro__line">
+                  <Words text={line} start={title.slice(0, i).reduce((sum, before) => sum + wordCount(before), 0)} />{' '}
+                </span>
+              ))}
+            </h1>
+            <p className="intro__lede">{lede}</p>
+          </div>
+          <div className="intro__visual">
+            <TiersMoment />
+          </div>
         </div>
       </header>
 
@@ -65,7 +71,6 @@ export default function PricingPage() {
           <p className="pricing__decision-note">{proposal}</p>
 
           <CompareMatrix openLabel={compare.open} closeLabel={compare.close} />
-
         </div>
       </section>
 
@@ -94,13 +99,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <ClosingCta
-        id="closing-title"
-        title={closing.title}
-        body={closing.body}
-        cta={closing.cta}
-        secondary={closing.secondary}
-      />
+      <ClosingCta id="closing-title" title={closing.title} body={closing.body} cta={closing.cta} secondary={closing.secondary} />
     </>
   )
 }

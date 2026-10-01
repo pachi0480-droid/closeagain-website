@@ -96,6 +96,7 @@ components/
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
   art/            message bubbles and the step layout (Trail)
+  moments/        the product moment beside each page's title, played beat by beat
   editorial/      intro, rows, trio, accordion, closing CTA, word split
   forms/          the inquiry form and its page layout
   site/           header, mobile menu, theme toggle, footer, page transition, motion
@@ -153,6 +154,10 @@ Motion decorates finished content and never gates it:
 - The dashboard showcase: on wide screens the dashboard stays in view while
   its six areas scroll past beside it, and the area being read is ringed.
   Tablets pair each area with its own card; phones swipe through them.
+- Every supporting page has a product moment beside its title — a lead's
+  path, features switching on, replies arriving, the tier meter, a chat,
+  setup ticking to live — played beat by beat as it arrives, then drifting
+  gently on wide screens.
 - Other content rises into place once, as it arrives.
 - Page changes dissolve in 180ms; the header holds still.
 - Themes: light is the brand default; the toggle (header, mobile menu,

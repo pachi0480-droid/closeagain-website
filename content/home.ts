@@ -45,7 +45,34 @@ export const home = {
     primary: primaryCta,
     secondary: learnCta,
     terms: [startingPriceText, billingNote],
-    exchange: { ask: 'Still interested?', reply: 'Yes. Let’s talk.' },
+    /**
+     * What CloseAgain does, in four beats the visitor watches play out around
+     * the headline. Generic wording, no names, no numbers: an illustration of
+     * how follow-up works, not a result.
+     */
+    steps: {
+      label: 'How CloseAgain works',
+      lead: { title: 'A lead comes in', detail: 'Website form · just now', card: 'New lead' },
+      reply: {
+        title: 'CloseAgain replies',
+        detail: 'Automatically',
+        message: 'Thanks for reaching out! Want to set up a quick call this week?',
+        meta: 'Sent automatically',
+      },
+      again: {
+        title: 'Quiet? It follows up',
+        detail: 'On the schedule you set',
+        quiet: 'No reply yet',
+        message: 'Just checking in. Still interested?',
+        meta: 'Follow-up sent automatically',
+      },
+      booked: {
+        title: 'They reply. You book.',
+        detail: 'Booked for Thursday',
+        message: 'Yes! Thursday works.',
+        booked: 'Booked · Thursday',
+      },
+    },
   },
 
   /** Right under the hero: where the money is, and whether it pays. */
@@ -111,6 +138,15 @@ export const home = {
         { title: 'Last contacted 84 days ago', meta: 'Quote sent · no reply' },
         { title: 'Re-engagement sent', meta: 'Automatically · this morning' },
         { title: 'Lead replies', meta: '“Yes — still interested.”' },
+      ],
+    },
+    /** Where both columns end up: one inbox, both replies in it. */
+    inbox: {
+      title: 'Your inbox',
+      count: '2 new replies',
+      rows: [
+        { from: 'New lead', text: '“Thursday works for me.”', tone: 'fresh' },
+        { from: 'Old lead', text: '“Yes — still interested.”', tone: 'old' },
       ],
     },
     outcome: 'More conversations.',

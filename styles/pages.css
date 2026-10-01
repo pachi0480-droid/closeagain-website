@@ -80,10 +80,6 @@
   color: var(--ink-2);
 }
 
-.form-page__ribbon {
-  display: none;
-}
-
 /* The detail beside the form keeps its own rhythm when it follows the form. */
 .form-page__aside {
   position: relative;
@@ -108,7 +104,6 @@
     grid-column: 1;
     grid-row: 2;
     align-self: stretch;
-    padding-bottom: 14rem;
   }
 
   .form-page__form {
@@ -116,21 +111,6 @@
     grid-row: 1 / span 2;
   }
 
-  /* Without detail, the intro itself makes room for the ribbon. */
-  .form-page__copy:has(> .form-page__ribbon) {
-    padding-bottom: 14rem;
-  }
-
-  .form-page__ribbon {
-    display: block;
-    position: absolute;
-    z-index: -1;
-    right: -3.5rem;
-    bottom: 1.5rem;
-    width: min(100% + 3.5rem, 46rem);
-    height: auto;
-    aspect-ratio: 700 / 260;
-  }
 }
 
 /* ── Thank you ─────────────────────────────────────────────────────────── */
@@ -138,7 +118,7 @@
 .arrival {
   position: relative;
   overflow: clip;
-  padding-block: clamp(3.5rem, 2rem + 6vw, 8.5rem) clamp(13rem, 8rem + 16vw, 22rem);
+  padding-block: clamp(3.5rem, 2rem + 6vw, 8.5rem) clamp(9rem, 6rem + 8vw, 13rem);
 }
 
 .arrival__title {
@@ -245,26 +225,18 @@
 }
 
 .arrival__art {
-  --art-h: clamp(8.5rem, 5rem + 12vw, 17rem);
   position: absolute;
-  right: max(var(--gutter), calc((100vw - var(--measure-max)) / 2 + 6rem));
-  bottom: clamp(2rem, 4vw, 4rem);
-  height: var(--art-h);
-  aspect-ratio: 1400 / 300;
-}
-
-.arrival__ribbon {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
+  right: max(var(--gutter), calc((100vw - var(--measure-max)) / 2 + 4rem));
+  bottom: clamp(2.5rem, 5vw, 5rem);
+  margin: 0;
 }
 
 .arrival__bubble {
-  position: absolute;
-  right: -1.25rem;
-  top: 66%;
+  display: block;
+  padding: 0.85rem 1.2rem 0.9rem;
+  border-radius: 1.4rem 1.4rem 0.35rem 1.4rem;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  box-shadow: var(--shadow-lift);
 }
 
 /* ── 404 ───────────────────────────────────────────────────────────────── */
@@ -288,12 +260,14 @@
   color: var(--vermilion);
 }
 
-.lost__ribbon {
-  display: block;
-  width: min(100%, 30rem);
-  height: auto;
-  aspect-ratio: 700 / 300;
-  margin-top: clamp(0.5rem, 2vw, 1.5rem);
+.lost__chat {
+  margin-top: clamp(1rem, 3vw, 2rem);
+}
+
+.lost__bubble {
+  padding: 0.75rem 1.1rem 0.8rem;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  box-shadow: var(--shadow-soft);
 }
 
 .lost__title {
@@ -625,7 +599,7 @@
   color: var(--vermilion-ink);
 }
 
-/* ── The trail: one ribbon through a sequence of sections ──────────────── */
+/* ── A sequence of steps: copy beside its product view ─────────────────── */
 
 .trail-section {
   overflow-x: clip;
@@ -641,35 +615,10 @@
 }
 
 .trail__row {
-  --rw: 12px;
   position: relative;
   display: grid;
   gap: clamp(1.75rem, 5vw, 2.5rem);
-  padding: clamp(2.25rem, 5vw, 3.5rem) 0 clamp(2.25rem, 5vw, 3.5rem) calc(var(--rw) + 1.25rem);
-}
-
-.trail__band {
-  top: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.trail__band--end {
-  bottom: 3.25rem;
-}
-
-/* The trail ends in an arrowhead, pointing on to what comes next. */
-.trail__band--end::after {
-  content: '';
-  position: absolute;
-  top: calc(100% - 1px);
-  left: 50%;
-  width: calc(var(--rw) * 2.7);
-  height: calc(var(--rw) * 1.8);
-  translate: -50% 0;
-  transform-origin: 50% 0;
-  background: inherit;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  padding-block: clamp(2.75rem, 6vw, 4.5rem);
 }
 
 .trail__copy,
@@ -737,42 +686,28 @@
   scroll-margin-top: calc(var(--header-h) + 2rem);
 }
 
-.trail__turn {
-  display: none;
+/* Each product view sits on a soft warm glow, so it reads as the product
+   in the light rather than a picture on the page. */
+.trail__visual::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -12% -8%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--vermilion) 13%, transparent), transparent 72%);
+  pointer-events: none;
 }
 
 @media (min-width: 760px) {
   .trail__row {
-    --rw: calc(100cqw * 26 / 1280);
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     align-items: center;
-    column-gap: clamp(2.5rem, 5vw, 5rem);
-    padding: clamp(3rem, 5vw, 4.5rem) calc(var(--rw) + clamp(1.5rem, 3vw, 3rem));
-  }
-
-  .trail__item--right .trail__band {
-    left: auto;
-    right: 0;
+    column-gap: clamp(2.5rem, 6vw, 6rem);
+    padding-block: clamp(3.5rem, 6vw, 5.5rem);
   }
 
   .trail__item--right .trail__copy {
     order: 2;
-  }
-
-  .trail__turn {
-    display: block;
-  }
-
-  .trail__turn-art {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1280 / 200;
-  }
-
-  /* The end arrow sits on whichever side the last band is on. */
-  .trail__band--end {
-    bottom: 4rem;
   }
 }
 
@@ -1165,18 +1100,11 @@
 }
 
 .onboarding__track {
-  --rw: clamp(10px, 1.6vw, 18px);
   --num: clamp(3rem, 2.4rem + 2vw, 4.25rem);
   position: relative;
   max-width: 52rem;
   border-top: 1px solid var(--rule);
   padding-top: clamp(2rem, 4vw, 3rem);
-}
-
-.onboarding__band {
-  top: clamp(2rem, 4vw, 3rem);
-  bottom: 2.5rem;
-  left: calc(var(--num) / 2 - var(--rw) / 2);
 }
 
 .onboarding__steps {

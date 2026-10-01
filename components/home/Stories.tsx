@@ -1,28 +1,17 @@
-import { Ribbon } from '@/components/art/Ribbon'
-import { secondChanceLoop, weaveWide } from '@/components/art/ribbons'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
 import { home } from '@/content/home'
 
 /**
  * Follow up without living in your inbox: the live sequence — what went out,
- * what is scheduled, the reply that stopped it, and the next step. The ribbon
- * comes in from the edge, passes behind the preview and carries on down the
- * page, drawn as the visitor scrolls past.
+ * what is scheduled, the reply that stopped it, and the next step. The view
+ * rises into place on a soft warm glow (home.css, motion.css).
  */
 export function Automation() {
   const { eyebrow, title, body } = home.automation
   return (
     <section className="followup" aria-labelledby="followup-title">
-      <Ribbon
-        id="followup-weave"
-        className="followup__ribbon"
-        viewBox={weaveWide.viewBox}
-        spec={weaveWide.spec}
-        preserveAspectRatio="xMidYMid slice"
-        draw="scroll"
-      />
       <div className="followup__inner wrap">
-        <div className="followup__ui" data-reveal>
+        <div className="followup__ui" data-lift>
           <ProductPreview kind="sequence" />
         </div>
         <div className="followup__copy">
@@ -39,8 +28,8 @@ export function Automation() {
 
 /**
  * Some conversations just need another chance: 92 days quiet, Cold, then
- * re-engaged, answered, reopened and booked. The ribbon goes out behind the
- * card and loops back over it — the shape of “again”.
+ * re-engaged, answered, reopened and booked — the card's status turns from
+ * Cold to Reopened as it arrives.
  */
 export function SecondChance() {
   const { eyebrow, title, body } = home.second
@@ -54,14 +43,7 @@ export function SecondChance() {
           </h2>
           <p className="second__body">{body}</p>
         </div>
-        <div className="second__ui">
-          <Ribbon
-            id="second-loop"
-            className="second__ribbon"
-            viewBox={secondChanceLoop.viewBox}
-            spec={secondChanceLoop.spec}
-            draw="scroll"
-          />
+        <div className="second__ui" data-lift>
           <ReengagePreview />
         </div>
       </div>

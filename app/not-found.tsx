@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { Ribbon } from '@/components/art/Ribbon'
-import { uTurn } from '@/components/art/ribbons'
+import { Bubble } from '@/components/art/Bubble'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { ButtonLink, TextLink } from '@/components/ui/links'
@@ -20,7 +19,11 @@ export default function NotFound() {
           <div className="lost__inner wrap">
             <div className="lost__code-wrap" aria-hidden="true">
               <p className="lost__code">{notFound.code}</p>
-              <Ribbon id="u-turn" className="lost__ribbon" viewBox={uTurn.viewBox} spec={uTurn.spec} draw="scroll" />
+              <div className="lost__chat" data-chat>
+                <Bubble tone="ask" className="lost__bubble">
+                  Still there?
+                </Bubble>
+              </div>
             </div>
 
             <div className="lost__copy">

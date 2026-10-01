@@ -22,8 +22,8 @@ npm run forms:sink   # local stand-in form destination, for testing only
 Next.js 16 (App Router) · React 19 · TypeScript · lucide-react for interface
 icons · Tailwind v4 for the reset only. Marketing pages are prerendered static
 HTML; contact, the form endpoint and the confirmation page render on the server.
-GSAP (loaded only on pages with a scroll-driven ribbon story) coordinates the
-connected ribbon motion. Light and dark themes share one token set.
+GSAP (loaded only on the homepage) plays its two timed stories. Light and dark
+themes share one token set.
 
 See `RESEARCH-AND-CHANGES.md` for the design decisions and `DEPLOYMENT-NOTES.md`
 for current delivery behavior, verification and launch requirements.
@@ -55,7 +55,7 @@ for current delivery behavior, verification and launch requirements.
 | Route | What it is |
 | --- | --- |
 | `/` | Hero · Again · New + Old opportunities · From lead to customer · follow-up automation · old lead recovery · dashboard showcase · pricing · next step |
-| `/how-it-works` | Six steps on one ribbon, each labelled automatic or your team, then what stays in your hands |
+| `/how-it-works` | Six steps, each beside its product view and labelled automatic or your team, then what stays in your hands |
 | `/features` | Nine capabilities, each with its product view and the plans that include it |
 | `/who-its-for` | Eight lead-driven industries, each with a one-line value statement, linking to its own page |
 | `/who-its-for/<industry>` | One landing page per industry (`real-estate`, `home-services`, `med-spas`, `law-firms`, `agencies`, `saas-technology`, `e-commerce`, `lead-driven-businesses`): where its leads slip, sample wording, a product view, plans, and Contact to buy with the industry pre-selected |
@@ -95,14 +95,13 @@ components/
                   dashboard showcase, control band
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
-  art/            ribbon renderer and shapes, trail, bubbles
+  art/            message bubbles and the step layout (Trail)
   editorial/      intro, rows, trio, accordion, closing CTA, word split
   forms/          the inquiry form and its page layout
   site/           header, mobile menu, theme toggle, footer, page transition, motion
   dashboard/      the demo UI; dashboard/showcase/ is the homepage's scaled
                   dashboard and phone cards (loads only styles/showcase.css)
 lib/
-  ribbon.ts       centreline + width profile → filled ribbon outline
   breakeven.ts    break-even arithmetic (visitor's numbers only)
   forms/          validation, transport, state, receipt, server decision,
                   webhook delivery, rate limiting — framework-free and tested
@@ -141,19 +140,21 @@ substitution rather than its exact face.
 Motion decorates finished content and never gates it:
 
 - The homepage opens once per session in a set order: navigation, the two
-  headline lines, the ribbon drawing through, the two bubbles, then the copy
-  and buttons settling into place. The copy and buttons move but are never
-  hidden, so they are readable and clickable from the first frame.
-- Ribbon stories follow the visitor's scroll: the New + Old paths merge, the
-  lead-to-customer events complete in order, the automation and old-lead
-  ribbons draw, and long page trails track reading progress. Scrolling is
-  always the browser's own — nothing is pinned or hijacked.
+  headline lines, the copy and buttons settling into place, then the four
+  product beats beside the headline — a lead arrives, CloseAgain replies,
+  follows up when it goes quiet, and the lead types back and books. The copy
+  and buttons move but are never hidden, so they are readable and clickable
+  from the first frame. On wide screens the beats then drift gently.
+- Stories play once they are on screen: the New + Old columns fill and both
+  replies fly into one inbox; the lead-to-customer events complete in order.
+  Sample conversations arrive like a live chat (typing, then the reply).
+  Product views rise into place on a soft glow. Scrolling is always the
+  browser's own — nothing is pinned or hijacked.
 - The dashboard showcase: on wide screens the dashboard stays in view while
   its six areas scroll past beside it, and the area being read is ringed.
   Tablets pair each area with its own card; phones swipe through them.
 - Other content rises into place once, as it arrives.
-- Page changes dissolve in 180ms while a thin vermilion line — the ribbon in
-  one stroke — runs across the top; the header holds still.
+- Page changes dissolve in 180ms; the header holds still.
 - Themes: light is the brand default; the toggle (header, mobile menu,
   dashboard) switches to the warm dark theme with a short cross-fade, set
   before first paint so nothing flashes.

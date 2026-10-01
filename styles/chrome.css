@@ -740,24 +740,3 @@
   border-color: var(--rule);
 }
 
-/* ── Ribbon ────────────────────────────────────────────────────────────── */
-
-.ribbon {
-  display: block;
-  overflow: visible;
-  pointer-events: none;
-  /* Lets the paper grain show through the vermilion, like printed ink
-     (normal blending on dark paper, where multiply would swallow it). */
-  mix-blend-mode: var(--ink-blend);
-}
-
-.ribbon__shape {
-  fill: var(--vermilion);
-}
-
-.ribbon__guide {
-  fill: none;
-  stroke: #fff;
-  stroke-dasharray: 1 2;
-  stroke-dashoffset: 0;
-}

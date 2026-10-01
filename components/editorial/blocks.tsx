@@ -1,5 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react'
+import { Check } from 'lucide-react'
+import { Bubble } from '@/components/art/Bubble'
 import { ButtonLink, TextLink } from '@/components/ui/links'
+import { closingChat } from '@/content/site'
 import { Words } from './Words'
 
 /** Stagger for a group of reveals — small, and capped so nothing waits long. */
@@ -84,24 +87,27 @@ export function Trio({
 }
 
 /** Closing call to action: one line of display type and one decision. */
+/**
+ * The one decision, on black paper (.band-ink), with the conversation it
+ * starts beside it: the follow-up goes out, the reply types, and the answer
+ * is yes. The exchange is decoration (aria-hidden); the heading and the
+ * button carry the meaning.
+ */
 export function ClosingCta({
   id,
   title,
   body,
   cta,
   secondary,
-  art,
 }: {
   id: string
   title: string
   body?: string
   cta: { label: string; href: string }
   secondary?: { label: string; href: string }
-  art?: ReactNode
 }) {
   return (
-    <section className={['closing', 'band-ink', art && 'closing--with-art'].filter(Boolean).join(' ')} aria-labelledby={id}>
-      {art}
+    <section className="closing band-ink" aria-labelledby={id}>
       <div className="closing__inner wrap">
         <div className="closing__copy" data-reveal>
           <h2 id={id} className="closing__title">
@@ -115,6 +121,18 @@ export function ClosingCta({
           </ButtonLink>
           {secondary && <TextLink href={secondary.href}>{secondary.label}</TextLink>}
         </div>
+        <figure className="closing__chat" data-chat aria-hidden="true">
+          <Bubble tone="ask" className="closing__bubble">
+            {closingChat.ask}
+          </Bubble>
+          <p className="closing__meta">
+            <Check size={14} strokeWidth={2} />
+            {closingChat.meta}
+          </p>
+          <Bubble tone="reply" typing className="closing__bubble closing__bubble--reply">
+            {closingChat.reply}
+          </Bubble>
+        </figure>
       </div>
     </section>
   )

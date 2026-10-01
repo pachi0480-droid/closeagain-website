@@ -40,7 +40,6 @@ export default async function ContactPage({
 
   return (
     <FormPage
-      id="inquiry"
       eyebrow={contact.eyebrow}
       title={contact.title}
       lede={contact.lede}

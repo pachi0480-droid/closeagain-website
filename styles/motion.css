@@ -5,12 +5,12 @@
  * Three rules:
  *   1. Nothing a visitor needs to read or click waits for an animation. The
  *      homepage headline, explanation and calls to action are there on first
- *      paint; only the ribbon and the two bubbles move.
+ *      paint; only the four product beats beside them move.
  *   2. Reveals happen once, as content arrives, and never replay when the
  *      visitor scrolls back (MotionController adds `.is-in` and stops
  *      watching). Scrolling itself is always the browser's own.
  *   3. One vocabulary (tokens.css): 140–200ms for feedback, 180–300ms for
- *      state changes, ~450ms for entrances, ~1150ms for a supporting ribbon; hero and scroll stories have their own pacing.
+ *      state changes, ~450ms for entrances, ~1150ms for a drawn chart line; hero and scroll stories have their own pacing.
  *
  * Reduced motion starts none of it, and without JavaScript nothing is hidden.
  */
@@ -57,27 +57,6 @@
   }
 }
 
-/* An arrowhead arriving at the end of its ribbon (--hx/--hy point back
-   along the ribbon's last direction; set per ribbon in Ribbon.tsx). */
-@keyframes head-land {
-  from {
-    opacity: 0;
-    translate: var(--hx) var(--hy);
-  }
-}
-
-/* The ribbon band is solid vermilion; it grows from its top as it draws. */
-.ribbon-band {
-  position: absolute;
-  display: block;
-  width: var(--rw, 24px);
-  background: var(--vermilion);
-  mix-blend-mode: var(--ink-blend);
-  pointer-events: none;
-  transform-origin: 50% 0;
-  z-index: 0;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   /* ── 1. The homepage opening, once per session ───────────────────────── */
 
@@ -97,22 +76,27 @@
     animation: rise-line 760ms var(--ease-editorial) 220ms both;
   }
 
-  /* Then the ribbon draws across and reaches the conversation. */
-  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
-    animation: draw 1500ms cubic-bezier(0.3, 0.05, 0.18, 1) 320ms backwards;
+  /* Then CloseAgain goes to work beside the type, one beat at a time: the
+     lead arrives, the reply goes out, the follow-up goes out, and the
+     answer types, opens and books. */
+  html:not([data-intro='seen']) .hero-step {
+    animation: step-in 780ms var(--ease-spring) calc(950ms + var(--beat, 0) * 560ms) backwards;
   }
 
-  /* …and its arrowhead lands as the stroke arrives. */
-  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__head {
-    animation: head-land 540ms var(--ease-editorial) 1440ms backwards;
+  html:not([data-intro='seen']) .hero-step--booked .bubble--reply {
+    animation: reply-open 560ms var(--ease-editorial) 3700ms backwards;
   }
 
-  html:not([data-intro='seen']) .hero__bubble--ask {
-    animation: settle 420ms var(--ease-editorial) 1180ms backwards;
+  html:not([data-intro='seen']) .hero-step--booked .bubble__typing {
+    animation: typing-show 1100ms var(--ease-ui) 2720ms both;
   }
 
-  html:not([data-intro='seen']) .hero__bubble--reply {
-    animation: settle 460ms var(--ease-editorial) 1480ms backwards;
+  html:not([data-intro='seen']) .hero-step--booked .bubble__typing i {
+    animation: typing-dot 560ms var(--ease-ui) calc(2780ms + var(--d, 0ms)) 2 both;
+  }
+
+  html:not([data-intro='seen']) .hero-booked {
+    animation: pop-in 640ms var(--ease-spring) 4250ms backwards;
   }
 
   /* The explanation and the calls to action settle into place — moved, never
@@ -151,63 +135,18 @@
     translate: 0 var(--travel);
   }
 
-  /* A ribbon draws along its curve. Multi-part drawings go in stages. */
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide {
-    transition: stroke-dashoffset var(--dur-draw) var(--ease-draw) var(--reveal-delay, 0ms);
-  }
-
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__guide--b {
-    transition-delay: calc(var(--dur-draw) * 0.7);
-  }
-
-  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__guide {
-    stroke-dashoffset: 1;
-  }
-
-  /* Arrowheads land as their shaft finishes drawing. */
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__head {
+  /* Product views rise into place, tilting up from the page as if set down
+     on it — one smooth movement, transform and opacity only. */
+  .js-reveal [data-lift] {
+    transform-origin: 50% 100%;
     transition:
-      opacity 320ms var(--ease-ui),
-      translate 640ms var(--ease-editorial);
-    transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 0.84);
+      opacity 640ms var(--ease-ui),
+      transform 1100ms var(--ease-editorial);
   }
 
-  .js-reveal .ribbon[data-draw='scroll'] .ribbon__head--b {
-    transition-delay: calc(var(--reveal-delay, 0ms) + var(--dur-draw) * 1.54);
-  }
-
-  .js-reveal .ribbon[data-draw='scroll']:not(.is-in) .ribbon__head {
+  .js-reveal [data-lift]:not(.is-in) {
     opacity: 0;
-    translate: var(--hx) var(--hy);
-  }
-
-  /* The last stretch of a trail keeps its arrowhead hidden until drawn. */
-  .js-reveal .trail__band--end::after {
-    transition: opacity 320ms var(--ease-ui) calc(var(--dur-draw) * 0.8);
-  }
-
-  .js-reveal .trail__band--end:not(.is-in)::after {
-    opacity: 0;
-  }
-
-  .js-reveal .ribbon-band[data-draw='scroll'] {
-    transition: transform var(--dur-draw) var(--ease-draw) var(--reveal-delay, 0ms);
-  }
-
-  .js-reveal .ribbon-band[data-draw='scroll']:not(.is-in) {
-    transform: scaleY(0);
-  }
-
-  /* Pieces that follow a drawn ribbon, like a landing bubble. */
-  .js-reveal [data-after-draw] {
-    transition:
-      opacity 300ms var(--ease-editorial) var(--reveal-delay, 600ms),
-      translate 300ms var(--ease-editorial) var(--reveal-delay, 600ms);
-  }
-
-  .js-reveal :not(.is-in) > [data-after-draw] {
-    opacity: 0;
-    translate: 0 8px;
+    transform: perspective(1400px) rotateX(10deg) translateY(40px) scale(0.98);
   }
 
   /* A sample chart line is drawn once, left to right. */
@@ -238,41 +177,6 @@
 
 /* ── 3. Page changes: a quick dissolve; the header holds still ─────────── */
 
-/* The ribbon in one stroke: it runs across the top as a new page arrives. */
-.route-line {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  height: 3px;
-  background: var(--vermilion);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .route-line:not([data-initial]) {
-    animation: route-line 720ms var(--ease-draw) both;
-  }
-}
-
-@keyframes route-line {
-  0% {
-    transform: scaleX(0);
-    opacity: 1;
-  }
-  62% {
-    transform: scaleX(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-
 ::view-transition-old(root),
 ::view-transition-new(root),
 ::view-transition-old(.page-exit) {
@@ -291,25 +195,9 @@
   }
 }
 
-/* Timelines own the ribbon pieces as one sequence. CSS is the resilient fallback. */
-.flow-ready :is(.ribbon__guide, .ribbon-band, [data-reveal]) { transition: none !important; }
-.ribbon-band[data-progress] { transition: none !important; }
-
-/* Timeline-drawn ribbons (New + Old): the arrowhead lands when the stroke
-   reaches the end (MotionController sets data-landed). */
-.flow-ready .ribbon .ribbon__head {
-  opacity: 0;
-  translate: var(--hx) var(--hy);
-  transition:
-    opacity 260ms var(--ease-ui),
-    translate 560ms var(--ease-editorial) !important;
-  transition-delay: 0ms !important;
-}
-
-.flow-ready .ribbon .ribbon__head[data-landed] {
-  opacity: 1;
-  translate: 0 0;
-}
+/* Timelines own their pieces as one sequence. CSS is the resilient fallback. */
+.flow-ready [data-reveal],
+.flow__rail[data-progress] { transition: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
@@ -385,12 +273,20 @@
     animation: typing-dot 560ms var(--ease-ui) calc(700ms + var(--d, 0ms)) 2 both;
   }
 
-  .js-reveal [data-chat] .bubble__typing i:nth-child(2) {
+  .bubble__typing i:nth-child(2) {
     --d: 120ms;
   }
 
-  .js-reveal [data-chat] .bubble__typing i:nth-child(3) {
+  .bubble__typing i:nth-child(3) {
     --d: 240ms;
+  }
+
+  .js-reveal [data-chat] .closing__meta {
+    transition: opacity 420ms var(--ease-ui) 520ms;
+  }
+
+  .js-reveal [data-chat]:not(.is-in) .closing__meta {
+    opacity: 0;
   }
 
   .js-reveal [data-chat] .sample__stop {
@@ -499,5 +395,63 @@
 @keyframes sheet-open {
   from {
     scale: 0.93 1;
+  }
+}
+
+/* The hero's beats, and the product pieces that float beside it. */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+    scale: 0.94;
+  }
+}
+
+@keyframes reply-open {
+  from {
+    clip-path: inset(max(0px, 100% - 2.6rem) 0 0 calc(100% - 3.5rem) round 999px);
+    color: transparent;
+  }
+  to {
+    clip-path: inset(-3em -1em -1em -1em round 0);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+
+@keyframes hover-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+
+@keyframes breathe {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--vermilion) 45%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 9px color-mix(in srgb, var(--vermilion) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 1280px) {
+  /* Out of sync on purpose, so the four pieces drift like paper on air. */
+  .hero-step__float {
+    animation: hover-float 7.5s ease-in-out infinite;
+    animation-delay: calc(var(--beat, 0) * -1.9s);
+  }
+
+  .hero-lead__new {
+    animation: breathe 2.4s ease-out infinite;
   }
 }

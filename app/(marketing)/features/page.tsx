@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
@@ -14,9 +13,9 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Nine capabilities, each with the part of the product that delivers it. One
- * ribbon threads them together, swapping sides with the layout; it follows
- * the reader's progress down the page. Which plans include each capability
+ * Nine capabilities, each with the part of the product that delivers it,
+ * swapping sides from one to the next; each view rises into place as it
+ * arrives. Which plans include each capability
  * is read from the pricing data, so the two pages can never disagree.
  */
 export default function FeaturesPage() {
@@ -39,7 +38,6 @@ export default function FeaturesPage() {
       <section className="trail-section" aria-label="Features">
         <div className="wrap">
           <Trail
-            id="features"
             label="CloseAgain features"
             items={items.map((item) => {
               const plans = availability(item.row)
@@ -69,7 +67,6 @@ export default function FeaturesPage() {
         body={closing.body}
         cta={closing.cta}
         secondary={closing.secondary}
-        art={<ClosingRibbon id="features-closing" />}
       />
     </>
   )

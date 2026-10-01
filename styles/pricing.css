@@ -399,7 +399,7 @@
 }
 .plan--featured:hover .plan__card, .plan--featured:focus-within .plan__card { border-color: transparent; box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--vermilion) 80%, transparent); }
 .plan__flag { position: absolute; z-index: 1; top: 0; left: 50%; translate: -50% -50%; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.38rem 0.9rem; border-radius: var(--radius-pill); background: var(--vermilion-ink); color: var(--on-accent); white-space: nowrap; font-size: 0.7rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--vermilion) 80%, transparent); }
-/* The ribbon in miniature: its tail runs on when the plan is hovered. */
+/* The badge's small arrow runs on when the plan is hovered. */
 .plan__flag-tail { flex: none; width: 1.35rem; height: 0.6rem; transition: translate 420ms var(--ease-editorial); }
 .plan--featured:hover .plan__flag-tail, .plan--featured:focus-within .plan__flag-tail { translate: 4px 0; }
 .plan__tagline { margin: 0.4rem 0 0; font-family: var(--font-display); font-size: 1.2rem; line-height: 1.15; letter-spacing: -0.015em; color: var(--ink); }

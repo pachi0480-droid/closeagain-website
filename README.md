@@ -22,7 +22,8 @@ npm run forms:sink   # local stand-in form destination, for testing only
 Next.js 16 (App Router) · React 19 · TypeScript · lucide-react for interface
 icons · Tailwind v4 for the reset only. Marketing pages are prerendered static
 HTML; contact, the form endpoint and the confirmation page render on the server.
-GSAP (loaded only on the homepage) plays its two timed stories. Light and dark
+GSAP (loaded only on the homepage) plays its two timed stories; the hero's
+red arrow is static SVG built at compile time (lib/ribbon.ts). Light and dark
 themes share one token set.
 
 See `RESEARCH-AND-CHANGES.md` for the design decisions and `DEPLOYMENT-NOTES.md`
@@ -95,7 +96,7 @@ components/
                   dashboard showcase, control band
   pricing/        plan cards, comparison, break-even check
   previews/       small product views used on marketing pages (sample data)
-  art/            message bubbles and the step layout (Trail)
+  art/            the hero ribbon, message bubbles and the step layout (Trail)
   moments/        the product moment beside each page's title, played beat by beat
   editorial/      intro, rows, trio, accordion, closing CTA, word split
   forms/          the inquiry form and its page layout
@@ -141,8 +142,9 @@ substitution rather than its exact face.
 Motion decorates finished content and never gates it:
 
 - The homepage opens once per session in a set order: navigation, the two
-  headline lines, the copy and buttons settling into place, then the four
-  product beats beside the headline — a lead arrives, CloseAgain replies,
+  headline lines, the copy and buttons settling into place, the red arrow
+  drawing through the headline to land on the last of the four product beats
+  beside it — a lead arrives, CloseAgain replies,
   follows up when it goes quiet, and the lead types back and books. The copy
   and buttons move but are never hidden, so they are readable and clickable
   from the first frame. On wide screens the beats then drift gently.

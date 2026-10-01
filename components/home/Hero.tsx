@@ -1,19 +1,23 @@
 import { CalendarCheck, Check, Clock, Inbox } from 'lucide-react'
 import type { CSSProperties } from 'react'
 import { Bubble } from '@/components/art/Bubble'
+import { Ribbon } from '@/components/art/Ribbon'
+import { heroCompact, heroWide } from '@/components/art/ribbons'
 import { ButtonLink, TextLink } from '@/components/ui/links'
 import { home } from '@/content/home'
 import { IntroMark } from './IntroMark'
 
 /**
- * The approved type composition, with the product beside it. The headline,
- * promise, explanation and both calls to action are there on first paint and
- * never wait for motion.
+ * The approved composition — the headline with the red arrow sweeping
+ * through it — with the product beside it. The headline, promise,
+ * explanation and both calls to action are there on first paint and never
+ * wait for motion.
  *
  * Around the headline, CloseAgain works in four beats: a lead comes in, it
  * replies, it follows up when the lead goes quiet, and the lead says yes. On
  * wide screens the beats float beside the type and play out in order on the
- * first visit of a session (motion.css). Narrower screens show the same four
+ * first visit of a session (motion.css), and the arrow draws through the
+ * headline and lands on the last one: they reply, you book. Narrower screens show the same four
  * beats as a compact row under the calls to action. Either way, a visitor
  * sees what CloseAgain does before reading a word about it.
  */
@@ -23,6 +27,14 @@ export function Hero() {
 
   return (
     <section className="hero" aria-labelledby="hero-title">
+      <Ribbon
+        id="hero-wide"
+        className="hero__ribbon hero__ribbon--wide"
+        viewBox={heroWide.viewBox}
+        spec={heroWide.spec}
+        draw="intro"
+      />
+
       <div className="hero__stage wrap">
         <p className="eyebrow hero__category">{category}</p>
         <div className="hero__headline">
@@ -35,6 +47,14 @@ export function Hero() {
               <span className="hero__line hero__line--close">{headline.close}</span>
             </span>
           </h1>
+          <Ribbon
+            id="hero-compact"
+            className="hero__ribbon hero__ribbon--compact"
+            viewBox={heroCompact.viewBox}
+            preserveAspectRatio="xMaxYMin slice"
+            spec={heroCompact.spec}
+            draw="intro"
+          />
         </div>
 
         <p className="hero__promise">{promise}</p>

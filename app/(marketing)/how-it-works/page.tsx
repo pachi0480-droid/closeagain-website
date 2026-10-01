@@ -36,7 +36,7 @@ export default function HowItWorksPage() {
                   <span className="trail__num" aria-hidden="true">
                     {step.number}
                   </span>
-                  <p className={['trail__who', step.who === 'Your team' && 'trail__who--team'].filter(Boolean).join(' ')}>
+                  <p className={['trail__who', step.who === 'You do this' && 'trail__who--team'].filter(Boolean).join(' ')}>
                     {step.who}
                   </p>
                   <h2 className="trail__title">

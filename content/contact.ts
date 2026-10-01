@@ -14,15 +14,15 @@ import { primaryCta, site } from './site.ts'
 export const contact = {
   meta: {
     title: 'Contact to buy',
-    description: `Choose a plan and tell us about your business. ${startingPriceText}, monthly billing, no annual commitment, setup assistance included.`,
+    description: `Choose a plan and tell us about your business. ${startingPriceText}, monthly billing, no annual commitment, set up and run for you.`,
   },
   eyebrow: 'Contact to buy',
   title: 'Ready to close more conversations?',
-  lede: 'Tell us about your business and the plan you want. We’ll confirm the right setup and get CloseAgain running for you.',
+  lede: 'Tell us about your business and the plan you want. We’ll confirm the right setup, then set up your follow-up and run it for you.',
   terms: planTerms,
   next: {
     title: 'What happens next',
-    steps: ['Send your information', 'We confirm the setup', 'Connect your tools', 'Launch CloseAgain'],
+    steps: ['Send your details', 'We confirm the plan', 'We set everything up', 'We start following up'],
   },
   process: { label: 'What happens after you buy', href: '/after-you-buy' },
   form: {

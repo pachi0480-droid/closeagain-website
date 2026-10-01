@@ -20,12 +20,12 @@ export const site = {
   email: 'Closeagainhq@gmail.com',
   tagline: 'The conversation isn’t over.',
   /** What CloseAgain is, in four words. */
-  category: 'Automated lead follow-up and recovery',
+  category: 'Done-for-you lead follow-up and recovery',
   /** The one-sentence explanation. Keep it this short. */
   promise:
-    'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities\u00A0— so more conversations become customers.',
+    'We follow up with your leads for you — new inquiries and old ones that went quiet\u00A0— so more conversations become customers.',
   description:
-    'CloseAgain follows up with every lead automatically — new inquiries and old ones that went quiet — so more of them become paying customers.',
+    'CloseAgain is done-for-you lead follow-up: we follow up with every lead for you — new inquiries and old ones that went quiet — so more of them become paying customers.',
   origin: configuredOrigin || null,
 } as const
 

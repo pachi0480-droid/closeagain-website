@@ -41,7 +41,8 @@ export type Plan = {
 
 export const billingNote = 'Monthly billing'
 export const commitmentNote = 'No annual commitment'
-export const setupNote = 'Setup assistance included'
+/** Done for you: we set up the follow-up and run it (the owner's service model). */
+export const setupNote = 'Set up and run for you'
 
 export const formatPrice = (amount: number) => `$${amount.toLocaleString('en-US')}`
 
@@ -288,9 +289,9 @@ export const comparison: Array<{ group: string; rows: ComparisonRow[] }> = [
       {
         label: 'Setup',
         values: {
-          core: 'Setup assistance',
-          growth: 'Setup assistance',
-          scale: 'Priority onboarding',
+          core: 'Done for you',
+          growth: 'Done for you',
+          scale: 'Done for you, priority',
           enterprise: 'Dedicated onboarding',
         },
       },

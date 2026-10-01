@@ -10,6 +10,33 @@
   overflow: clip;
 }
 
+/* The ribbon sits beneath the type and the cards (z-index -1 in the hero's
+   own stacking context). */
+.hero {
+  isolation: isolate;
+}
+
+.hero__ribbon {
+  position: absolute;
+  z-index: -1;
+}
+
+.hero__ribbon--wide {
+  display: none;
+}
+
+/* Small screens: the ribbon threads between the headline's last two lines. */
+.hero__row--2 {
+  margin-top: 0.34em;
+}
+
+.hero__ribbon--compact {
+  top: 1.62em;
+  left: calc(-1 * var(--gutter));
+  width: calc(100% + var(--gutter));
+  height: 3.3em;
+}
+
 .hero__stage {
   display: flex;
   flex-direction: column;
@@ -42,10 +69,11 @@
   display: block;
 }
 
-/* The promise: what the business gets, in the display face. */
+/* The promise: what the business gets, in the display face. On small
+   screens it starts just under the arrowhead, which points down at it. */
 .hero__promise {
   order: 3;
-  margin: 1.1rem 0 0;
+  margin: max(1.1rem, calc(var(--hs) * 0.72)) 0 0;
   max-width: 30ch;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.35rem);
@@ -215,6 +243,23 @@
     display: inline;
   }
 
+  .hero__row--2 {
+    margin-top: 0;
+  }
+
+  .hero__ribbon--wide {
+    display: block;
+    top: 0;
+    left: 50%;
+    width: calc(var(--hs) * 10.363);
+    height: calc(var(--hs) * 4.815);
+    translate: -50% 0;
+  }
+
+  .hero__ribbon--compact {
+    display: none;
+  }
+
   .hero__promise {
     margin-top: calc(var(--hs) * 0.133);
     max-width: none;
@@ -269,6 +314,11 @@
     margin: 0;
   }
 
+  /* Room under the arrow for the booking card. */
+  .hero__stage {
+    min-height: calc(var(--hs) * 4.06 + 10.5rem);
+  }
+
   .hero-step {
     position: absolute;
     z-index: 1;
@@ -281,10 +331,11 @@
     right: calc(50% + var(--hs) * 1.95 + 1.5rem);
   }
 
+  /* Outside the arrow's curve, clear of the headline's first line. */
   .hero-step--reply {
-    top: calc(var(--hs) * 1.78);
-    left: calc(50% + var(--hs) * 1.95 + 1.5rem);
-    width: 17rem;
+    top: calc(var(--hs) * 1.6);
+    left: calc(50% + var(--hs) * 3.25);
+    width: min(16.5rem, calc(50% - var(--hs) * 3.25 - 1rem));
   }
 
   .hero-step--again {
@@ -292,9 +343,10 @@
     right: calc(50% + max(var(--hs) * 2.5, 21rem));
   }
 
+  /* Right under the arrowhead (ribbons.ts): the arrow lands on the booking. */
   .hero-step--booked {
-    top: calc(var(--hs) * 3.42);
-    left: calc(50% + max(var(--hs) * 2.5, 21rem));
+    top: calc(var(--hs) * 4.06 + 0.6rem);
+    left: calc(50% + var(--hs) * 3.41 - 7.25rem);
     width: 14.5rem;
   }
 

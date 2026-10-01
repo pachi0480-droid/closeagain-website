@@ -681,6 +681,26 @@
   color: var(--ink-3);
 }
 
+/* ── Ribbon (the hero's arrow) ─────────────────────────────────────────── */
+
+.ribbon {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  mix-blend-mode: var(--ink-blend);
+}
+
+.ribbon__shape {
+  fill: var(--vermilion);
+}
+
+.ribbon__guide {
+  fill: none;
+  stroke: #fff;
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 0;
+}
+
 /* ── Theme toggle ──────────────────────────────────────────────────────── */
 
 .theme-toggle {

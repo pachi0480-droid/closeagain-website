@@ -51,6 +51,15 @@
   }
 }
 
+/* An arrowhead arriving at the end of its ribbon (--hx/--hy point back
+   along the ribbon's last direction; set in Ribbon.tsx). */
+@keyframes head-land {
+  from {
+    opacity: 0;
+    translate: var(--hx) var(--hy);
+  }
+}
+
 @keyframes page-in {
   from {
     opacity: 0;
@@ -74,6 +83,16 @@
 
   html:not([data-intro='seen']) .hero__row--2 {
     animation: rise-line 760ms var(--ease-editorial) 220ms both;
+  }
+
+  /* The arrow draws through the headline, and its head lands as the
+     stroke arrives. */
+  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__guide {
+    animation: draw 1700ms cubic-bezier(0.32, 0.04, 0.2, 1) 320ms backwards;
+  }
+
+  html:not([data-intro='seen']) .ribbon[data-draw='intro'] .ribbon__head {
+    animation: head-land 560ms var(--ease-editorial) 1880ms backwards;
   }
 
   /* Then CloseAgain goes to work beside the type, one beat at a time: the
@@ -430,7 +449,7 @@
     translate: 0 0;
   }
   50% {
-    translate: 0 -7px;
+    translate: 0 -5px;
   }
 }
 

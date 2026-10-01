@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { JourneyMoment } from '@/components/moments/Moments'
 import { Control } from '@/components/home/Control'
 import { ProductPreview } from '@/components/previews/Previews'
 import { howItWorks } from '@/content/pages'
@@ -22,7 +23,7 @@ export default function HowItWorksPage() {
 
   return (
     <>
-      <PageIntro eyebrow={howItWorks.eyebrow} title={howItWorks.title} lede={howItWorks.lede} />
+      <PageIntro eyebrow={howItWorks.eyebrow} title={howItWorks.title} lede={howItWorks.lede} visual={<JourneyMoment />} />
 
       <section className="trail-section" aria-label="How CloseAgain works, step by step">
         <div className="wrap">

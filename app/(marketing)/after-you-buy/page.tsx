@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { SetupMoment } from '@/components/moments/Moments'
 import { afterYouBuy } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
 
@@ -20,7 +21,7 @@ export default function AfterYouBuyPage() {
 
   return (
     <>
-      <PageIntro eyebrow={afterYouBuy.eyebrow} title={afterYouBuy.title} lede={afterYouBuy.lede} />
+      <PageIntro eyebrow={afterYouBuy.eyebrow} title={afterYouBuy.title} lede={afterYouBuy.lede} visual={<SetupMoment />} />
 
       <section className="onboarding" aria-labelledby="onboarding-title">
         <div className="wrap">

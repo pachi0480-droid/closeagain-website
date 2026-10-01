@@ -86,6 +86,14 @@ export const industryPage = {
     sent: 'Sent automatically',
     replied: 'Reply received — follow-up stops',
   },
+  /** Beside the title: this industry's inbox, with its sample leads' replies arriving. */
+  moment: {
+    title: 'Inbox',
+    tag: 'Sample',
+    replied: 'Replied',
+    following: 'Following up',
+    note: 'Follow-up stops the moment they reply.',
+  },
   preview: {
     eyebrow: 'Inside CloseAgain',
     link: { label: 'Explore the features', href: '/features' },

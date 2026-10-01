@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { FaqMoment } from '@/components/moments/Moments'
 import { Accordion } from '@/components/editorial/Accordion'
 import { faq } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
@@ -13,7 +14,7 @@ export const metadata: Metadata = pageMetadata({
 export default function FaqPage() {
   return (
     <>
-      <PageIntro eyebrow={faq.eyebrow} title={faq.title} lede={faq.lede} />
+      <PageIntro eyebrow={faq.eyebrow} title={faq.title} lede={faq.lede} visual={<FaqMoment />} />
 
       <section className="section section--flush-top" aria-label="Questions and answers">
         <div className="wrap">

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
+import { FeaturesMoment } from '@/components/moments/Moments'
 import { ProductPreview, ReengagePreview } from '@/components/previews/Previews'
 import { features } from '@/content/pages'
 import { availability } from '@/content/pricing'
@@ -23,7 +24,7 @@ export default function FeaturesPage() {
 
   return (
     <>
-      <PageIntro eyebrow={features.eyebrow} title={features.title} lede={features.lede}>
+      <PageIntro eyebrow={features.eyebrow} title={features.title} lede={features.lede} visual={<FeaturesMoment />}>
         <nav className="feature-index" aria-label="Features on this page">
           <ul>
             {items.map((item) => (

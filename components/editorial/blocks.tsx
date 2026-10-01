@@ -138,7 +138,7 @@ export function ClosingCta({
   )
 }
 
-/** Eyebrow, page title and lede for supporting pages. */
+/** Eyebrow, page title and lede for supporting pages, with an optional product moment beside them. */
 export function PageIntro({
   id = 'page-title',
   eyebrow,
@@ -146,6 +146,7 @@ export function PageIntro({
   lede,
   className,
   children,
+  visual,
 }: {
   id?: string
   eyebrow: string
@@ -153,16 +154,21 @@ export function PageIntro({
   lede?: string
   className?: string
   children?: ReactNode
+  /** A product moment beside the title (components/moments). */
+  visual?: ReactNode
 }) {
   return (
-    <header className={['intro', className].filter(Boolean).join(' ')}>
+    <header className={['intro', visual && 'intro--stage', className].filter(Boolean).join(' ')}>
       <div className="intro__inner wrap">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1 id={id} className="intro__title">
-          <Words text={title} />
-        </h1>
-        {lede && <p className="intro__lede">{lede}</p>}
-        {children}
+        <div className="intro__copy">
+          <p className="eyebrow">{eyebrow}</p>
+          <h1 id={id} className="intro__title">
+            <Words text={title} />
+          </h1>
+          {lede && <p className="intro__lede">{lede}</p>}
+          {children}
+        </div>
+        {visual && <div className="intro__visual">{visual}</div>}
       </div>
     </header>
   )

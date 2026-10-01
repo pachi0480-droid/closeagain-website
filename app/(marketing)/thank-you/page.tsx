@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { Bubble } from '@/components/art/Bubble'
-import { Ribbon } from '@/components/art/Ribbon'
-import { arrivalWide } from '@/components/art/ribbons'
 import { ButtonLink, TextLink } from '@/components/ui/links'
 import { thankYou } from '@/content/contact'
 import { planById, planSummary } from '@/content/pricing'
@@ -38,19 +36,11 @@ export default async function ThankYouPage() {
     <section className="arrival" aria-labelledby="page-title">
       {receipt ? <Received planLine={plan ? thankYou.received.plan(planSummary(plan)) : null} /> : <Neutral />}
 
-      <div className="arrival__art" aria-hidden="true">
-        <Ribbon
-          id="arrival"
-          className="arrival__ribbon"
-          viewBox={arrivalWide.viewBox}
-          spec={arrivalWide.spec}
-          preserveAspectRatio="xMaxYMid meet"
-          draw="scroll"
-        />
-        <Bubble tone="reply" className="arrival__bubble">
+      <figure className="arrival__art" data-chat aria-hidden="true">
+        <Bubble tone="reply" typing className="arrival__bubble">
           {thankYou.bubble}
         </Bubble>
-      </div>
+      </figure>
     </section>
   )
 }

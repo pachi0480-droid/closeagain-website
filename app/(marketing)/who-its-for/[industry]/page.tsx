@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Bubble } from '@/components/art/Bubble'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { Words } from '@/components/editorial/Words'
@@ -53,9 +52,9 @@ function Sample({ sample }: { sample: SampleMessage }) {
 
 /**
  * One industry, one page, in the site's editorial layout (as Features and How
- * it works): the introduction and the way to buy; then one ribbon threading
- * where this industry's leads slip — each beside the message CloseAgain would
- * send — and the part of the product that does the work; the plans, with the
+ * it works): the introduction and the way to buy; then where this industry's
+ * leads slip — each beside the message CloseAgain would send, arriving like
+ * a live chat — and the part of the product that does the work; the plans, with the
  * industry already chosen; other industries; the next step. Every word comes
  * from content/industries.ts; plan facts come from content/pricing.ts.
  */
@@ -134,7 +133,6 @@ export default async function IndustryPage({ params }: Props) {
       <section className="trail-section ind-trail" aria-label={industry.leaksTitle}>
         <div className="wrap">
           <Trail
-            id={`industry-${industry.slug}`}
             label={industry.leaksTitle}
             items={[
               ...leakItems,
@@ -192,7 +190,6 @@ export default async function IndustryPage({ params }: Props) {
         body={page.closing.body}
         cta={{ label: page.cta, href: industry.contactHref }}
         secondary={page.closing.secondary}
-        art={<ClosingRibbon id="industry-closing" />}
       />
 
       {breadcrumbs && (

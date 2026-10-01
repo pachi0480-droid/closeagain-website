@@ -14,7 +14,7 @@ const delay = (i: number): CSSProperties => ({ '--reveal-delay': `${i * 70}ms` }
  * band beneath. Each card leads with who it is for and its headline facts
  * (users, locations, the defining extra), then the same fact sheet on every
  * card, then the full feature list.
- * Scale carries the emphasis: a vermilion edge, a lift, and the ribbon.
+ * Scale carries the emphasis: a vermilion edge, a lift, and the badge.
  */
 export function PlanCards({
   variant = 'full',

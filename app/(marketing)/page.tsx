@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta, SectionHead } from '@/components/editorial/blocks'
 import { WordSplit } from '@/components/editorial/WordSplit'
 import { Hero } from '@/components/home/Hero'
@@ -22,9 +21,10 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * The homepage tells one story with one ribbon: a lead arrives or returns,
- * gets followed up, replies, books, and reaches the team — then the
- * dashboard that runs it, what it costs, and the next step.
+ * The homepage tells one story: what CloseAgain does (the hero's four beats),
+ * who it is for, why it pays, then a lead arriving or returning, followed up,
+ * replying, booking and reaching the team — then the dashboard that runs it,
+ * what it costs, and the next step.
  */
 export default function HomePage() {
   const { again, pricing, closing } = home
@@ -65,7 +65,6 @@ export default function HomePage() {
         body={closing.body}
         cta={closing.cta}
         secondary={closing.secondary}
-        art={<ClosingRibbon id="home-closing" />}
       />
     </>
   )

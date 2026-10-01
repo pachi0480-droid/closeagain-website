@@ -1,7 +1,5 @@
 import type { CSSProperties } from 'react'
 import { Clock, Inbox, MessageCircle, RotateCcw, Send, type LucideIcon } from 'lucide-react'
-import { Ribbon, RibbonBand } from '@/components/art/Ribbon'
-import { mergeCompact, mergeWide } from '@/components/art/ribbons'
 import { home } from '@/content/home'
 
 const icons: Record<'fresh' | 'old', LucideIcon[]> = {
@@ -13,13 +11,12 @@ const delay = (i: number) => ({ '--reveal-delay': `${i * 80}ms` }) as CSSPropert
 
 /**
  * New + Old. Each column is one conversation — a new lead, an old lead that
- * went quiet — with a ribbon running down behind its three steps. The two
- * ribbons then turn in and merge into one that points at the outcome. The
- * whole drawing follows the visitor's scroll (MotionController), so the
- * merge happens as they read toward it.
+ * went quiet — in three steps. Then both replies land in one inbox, each
+ * flying in from its own column, and the outcome follows. The story plays
+ * through once it is on screen (MotionController).
  */
 export function Paths() {
-  const { eyebrow, title, lede, fresh, old, outcome } = home.paths
+  const { eyebrow, title, lede, fresh, old, inbox, outcome } = home.paths
 
   return (
     <section className="paths band-ink" aria-labelledby="paths-title">
@@ -48,7 +45,6 @@ export function Paths() {
                   </span>
                 </h3>
                 <div className="paths__run">
-                  <RibbonBand className="paths__band" />
                   <ol className="paths__steps">
                     {column.steps.map((step, i) => {
                       const Icon = icons[key][i]
@@ -80,27 +76,27 @@ export function Paths() {
           })}
         </div>
 
-        <div className="paths__merge" aria-hidden="true">
-          <Ribbon
-            id="merge-wide"
-            className="paths__merge-art paths__merge-art--wide"
-            viewBox={mergeWide.viewBox}
-            layers={[
-              ...mergeWide.branches.map((spec) => ({ spec, stage: 'a' as const })),
-              { spec: mergeWide.trunk, stage: 'b' },
-            ]}
-            draw="scroll"
-          />
-          <Ribbon
-            id="merge-compact"
-            className="paths__merge-art paths__merge-art--compact"
-            viewBox={mergeCompact.viewBox}
-            layers={[
-              ...mergeCompact.branches.map((spec) => ({ spec, stage: 'a' as const })),
-              { spec: mergeCompact.trunk, stage: 'b' },
-            ]}
-            draw="scroll"
-          />
+        {/* Where both columns end up: the two replies, side by side in one
+            inbox. On screen, each flies in from its own column (MotionController). */}
+        <div className="paths__inbox ui" data-reveal>
+          <div className="paths__inbox-head">
+            <span className="paths__inbox-icon" aria-hidden="true">
+              <Inbox size={16} strokeWidth={1.7} />
+            </span>
+            <span className="paths__inbox-title">{inbox.title}</span>
+            <span className="paths__inbox-count">{inbox.count}</span>
+          </div>
+          <ul className="paths__inbox-rows">
+            {inbox.rows.map((row) => (
+              <li key={row.from} className={`paths__inbox-row paths__inbox-row--${row.tone}`}>
+                <span className="paths__inbox-from">
+                  <span className="paths__label-mark" aria-hidden="true" />
+                  {row.from}
+                </span>
+                <span className="paths__inbox-text">{row.text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <p className="paths__outcome" data-reveal>

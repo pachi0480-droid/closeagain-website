@@ -1,6 +1,5 @@
 import { CalendarCheck, Check, Inbox, LayoutGrid, MessageSquareReply, Send, type LucideIcon } from 'lucide-react'
 import type { CSSProperties } from 'react'
-import { RibbonBand } from '@/components/art/Ribbon'
 import { home } from '@/content/home'
 
 const icons: LucideIcon[] = [Inbox, Send, MessageSquareReply, CalendarCheck, LayoutGrid]
@@ -10,7 +9,7 @@ const icons: LucideIcon[] = [Inbox, Send, MessageSquareReply, CalendarCheck, Lay
  * product's own interface.
  *
  * As the card scrolls through the viewport the events complete in order, the
- * ribbon runs down the timeline and the status at the top follows along
+ * timeline's progress runs down to each one and the status at the top follows along
  * (MotionController drives it from scroll progress). Without that
  * enhancement — no JavaScript, reduced motion — every event is simply shown
  * complete, with the final status.
@@ -58,7 +57,7 @@ export function LeadFlow() {
           </div>
 
           <div className="flow__timeline">
-            <RibbonBand className="flow__rail" draw="static" />
+            <span className="flow__rail" aria-hidden="true" />
             <ol className="flow__events">
               {events.map((event, i) => {
                 const Icon = icons[i] ?? Check

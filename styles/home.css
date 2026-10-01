@@ -10,17 +10,6 @@
   overflow: clip;
 }
 
-/* The ribbon sits beneath the type (z-index -1 in the root stacking context)
-   so its multiply blend picks up the paper grain. */
-.hero__ribbon {
-  position: absolute;
-  z-index: -1;
-}
-
-.hero__ribbon--wide {
-  display: none;
-}
-
 .hero__stage {
   display: flex;
   flex-direction: column;
@@ -53,51 +42,10 @@
   display: block;
 }
 
-/* The channel the small-screen ribbon runs through. */
-.hero__row--2 {
-  margin-top: 0.34em;
-}
-
-.hero__ribbon--compact {
-  /* An SVG does not stretch between left and right, so size it outright. */
-  top: 1.62em;
-  left: calc(-1 * var(--gutter));
-  width: calc(100% + var(--gutter));
-  height: 3.3em;
-}
-
-.hero__exchange {
-  order: 2;
-  position: relative;
-  width: 100%;
-  height: calc(var(--hs) * 2.3);
-}
-
-.hero__bubble {
-  position: absolute;
-  font-size: clamp(0.9375rem, 0.86rem + 0.35vw, 1rem);
-}
-
-.hero__bubble--ask {
-  top: calc(var(--hs) * 0.2);
-  right: calc(var(--hs) * 0.95);
-}
-
-.hero__bubble--reply {
-  top: calc(var(--hs) * 1.66);
-  right: 0;
-}
-
-/* On small screens the reply sits under the arrow, so its tail moves right. */
-.hero__bubble--reply .bubble__tail {
-  left: auto;
-  right: 0.35em;
-}
-
 /* The promise: what the business gets, in the display face. */
 .hero__promise {
   order: 3;
-  margin: 0.25rem 0 0;
+  margin: 1.1rem 0 0;
   max-width: 30ch;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.35rem);
@@ -140,24 +88,107 @@
   color: var(--vermilion);
 }
 
-/* Wide screens: the reference composition, scaled as one piece. */
+/* ── How it works, in four beats beside the headline ───────────────────── */
+
+/* Narrow screens: four compact steps under the calls to action. */
+.hero-steps {
+  order: 6;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  width: 100%;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.hero-step {
+  min-width: 0;
+}
+
+.hero-step__float {
+  height: 100%;
+}
+
+.hero-step__label {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 0.65rem;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+}
+
+.hero-step__n {
+  grid-row: span 2;
+  display: inline-grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  background: var(--vermilion-ink);
+  color: var(--on-accent);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.hero-step__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.hero-step__detail {
+  font-size: var(--ui-xs);
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+
+/* The product moment itself only shows where there is room beside the type. */
+.hero-step__card {
+  display: none;
+}
+
+/* Phones: the four steps as one small card, a step to a line. */
+@media (max-width: 559px) {
+  .hero-steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding: 0.35rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .hero-step__label {
+    padding: 0.6rem 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .hero-step__n {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.75rem;
+  }
+}
+
 @media (min-width: 960px) {
   .hero {
     /* 146px at the reference's 1513px width */
     --hs: min(9.73vw, 10rem);
-  }
-
-  .hero__ribbon--wide {
-    display: block;
-    top: 0;
-    left: 50%;
-    width: calc(var(--hs) * 10.363);
-    height: calc(var(--hs) * 4.815);
-    translate: -50% 0;
-  }
-
-  .hero__ribbon--compact {
-    display: none;
   }
 
   .hero__stage {
@@ -184,20 +215,14 @@
     display: inline;
   }
 
-  .hero__row--2 {
-    margin-top: 0;
-  }
-
   .hero__promise {
     margin-top: calc(var(--hs) * 0.133);
     max-width: none;
-    /* Sized with the composition, so it always clears the ribbon's descent. */
     font-size: min(2.35rem, calc(var(--hs) * 0.3));
   }
 
   .hero__lede {
     margin-top: 0.75rem;
-    /* Scales with the composition so it always clears the ribbon's descent. */
     max-width: min(40rem, 58vw);
     line-height: 1.35;
     text-wrap: balance;
@@ -212,9 +237,15 @@
     justify-content: center;
     margin-top: 1.1rem;
   }
+
+  /* One row of four, centred under the decision. */
+  .hero-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: 62rem;
+    margin-top: 2.25rem;
+  }
 }
 
-/* Wide enough for the explanation's own three lines to clear the ribbon. */
 @media (min-width: 1300px) {
   .hero__lede {
     max-width: 48.5rem;
@@ -226,39 +257,195 @@
   }
 }
 
-@media (min-width: 1200px) {
-
-  .hero__exchange {
-    position: static;
-    height: 0;
+/* Wide screens: the four beats float beside the headline — two level with
+   its second line, two beside the explanation — each a small piece of the
+   product. Positions are measured in the headline size, so they keep their
+   places at any width. */
+@media (min-width: 1280px) {
+  .hero-steps {
+    display: block;
+    width: auto;
+    max-width: none;
+    margin: 0;
   }
 
-  /* The bubbles are real, readable text, so they do not shrink with the
-     composition; below the reference width they are nudged to keep clear of
-     the ribbon and the window edge. */
-  .hero__bubble {
-    font-size: clamp(0.875rem, 0.55rem + 0.5vw, 1rem);
+  .hero-step {
+    position: absolute;
+    z-index: 1;
+    width: 15.5rem;
+    text-align: left;
   }
 
-  .hero__bubble--ask {
-    top: calc(var(--hs) * 3.267);
-    left: min(calc(50% + var(--hs) * 3.825), calc(100% - 9.75rem));
-    right: auto;
+  .hero-step--lead {
+    top: calc(var(--hs) * 1.95);
+    right: calc(50% + var(--hs) * 1.95 + 1.5rem);
   }
 
-  .hero__bubble--reply {
-    top: calc(var(--hs) * 4.39 + max(0px, (1400px - 100vw) * 0.03));
-    right: max(0.75rem, calc(50% - var(--hs) * 5.08));
+  .hero-step--reply {
+    top: calc(var(--hs) * 1.78);
+    left: calc(50% + var(--hs) * 1.95 + 1.5rem);
+    width: 17rem;
   }
 
-  .hero__bubble--reply .bubble__tail {
-    left: 2.45em;
-    right: auto;
+  .hero-step--again {
+    top: calc(var(--hs) * 3.22);
+    right: calc(50% + max(var(--hs) * 2.5, 21rem));
   }
 
+  .hero-step--booked {
+    top: calc(var(--hs) * 3.42);
+    left: calc(50% + max(var(--hs) * 2.5, 21rem));
+    width: 14.5rem;
+  }
 
+  .hero-step__label {
+    display: flex;
+    gap: 0.5rem;
+    height: auto;
+    margin: 0 0 0.6rem 0.2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .hero-step__n {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.75rem;
+  }
+
+  .hero-step__title {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+  }
+
+  .hero-step__detail {
+    display: none;
+  }
+
+  .hero-step__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    box-shadow: var(--shadow-lift);
+    transition:
+      translate 480ms var(--ease-editorial),
+      box-shadow 480ms var(--ease-editorial);
+  }
+
+  .hero-step:hover .hero-step__card {
+    translate: 0 -3px;
+    box-shadow: 0 1px 0 rgb(13 13 11 / 0.04), 0 34px 60px -30px rgb(13 13 11 / 0.36);
+  }
 }
 
+/* The lead that just arrived. */
+.hero-lead {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+}
+
+.hero-lead__icon {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: var(--blush-surface);
+  color: var(--vermilion-ink);
+}
+
+.hero-lead__text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-lead__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.hero-lead__detail {
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+/* A small “new” dot that breathes. */
+.hero-lead__new {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vermilion);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--vermilion) 45%, transparent);
+}
+
+.hero-step__bubble {
+  display: block;
+  max-width: 100%;
+  padding: 0.65rem 0.85rem 0.7rem;
+  border-radius: 1rem 1rem 1rem 0.3rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: normal;
+  text-align: left;
+}
+
+.hero-step__bubble--reply {
+  align-self: flex-end;
+  border-radius: 1rem 1rem 0.3rem 1rem;
+}
+
+/* Inside a product card the bubbles need no hand-drawn tails. */
+.hero-step__bubble .bubble__tail {
+  display: none;
+}
+
+.hero-step__meta,
+.hero-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  font-size: var(--ui-xs);
+  color: var(--ink-3);
+}
+
+.hero-step__meta svg {
+  color: var(--positive);
+}
+
+.hero-quiet {
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+}
+
+.hero-booked {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--positive-line);
+  border-radius: var(--radius-pill);
+  background: var(--positive-wash);
+  color: var(--positive);
+  font-size: var(--ui-sm);
+  font-weight: 600;
+}
 
 /* ── Built for: the industries running past under the hero ────────────── */
 
@@ -635,13 +822,6 @@
 .paths__run {
   position: relative;
   flex: 1;
-  --rw: calc(100cqw * 20 / 400);
-}
-
-.paths__band {
-  top: 0;
-  bottom: 0;
-  left: calc(50% - var(--rw) / 2);
 }
 
 .paths__steps {
@@ -716,24 +896,99 @@
   color: var(--vermilion-ink);
 }
 
-.paths__merge-art {
-  display: block;
-  width: 100%;
-  height: auto;
+/* One inbox: both replies, side by side, wherever they started. */
+.paths__inbox {
+  width: min(100%, 34rem);
+  margin: clamp(0.5rem, 2vw, 1.25rem) auto 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 30px 70px -36px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.02);
+  overflow: hidden;
 }
 
-.paths__merge-art--wide {
-  display: none;
-  aspect-ratio: 1280 / 330;
+.paths__inbox-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.paths__merge-art--compact {
-  aspect-ratio: 400 / 250;
+.paths__inbox-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  background: var(--blush-surface);
+  color: var(--vermilion-ink);
+}
+
+.paths__inbox-title {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.paths__inbox-count {
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--vermilion);
+  color: var(--on-accent);
+  font-size: var(--ui-xs);
+  font-weight: 600;
+}
+
+.paths__inbox-rows {
+  display: grid;
+  margin: 0;
+  padding: 0.35rem 0;
+  list-style: none;
+}
+
+.paths__inbox-row {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.1rem;
+}
+
+.paths__inbox-row + .paths__inbox-row {
+  border-top: 1px solid var(--line);
+}
+
+.paths__inbox-from {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--ui-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.paths__inbox-row--old .paths__label-mark {
+  background: var(--ink-3);
+}
+
+.paths__inbox-text {
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+@media (max-width: 559px) {
+  .paths__inbox-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
 }
 
 .paths__outcome {
   margin: 0;
-  padding: 0.75rem 0 var(--section-y);
+  padding: clamp(2rem, 5vw, 3.25rem) 0 var(--section-y);
   text-align: center;
   font-family: var(--font-display);
   font-size: var(--display-m);
@@ -773,21 +1028,9 @@
 
 @media (min-width: 720px) {
   .paths__cols {
-    /* 4% keeps the column centres at 24% / 76% for the wide drawing. */
     column-gap: 4%;
   }
 
-  .paths__run {
-    --rw: calc(100cqw * 30 / 1280);
-  }
-
-  .paths__merge-art--wide {
-    display: block;
-  }
-
-  .paths__merge-art--compact {
-    display: none;
-  }
 }
 
 /* ── From lead to customer: one lead's morning, in the product ─────────── */
@@ -895,10 +1138,17 @@
   padding: 1.35rem 1.25rem 0.75rem;
 }
 
+/* The timeline's progress: a slim rail in the product's own style, filled
+   in red as the morning plays out (MotionController). */
 .flow__rail {
+  position: absolute;
   top: 2rem;
   bottom: 2.6rem;
-  left: calc(1.25rem + var(--time-w) + 0.9rem + 0.95rem - var(--rw) / 2);
+  left: calc(1.25rem + var(--time-w) + 0.9rem + 0.95rem - 1.5px);
+  width: 3px;
+  border-radius: 3px;
+  background: var(--vermilion);
+  transform-origin: 50% 0;
 }
 
 .flow__events {
@@ -1059,15 +1309,22 @@
   padding-block: var(--section-y);
 }
 
-.followup__ribbon {
-  /* A long stroke: drawn a little slower, so it reads as one gesture. */
-  --dur-draw: 1700ms;
-  display: none;
+.followup__ui,
+.second__ui {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The product views sit on a soft warm glow. */
+.followup__ui::before,
+.second__ui::before {
+  content: '';
   position: absolute;
-  inset: 0;
   z-index: -1;
-  width: 100%;
-  height: 100%;
+  inset: -16% -10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--vermilion) 14%, transparent), transparent 72%);
+  pointer-events: none;
 }
 
 .followup__inner {
@@ -1080,10 +1337,6 @@
 }
 
 @media (min-width: 960px) {
-  .followup__ribbon {
-    display: block;
-  }
-
   .followup__inner {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     align-items: center;
@@ -1111,19 +1364,6 @@
 .second__ui {
   position: relative;
   margin-inline: clamp(0rem, 4vw, 2rem) 0;
-}
-
-.second__ribbon {
-  /* A long stroke: drawn a little slower, so it reads as one gesture. */
-  --dur-draw: 1700ms;
-  position: absolute;
-  z-index: -1;
-  left: -40%;
-  top: 50%;
-  width: 150%;
-  height: auto;
-  aspect-ratio: 1000 / 600;
-  translate: 0 -50%;
 }
 
 @media (min-width: 960px) {
@@ -1200,7 +1440,6 @@
   .control__top { margin-bottom: 1rem; }
   .control__foot { flex-direction: column; align-items: flex-start; }
   .paths__outcome span { display: block; }
-  .hero__exchange { height: calc(var(--hs) * 2.05); }
   .hero__lede { font-size: 1.15rem; }
   .hero__actions { gap: .4rem 1.4rem; margin-top: 1.4rem; }
   .hero__actions .text-link { font-size: 1rem; }

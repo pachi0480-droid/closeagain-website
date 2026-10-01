@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
-import { RibbonBand } from '@/components/art/Ribbon'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
 import { afterYouBuy } from '@/content/pages'
 import { pageMetadata } from '@/lib/seo'
@@ -29,7 +28,6 @@ export default function AfterYouBuyPage() {
             Setup steps
           </h2>
           <div className="onboarding__track">
-            <RibbonBand className="onboarding__band" />
             <ol className="onboarding__steps">
               {steps.map((step, i) => (
                 <li

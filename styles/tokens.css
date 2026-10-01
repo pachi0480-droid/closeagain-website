@@ -22,7 +22,7 @@
   --ink-2: #2b2a26; /* body copy, 13:1 */
   --ink-3: #5a564e; /* secondary copy, 6.6:1 */
 
-  /* Vermilion — ribbon and display type. Small red text uses --vermilion-ink. */
+  /* Vermilion — accents and display type. Small red text uses --vermilion-ink. */
   --vermilion: #cd3926; /* 4.3:1, large display only */
   --vermilion-ink: #b32e1d; /* 5.3:1 */
 
@@ -76,9 +76,9 @@
   --header-frost: rgb(242 239 231 / 0.9);
   --header-clear: rgb(242 239 231 / 0);
 
-  /* How printed-ink colour meets the paper. Normal in both themes: a
-     multiplied ribbon let the grain show through, but made Safari re-blend
-     every frame of the scroll-drawn ribbons under the frosted header. */
+  /* How printed-ink colour meets the paper. Normal in both themes: multiply
+     let the grain show through, but made Safari re-blend every frame under
+     the frosted header. */
   --ink-blend: normal;
   --paper-blend: normal;
 
@@ -119,12 +119,13 @@
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-draw: cubic-bezier(0.45, 0.05, 0.25, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1); /* arrives with a small, soft overshoot */
   --dur-press: 150ms; /* button and link feedback */
   --dur-ui: 180ms; /* hovers, toggles */
   --dur-state: 260ms; /* a message or status changing */
   --dur-settle: 450ms;
   --dur-reveal: 450ms; /* selected content arriving */
-  --dur-draw: 1150ms; /* a ribbon drawing along its curve */
+  --dur-draw: 1150ms; /* a line drawing in, as in a sample chart */
   --stagger: 60ms;
   --travel: 12px;
 }

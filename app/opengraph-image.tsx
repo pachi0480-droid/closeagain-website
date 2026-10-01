@@ -3,8 +3,8 @@ import { join } from 'node:path'
 import { shareCard } from '@/lib/share'
 
 /**
- * The share card: the homepage composition — headline, ribbon, the one-line
- * explanation and the two bubbles — captured from the hero itself at
+ * The share card: the homepage composition — headline, the one-line
+ * promise and the product beats beside it — captured from the hero itself at
  * 1200×630 and stored as og-card.jpg. Re-capture it if the hero changes.
  */
 export const alt = shareCard.alt

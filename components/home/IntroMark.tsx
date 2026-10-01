@@ -21,7 +21,7 @@ export function IntroMark() {
         // Storage can be unavailable (private modes). The entrance may then
         // replay on a later full load, which is harmless.
       }
-    }, 2400)
+    }, 4900)
     return () => window.clearTimeout(timer)
   }, [])
 

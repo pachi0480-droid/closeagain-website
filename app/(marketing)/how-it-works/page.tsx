@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { Trail } from '@/components/art/Trail'
 import { ClosingCta, PageIntro } from '@/components/editorial/blocks'
 import { Control } from '@/components/home/Control'
@@ -14,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
 })
 
 /**
- * Six steps on one unbroken ribbon: a lead's path through CloseAgain, each
+ * Six steps, each beside the part of the product that does it: a lead's path through CloseAgain, each
  * step labelled with who does the work — CloseAgain automatically, or the
  * customer's own team.
  */
@@ -28,7 +27,6 @@ export default function HowItWorksPage() {
       <section className="trail-section" aria-label="How CloseAgain works, step by step">
         <div className="wrap">
           <Trail
-            id="hiw"
             label="Six steps"
             items={steps.map((step, i) => ({
               key: step.number,
@@ -61,7 +59,6 @@ export default function HowItWorksPage() {
         body={closing.body}
         cta={closing.cta}
         secondary={closing.secondary}
-        art={<ClosingRibbon id="hiw-closing" />}
       />
     </>
   )

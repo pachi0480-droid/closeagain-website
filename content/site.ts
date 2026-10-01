@@ -115,3 +115,6 @@ export const primaryCta = { label: 'Contact to buy', href: '/contact' } as const
 
 /** The quieter route for visitors who want to understand the service first. */
 export const learnCta = { label: 'See how it works', href: '/how-it-works' } as const
+
+/** The exchange every closing call to action plays: the follow-up, and the yes. */
+export const closingChat = { ask: 'Still interested?', reply: 'Yes. Let’s talk.', meta: 'Sent automatically' } as const

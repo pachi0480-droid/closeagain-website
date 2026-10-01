@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Check } from 'lucide-react'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta } from '@/components/editorial/blocks'
 import { Accordion } from '@/components/editorial/Accordion'
 import { Words, wordCount } from '@/components/editorial/Words'
@@ -101,7 +100,6 @@ export default function PricingPage() {
         body={closing.body}
         cta={closing.cta}
         secondary={closing.secondary}
-        art={<ClosingRibbon id="pricing-closing" />}
       />
     </>
   )

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { ClosingRibbon } from '@/components/art/ClosingRibbon'
 import { ClosingCta, PageIntro, Trio } from '@/components/editorial/blocks'
 import { WordSplit } from '@/components/editorial/WordSplit'
 import { about } from '@/content/pages'
@@ -61,7 +60,7 @@ export default function AboutPage() {
         </section>
       )}
 
-      <ClosingCta id="closing-title" title={closing.title} cta={closing.cta} art={<ClosingRibbon id="about-closing" />} />
+      <ClosingCta id="closing-title" title={closing.title} cta={closing.cta} />
     </>
   )
 }

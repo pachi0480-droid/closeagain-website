@@ -73,7 +73,7 @@
    screens it starts just under the arrowhead, which points down at it. */
 .hero__promise {
   order: 3;
-  margin: max(1.1rem, calc(var(--hs) * 0.72)) 0 0;
+  margin: max(1.1rem, calc(var(--hs) * 0.82)) 0 0;
   max-width: 30ch;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 1.15rem + 1.5vw, 2.35rem);
@@ -316,7 +316,7 @@
 
   /* Room under the arrow for the booking card. */
   .hero__stage {
-    min-height: calc(var(--hs) * 4.06 + 10.5rem);
+    min-height: calc(var(--hs) * 4.154 + 10.5rem);
   }
 
   .hero-step {
@@ -334,8 +334,8 @@
   /* Outside the arrow's curve, clear of the headline's first line. */
   .hero-step--reply {
     top: calc(var(--hs) * 1.6);
-    left: calc(50% + var(--hs) * 3.25);
-    width: min(16.5rem, calc(50% - var(--hs) * 3.25 - 1rem));
+    left: calc(50% + var(--hs) * 3.34);
+    width: min(16.5rem, calc(50% - var(--hs) * 3.34 - 1rem));
   }
 
   .hero-step--again {
@@ -345,8 +345,8 @@
 
   /* Right under the arrowhead (ribbons.ts): the arrow lands on the booking. */
   .hero-step--booked {
-    top: calc(var(--hs) * 4.06 + 0.6rem);
-    left: calc(50% + var(--hs) * 3.41 - 7.25rem);
+    top: calc(var(--hs) * 4.154 + 0.5rem);
+    left: calc(50% + var(--hs) * 3.43 - 7.25rem);
     width: 14.5rem;
   }
 

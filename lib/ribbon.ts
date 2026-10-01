@@ -28,6 +28,13 @@ export type RibbonSpec = {
   taperStart?: number
   /** Sampling distance in viewBox units. */
   step?: number
+  /**
+   * Smoothing radius, in samples: the sampled centreline and width are
+   * averaged over this many neighbours (a few passes of a triangular
+   * kernel), which irons out the small changes of curvature where the traced
+   * points join, so the stroke reads as one continuous gesture.
+   */
+  smooth?: number
 }
 
 export type RibbonGeometry = {
@@ -108,6 +115,36 @@ function bezier(s: [Vec, Vec, Vec, Vec], t: number): Vec {
   ]
 }
 
+/**
+ * A few passes of a triangular moving average, keeping both ends where they
+ * are (the radius shrinks towards them, so the end tangent survives).
+ */
+function smoothSeries<T extends number | Vec>(values: T[], radius: number, passes = 3): T[] {
+  if (radius < 1) return values
+  let current = values
+  for (let pass = 0; pass < passes; pass++) {
+    current = current.map((value, i) => {
+      const r = Math.min(radius, i, current.length - 1 - i)
+      if (r < 1) return value
+      let total = 0
+      let x = 0
+      let y = 0
+      for (let k = -r; k <= r; k++) {
+        const weight = r + 1 - Math.abs(k)
+        const v = current[i + k]
+        total += weight
+        if (typeof v === 'number') x += v * weight
+        else {
+          x += v[0] * weight
+          y += v[1] * weight
+        }
+      }
+      return (typeof value === 'number' ? x / total : [x / total, y / total]) as T
+    })
+  }
+  return current
+}
+
 function interpolateWidth(stops: RibbonSpec['width'], t: number) {
   if (t <= stops[0][0]) return stops[0][1]
   for (let i = 1; i < stops.length; i++) {
@@ -146,15 +183,16 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
   const total = cumulative[cumulative.length - 1]
   const count = Math.max(8, Math.ceil(total / step))
 
-  const samples: Vec[] = []
+  const even: Vec[] = []
   let j = 1
   for (let i = 0; i <= count; i++) {
     const target = (total * i) / count
     while (j < cumulative.length - 1 && cumulative[j] < target) j++
     const span = cumulative[j] - cumulative[j - 1] || 1
     const k = (target - cumulative[j - 1]) / span
-    samples.push(add(dense[j - 1], scale(sub(dense[j], dense[j - 1]), k)))
+    even.push(add(dense[j - 1], scale(sub(dense[j], dense[j - 1]), k)))
   }
+  const samples = smoothSeries(even, spec.smooth ?? 0)
 
   const left: Vec[] = []
   const right: Vec[] = []
@@ -162,21 +200,29 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
   let endTangent: Vec = [1, 0]
   let endWidth = 0
 
+  const widths = smoothSeries(
+    samples.map((_, i) => {
+      const t = i / (samples.length - 1)
+      const arc = t * total
+      let w = interpolateWidth(spec.width, t)
+      w *= 1 + wobble * (0.6 * Math.sin(arc / 53 + seed) + 0.4 * Math.sin(arc / 19 + seed * 2.3))
+      if (spec.taperStart && arc < spec.taperStart) {
+        const k = arc / spec.taperStart
+        w *= 0.18 + 0.82 * Math.sin((k * Math.PI) / 2)
+      }
+      return w
+    }),
+    spec.smooth ?? 0,
+  )
+
   for (let i = 0; i < samples.length; i++) {
-    const prev = samples[Math.max(0, i - 1)]
-    const next = samples[Math.min(samples.length - 1, i + 1)]
+    // Tangents over two samples either side, so the edges never flicker.
+    const prev = samples[Math.max(0, i - 2)]
+    const next = samples[Math.min(samples.length - 1, i + 2)]
     const d = sub(next, prev)
     const tangent = scale(d, 1 / (len(d) || 1))
     const normal: Vec = [-tangent[1], tangent[0]]
-    const t = i / (samples.length - 1)
-    const arc = t * total
-
-    let w = interpolateWidth(spec.width, t)
-    w *= 1 + wobble * (0.6 * Math.sin(arc / 53 + seed) + 0.4 * Math.sin(arc / 19 + seed * 2.3))
-    if (spec.taperStart && arc < spec.taperStart) {
-      const k = arc / spec.taperStart
-      w *= 0.18 + 0.82 * Math.sin((k * Math.PI) / 2)
-    }
+    const w = widths[i]
 
     maxWidth = Math.max(maxWidth, w)
     left.push(add(samples[i], scale(normal, w / 2)))
@@ -225,8 +271,15 @@ export function buildRibbon(spec: RibbonSpec): RibbonGeometry {
     : null
   const headFrom = spec.arrow ? ([-endTangent[0] * endWidth * 1.1, -endTangent[1] * endWidth * 1.1] as const) : null
 
+  // The reveal follows the smoothed centreline exactly.
   const guide =
-    `M ${pt(segments[0][0])}` + segments.map((s) => ` C ${pt(s[1])} ${pt(s[2])} ${pt(s[3])}`).join('')
+    spec.smooth
+      ? `M ${pt(samples[0])}` +
+        samples
+          .filter((_, i) => i > 0 && (i % 3 === 0 || i === samples.length - 1))
+          .map((v) => ` L ${pt(v)}`)
+          .join('')
+      : `M ${pt(segments[0][0])}` + segments.map((s) => ` C ${pt(s[1])} ${pt(s[2])} ${pt(s[3])}`).join('')
 
   const padding = maxWidth * 1.5
   const xs = [...samples.map((p) => p[0]), tip[0]]

@@ -7,9 +7,6 @@
 
 import type { RibbonSpec } from '@/lib/ribbon'
 
-/** Shared arrowhead proportions, measured from the reference (≈111 × 74 on a 38px shaft). */
-const head = { length: 1.95, spread: 2.95 } as const
-
 /** Homepage, wide screens. viewBox: the reference, from the header down to the first rule. */
 export const heroWide: { viewBox: string; spec: RibbonSpec } = {
   viewBox: '0 84 1513 703',
@@ -33,18 +30,21 @@ export const heroWide: { viewBox: string; spec: RibbonSpec } = {
       [1218, 548],
       [1234, 604],
     ],
+    // A bold stroke: broad as it enters, steady through the headline, and
+    // filling out a little into the arrowhead.
     width: [
-      [0, 64],
-      [0.12, 53],
-      [0.24, 38],
-      [0.46, 33.5],
-      [0.63, 32.5],
-      [0.82, 37],
-      [1, 38],
+      [0, 84],
+      [0.14, 70],
+      [0.3, 54],
+      [0.5, 50],
+      [0.68, 50],
+      [0.86, 54],
+      [1, 56],
     ],
-    arrow: { length: 2.0, spread: 2.95 },
+    arrow: { length: 1.6, spread: 2.45 },
     wobble: 0,
     step: 3,
+    smooth: 10,
     seed: 2,
   },
 }
@@ -72,13 +72,14 @@ export const heroCompact: { viewBox: string; spec: RibbonSpec } = {
       [-46, 196],
     ],
     width: [
-      [0, 23],
-      [0.6, 21],
-      [1, 22],
+      [0, 31],
+      [0.6, 29],
+      [1, 30],
     ],
-    arrow: head,
+    arrow: { length: 1.6, spread: 2.5 },
     wobble: 0,
     step: 3,
+    smooth: 6,
     seed: 5,
   },
 }

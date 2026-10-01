@@ -26,11 +26,11 @@ export const howItWorks = {
   meta: {
     title: 'How it works',
     description:
-      'Leads enter CloseAgain, follow-up goes out automatically, replies move forward and your team takes over where it matters. Six steps, and who does each one.',
+      'Done-for-you lead follow-up: we take in your leads, follow up with every one, catch every reply and hand you the conversations. Six steps, and who does each one.',
   },
   eyebrow: 'How it works',
   title: 'One path from first message to customer.',
-  lede: 'CloseAgain captures new leads, follows up automatically, and re‑engages old opportunities — so more conversations become customers.',
+  lede: 'We take in your leads, follow up with every one and bring old ones back. You take the conversations that reply.',
   /** Beside the title: one lead's path, ticking through the six steps. Sample wording. */
   moment: {
     label: 'One lead’s path through CloseAgain',
@@ -38,62 +38,62 @@ export const howItWorks = {
     detail: 'Website form · just now',
     status: { from: 'New', to: 'Booked' },
     rows: [
-      { label: 'Lead captured', meta: 'Website form', who: 'Auto' },
-      { label: 'Follow-up sent', meta: 'On your schedule', who: 'Auto' },
-      { label: 'Lead replied', meta: '“Thursday works.”', who: 'Auto' },
-      { label: 'Appointment booked', meta: 'Thursday', who: 'Auto' },
-      { label: 'Your team takes over', meta: 'Whole conversation in view', who: 'Team' },
-      { label: 'Added to your reports', meta: 'By source', who: 'Auto' },
+      { label: 'Lead captured', meta: 'Website form', who: 'Us' },
+      { label: 'Follow-up sent', meta: 'On your schedule', who: 'Us' },
+      { label: 'Lead replied', meta: '“Thursday works.”', who: 'Us' },
+      { label: 'Appointment booked', meta: 'Thursday', who: 'Us' },
+      { label: 'You take over', meta: 'Whole conversation in view', who: 'You' },
+      { label: 'Added to your reports', meta: 'By source', who: 'Us' },
     ],
   },
   steps: [
     {
       number: '01',
-      who: 'Automatic',
-      title: 'Leads enter CloseAgain.',
-      body: 'New inquiries arrive from the sources you connect, such as your website forms. Older leads come in too, ready for another conversation.',
+      who: 'We do this',
+      title: 'Your leads come to us.',
+      body: 'We connect the places your leads come from, such as your website forms, and load your older leads too, ready for another conversation.',
       preview: 'intake',
     },
     {
       number: '02',
-      who: 'Automatic',
-      title: 'CloseAgain follows up.',
-      body: 'Follow-ups go out on the schedule you approve, while interest is still high — and old leads get a well-timed message of their own.',
+      who: 'We do this',
+      title: 'We follow up with every one.',
+      body: 'Follow-ups go out on the schedule you approve, in wording you’ve signed off on, while interest is still high — and old leads get a well-timed message of their own.',
       preview: 'sequence',
     },
     {
       number: '03',
-      who: 'Automatic',
-      title: 'Leads reply.',
-      body: 'CloseAgain spots the reply, stops the sequence and puts the conversation in one inbox, organized by stage.',
+      who: 'We do this',
+      title: 'We catch every reply.',
+      body: 'The moment someone answers, their follow-up stops and the conversation lands in one inbox, organized by stage.',
       preview: 'reply',
     },
     {
       number: '04',
-      who: 'Automatic or your team',
+      who: 'We do this, or you do',
       title: 'Opportunities move forward.',
       body: 'Interested leads move toward the next step — an appointment, a quote, a call.',
       preview: 'booking',
     },
     {
       number: '05',
-      who: 'Your team',
-      title: 'Teams take over where needed.',
-      body: 'Step in at any point with the whole conversation in view. The consultation, the quote and the sale are your team’s.',
+      who: 'You do this',
+      title: 'You take it from there.',
+      body: 'Step in with the whole conversation in view. The consultation, the quote and the sale are yours.',
       preview: 'handoff',
     },
     {
       number: '06',
-      who: 'Automatic',
-      title: 'Performance is tracked.',
-      body: 'See new leads, recovered leads, replies and appointments by source — and which follow-up is working.',
+      who: 'We do this',
+      title: 'You see what’s working.',
+      body: 'New leads, recovered leads, replies and appointments by source — and which follow-up is working, so we can keep improving it with you.',
       preview: 'analytics',
     },
   ],
   control: {
     eyebrow: 'Automatic follow-up. Personal conversations.',
     title: ['More follow-through.', 'Still entirely you.'],
-    lede: 'Put the repetitive part on autopilot. Keep the human part in your hands.',
+    lede: 'We take the repetitive part off your hands. The human part stays yours.',
     items: [
       { title: 'Your words.', body: 'Messages use wording you approve, so every follow-up still sounds like your business.' },
       { title: 'Your timing.', body: 'Choose when to follow up and when to check back. Sequences stop when a lead replies.' },
@@ -128,7 +128,7 @@ export const features = {
   },
   eyebrow: 'Features',
   title: 'Everything a lead needs to keep moving.',
-  lede: 'Capture every new lead, follow up without thinking about it, and bring old opportunities back — from one place.',
+  lede: 'Everything we run for you: every new lead captured and followed up, and old opportunities brought back — all in one place.',
   /** Beside the title: a workspace with its features switching on, one by one. */
   moment: {
     label: 'CloseAgain features switching on in a sample workspace',
@@ -227,7 +227,7 @@ export const whoItsFor = {
   },
   eyebrow: 'Who it’s for',
   title: 'For businesses that live on conversations.',
-  lede: 'If leads come in, go quiet and come back, CloseAgain keeps them moving.',
+  lede: 'If your leads come in, go quiet and come back, we keep them moving for you.',
   /** Beside the title: replies arriving from different industries (sample wording from each page). */
   moment: {
     label: 'Sample replies from different industries',
@@ -306,7 +306,7 @@ export const pricingPage = {
   },
   eyebrow: 'Pricing',
   title: ['Simple pricing.', 'Clear differences.'],
-  lede: `Choose the plan that fits your business. ${billingNote}. ${commitmentNote}. ${setupNote}.`,
+  lede: `Every plan is done for you: we set up your follow-up and run it. ${billingNote}. ${commitmentNote}.`,
   /** Beside the title: the four plans as a tier meter, each bar a link to its card. */
   moment: {
     label: 'Jump to a plan',
@@ -315,7 +315,7 @@ export const pricingPage = {
   },
   common: {
     title: 'Every plan includes',
-    items: ['New lead capture and automated follow-up', 'Old lead re-engagement', 'A unified conversation inbox', setupNote],
+    items: ['We set up your follow-up and run it', 'Every new lead followed up', 'Old leads brought back', 'Every reply in one inbox'],
   },
   proposal: `${proposalCovers[0].charAt(0).toUpperCase()}${proposalCovers[0].slice(1)}, ${proposalCovers[1]} and ${proposalCovers[2]} are confirmed in writing before anything is billed.`,
   compare: { open: 'Compare all features', close: 'Hide comparison' },
@@ -341,11 +341,11 @@ export const afterYouBuy = {
   meta: {
     title: 'What happens after you buy',
     description:
-      'Choose your plan, tell us about your business, connect your tools, and we configure CloseAgain with you before you go live. Setup assistance included.',
+      'Choose your plan and tell us about your business. We connect your tools, write and set up your follow-up, and run it once you’ve approved it.',
   },
   eyebrow: 'After you buy',
   title: 'What happens after you buy.',
-  lede: 'A short, guided setup. Nothing goes live until you’ve reviewed it, and setup assistance is included on every plan.',
+  lede: 'We do the setup and the running. Nothing goes live until you’ve approved it, on every plan.',
   /** Beside the title: the setup, ticking through to live. */
   moment: {
     label: 'The setup, step by step, to live',
@@ -354,11 +354,11 @@ export const afterYouBuy = {
   },
   steps: [
     { number: '01', title: 'Choose your plan', body: 'Pick the plan that fits your leads and goals — or ask us to recommend one.' },
-    { number: '02', title: 'Tell us about your business', body: 'Your lead sources, the tools you use and how follow-up works today.' },
-    { number: '03', title: 'Connect your tools', body: 'We help connect your lead sources, calendar and CRM.' },
-    { number: '04', title: 'We configure CloseAgain', body: 'Follow-up sequences, re-engagement and workflows, set up for your business.' },
-    { number: '05', title: 'Review your setup', body: 'You review every message and workflow before anything goes live.' },
-    { number: '06', title: 'Go live', body: 'CloseAgain starts capturing, following up and re-engaging.' },
+    { number: '02', title: 'Tell us about your business', body: 'Your lead sources, the tools you use, how follow-up works today and how you like to talk to customers.' },
+    { number: '03', title: 'We connect everything', body: 'Your lead sources, calendar and CRM — and your list of older leads.' },
+    { number: '04', title: 'We write your follow-up', body: 'Sequences for new leads and re-engagement for old ones, in your voice.' },
+    { number: '05', title: 'You approve it', body: 'You review every message before anything goes live.' },
+    { number: '06', title: 'We run it', body: 'We follow up with every lead and bring old ones back. You get the replies.' },
   ],
   included: `${setupNote}.`,
   timing: 'Setup timing depends on your integrations and requirements.',
@@ -402,7 +402,7 @@ export const about = {
     word: 'Again.',
     title: 'Why CloseAgain exists.',
     body: [
-      'CloseAgain keeps those conversations moving — capturing new leads as they arrive, following up automatically, and giving older opportunities another chance.',
+      'CloseAgain keeps those conversations moving for you — following up with new leads as they arrive, and giving older opportunities another chance.',
       'So the conversations that matter don’t quietly end.',
     ],
   },
@@ -439,22 +439,32 @@ export const faq = {
     {
       id: 'what',
       q: 'What is CloseAgain?',
-      a: 'CloseAgain captures new leads, follows up automatically, and re-engages old opportunities — so more conversations become customers.',
+      a: 'A done-for-you lead follow-up service. We follow up with your leads on your behalf — new inquiries and old ones that went quiet — until they reply or the follow-up ends, and every reply comes to you.',
+    },
+    {
+      id: 'what-i-do',
+      q: 'What do I have to do?',
+      a: 'Very little. Tell us about your business, approve the wording, and take the conversations that reply. We handle the setup, the sending and the follow-up.',
+    },
+    {
+      id: 'software',
+      q: 'Is this software I have to learn?',
+      a: 'No. We set it up and run it for you. You can see every lead, reply and booking, but you never have to build or manage anything.',
     },
     {
       id: 'new-leads',
       q: 'Does CloseAgain work with new leads?',
-      a: 'Yes. New leads from your connected sources are captured as they arrive, and CloseAgain follows up automatically while interest is high.',
+      a: 'Yes. New leads from your connected sources are captured as they arrive, and we follow up with every one while interest is high.',
     },
     {
       id: 'old-leads',
       q: 'Can CloseAgain re-engage old leads?',
-      a: 'Yes. CloseAgain reaches back out to leads that went quiet — weeks or months ago — and brings their replies into the same inbox. Follow-up stops when someone replies.',
+      a: 'Yes. We reach back out to leads that went quiet — weeks or months ago — and bring their replies into the same inbox. Follow-up stops when someone replies.',
     },
     {
       id: 'follow-up',
-      q: 'How does automatic follow-up work?',
-      a: 'You approve the follow-up sequence for your business. When a lead arrives, CloseAgain sends the first message and keeps following up on schedule until the lead replies or the sequence ends. Replies appear in your inbox so your team can take over.',
+      q: 'How does the follow-up work?',
+      a: 'We write the follow-up sequence with you, and you approve it. When a lead arrives, we send the first message and keep following up on schedule until the lead replies or the sequence ends. Replies come to you so your team can take over.',
     },
     {
       id: 'channels',
@@ -474,7 +484,7 @@ export const faq = {
     {
       id: 'setup',
       q: 'Is setup included?',
-      a: 'Yes. Every plan includes setup assistance; Scale adds priority onboarding and Enterprise dedicated onboarding. Setup timing depends on your integrations and requirements.',
+      a: 'Yes. On every plan we set everything up and run it for you; Scale gets priority onboarding and Enterprise dedicated onboarding. Setup timing depends on your integrations and requirements.',
     },
     {
       id: 'annual-contract',
@@ -490,7 +500,7 @@ export const faq = {
     {
       id: 'after-contact',
       q: 'What happens after I contact you?',
-      a: 'We confirm the right plan and setup, help connect your tools, configure CloseAgain with you, and go live once you’ve reviewed everything.',
+      a: 'We confirm the right plan, connect your tools, write your follow-up with you, and start running it once you’ve approved everything.',
       links: [{ label: 'What happens after you buy', href: '/after-you-buy' }],
     },
   ] satisfies FaqItem[],

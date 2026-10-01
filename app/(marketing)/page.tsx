@@ -8,6 +8,7 @@ import { Paths } from '@/components/home/Paths'
 import { Payoff } from '@/components/home/Payoff'
 import { Proof } from '@/components/home/Proof'
 import { Showcase } from '@/components/home/Showcase'
+import { Split } from '@/components/home/Split'
 import { Automation, SecondChance } from '@/components/home/Stories'
 import { PlanCards } from '@/components/pricing/Plans'
 import { home } from '@/content/home'
@@ -33,6 +34,7 @@ export default function HomePage() {
     <>
       <Hero />
       <IndustryTicker />
+      <Split />
 
       <Payoff />
       <Proof />

@@ -59,10 +59,10 @@ describe('contact page copy', () => {
     assert.equal(contact.eyebrow, 'Contact to buy')
     assert.equal(contact.title, 'Ready to close more conversations?')
     assert.deepEqual(contact.next.steps, [
-      'Send your information',
-      'We confirm the setup',
-      'Connect your tools',
-      'Launch CloseAgain',
+      'Send your details',
+      'We confirm the plan',
+      'We set everything up',
+      'We start following up',
     ])
     assert.deepEqual(contact.process, { label: 'What happens after you buy', href: '/after-you-buy' })
     assert.equal(contact.form.submit, 'Send my details')

@@ -7,7 +7,7 @@
  */
 
 import type { ShowcaseArea } from './demo/types.ts'
-import { billingNote, planTerms, startingPriceText } from './pricing.ts'
+import { planTerms, setupNote, startingPriceText } from './pricing.ts'
 import { learnCta, primaryCta, site } from './site.ts'
 
 export type FlowEvent = {
@@ -26,25 +26,25 @@ const terms = planTerms.join(' · ')
 
 export const home = {
   meta: {
-    title: 'CloseAgain — Turn more of your leads into paying customers',
+    title: 'CloseAgain — Done-for-you lead follow-up for more paying customers',
     description: site.description,
   },
 
   hero: {
-    category: 'Automatic lead follow-up',
+    category: 'Done-for-you lead follow-up',
     /** Rendered as three spans so small screens can break after “The”. */
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
     /** What the business gets, in one line, before how it works. */
-    promise: 'More of your leads become paying customers.',
+    promise: 'We do the follow‑up. You get the customers.',
     /** Three lines on wide screens, as in the approved composition. */
     lede: [
-      'CloseAgain follows up with every new lead automatically,',
-      'chases the ones that go quiet and brings old leads back —',
-      'so fewer sales slip away.',
+      'You get the leads. We follow up with every one of them —',
+      'new inquiries and old ones that went quiet — and hand you',
+      'the replies and bookings. There’s nothing for you to run.',
     ],
     primary: primaryCta,
     secondary: learnCta,
-    terms: [startingPriceText, billingNote],
+    terms: [startingPriceText, setupNote],
     /**
      * What CloseAgain does, in four beats the visitor watches play out around
      * the headline. Generic wording, no names, no numbers: an illustration of
@@ -54,48 +54,75 @@ export const home = {
       label: 'How CloseAgain works',
       lead: { title: 'A lead comes in', detail: 'Website form · just now', card: 'New lead' },
       reply: {
-        title: 'CloseAgain replies',
-        detail: 'Automatically',
+        title: 'We reply for you',
+        detail: 'On your behalf',
         message: 'Thanks for reaching out! Can we set up a quick call?',
-        meta: 'Sent automatically',
+        meta: 'Sent for you',
       },
       again: {
-        title: 'Quiet? It follows up',
-        detail: 'On the schedule you set',
+        title: 'Quiet? We follow up',
+        detail: 'On a schedule you approve',
         quiet: 'No reply yet',
         message: 'Just checking in. Still interested?',
-        meta: 'Follow-up sent automatically',
+        meta: 'Follow-up sent for you',
       },
       booked: {
         title: 'They reply. You book.',
-        detail: 'Booked for Thursday',
+        detail: 'You take it from here',
         message: 'Yes! Thursday works.',
         booked: 'Booked · Thursday',
       },
     },
   },
 
-  /** Right under the hero: where the money is, and whether it pays. */
   /** Under the hero: the kinds of business it is for, each linking to its page. */
   ticker: {
     lead: 'Built for',
     label: 'Industries CloseAgain is built for',
   },
+
+  /** Under the ticker: the whole deal, in two columns — what you do, and what we do. */
+  split: {
+    eyebrow: 'Done for you',
+    title: 'You get the leads. We do the follow‑up.',
+    you: {
+      word: 'You',
+      label: 'What you do',
+      items: [
+        { title: 'Tell us about your business', body: 'Where your leads come from, what you sell and how you like to talk to customers.' },
+        { title: 'Approve the wording', body: 'Nothing goes out until you’ve signed off on it.' },
+        { title: 'Take the conversations', body: 'Replies and booked appointments come straight to you. The sale is yours.' },
+      ],
+    },
+    us: {
+      word: 'We',
+      label: 'What we do',
+      items: [
+        { title: 'Set everything up', body: 'We connect your lead sources and load your list of older leads.' },
+        { title: 'Answer every new lead', body: 'Each inquiry gets a reply, then follow-ups on schedule until they answer.' },
+        { title: 'Bring old leads back', body: 'We reach out to the people who went quiet, so some of them come back.' },
+        { title: 'Keep it running', body: 'Follow-up stops the moment someone replies, and every lead, reply and booking is in view.' },
+      ],
+    },
+    note: 'No software to learn. Nothing for you to manage.',
+  },
+
+  /** Where the money is, and whether it pays. */
   payoff: {
     eyebrow: 'Why it pays',
     title: 'Every lead that goes quiet is a sale you already paid for.',
     points: [
       {
         title: 'Leads you already paid for',
-        body: 'Ads, referrals and your website bring people in. The ones nobody gets back to buy from someone else. CloseAgain follows up with every one, automatically.',
+        body: 'Ads, referrals and your website bring people in. The ones nobody gets back to buy from someone else. We follow up with every one for you.',
       },
       {
         title: 'Old leads, new revenue',
-        body: 'Quotes that went quiet are people who already wanted what you sell. CloseAgain reaches back out, so some of them come back.',
+        body: 'Quotes that went quiet are people who already wanted what you sell. We reach back out, so some of them come back.',
       },
       {
         title: 'Your team talks to buyers',
-        body: 'Replies and booked appointments land in one inbox, so your people spend their time closing — not chasing.',
+        body: 'We do the chasing. Replies and booked appointments come to you, so your people spend their time closing.',
       },
     ],
     calculator: {
@@ -187,19 +214,19 @@ export const home = {
   },
 
   automation: {
-    eyebrow: 'Automatic follow-up',
+    eyebrow: 'Follow-up, handled',
     title: 'Follow up without living in your inbox.',
-    body: 'Set the sequence once. CloseAgain sends each follow-up on time, notices the reply, and hands you the next step.',
+    body: 'We set up the sequence with you once. Then every follow-up goes out on time, the reply is caught, and you get the next step.',
   },
 
   second: {
     eyebrow: 'Old leads',
     title: 'Some conversations just need another chance.',
-    body: 'A lead that went quiet isn’t a lost lead. CloseAgain reaches back out — and when they answer, the conversation picks up where it left off.',
+    body: 'A lead that went quiet isn’t a lost lead. We reach back out — and when they answer, the conversation comes back to you.',
   },
 
   showcase: {
-    eyebrow: 'The CloseAgain dashboard',
+    eyebrow: 'See it working',
     title: 'One dashboard. Every conversation.',
     views: [
       { id: 'overview', label: 'Overview', body: 'New leads, active conversations and what needs you today, at a glance.' },

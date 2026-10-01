@@ -101,7 +101,7 @@ export function JourneyMoment() {
               <span className="moment-row__label">{row.label}</span>
               <span className="moment-row__meta">{row.meta}</span>
             </span>
-            <span className={`moment-who moment-who--${row.who === 'Team' ? 'team' : 'auto'}`}>{row.who}</span>
+            <span className={`moment-who moment-who--${row.who === 'You' ? 'team' : 'auto'}`}>{row.who}</span>
           </li>
         ))}
       </ol>

@@ -122,7 +122,7 @@ describe('plans are compared honestly', () => {
   })
 
   it('states the owner’s commercial terms', () => {
-    assert.deepEqual([...planTerms], [startingPriceText, 'Monthly billing', 'No annual commitment', 'Setup assistance included'])
+    assert.deepEqual([...planTerms], [startingPriceText, 'Monthly billing', 'No annual commitment', 'Set up and run for you'])
   })
 })
 

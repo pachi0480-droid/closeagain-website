@@ -43,6 +43,13 @@ export const contact = {
     formAlternative: 'Prefer to email us directly?',
     address: site.email,
   },
+  /** Beside the email: the owner's number, for texts. */
+  text: {
+    lead: 'Rather text?',
+    label: `Text ${site.text.display}`,
+    href: site.text.href,
+    note: 'Texts only, please.',
+  },
 } as const
 
 export const thankYou = {
@@ -63,6 +70,8 @@ export const thankYou = {
       ],
     },
     payment: 'No payment has been taken.',
+    /** A way to reach the owner while they wait. */
+    question: { lead: 'Questions in the meantime?', label: `Text ${site.text.display}`, href: site.text.href },
     actions: {
       primary: { label: 'What happens after you buy', href: '/after-you-buy' },
       secondary: { label: 'Back to home', href: '/' },

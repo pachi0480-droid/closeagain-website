@@ -18,7 +18,7 @@ import {
   setupNote,
   startingPriceText,
 } from './pricing.ts'
-import { primaryCta } from './site.ts'
+import { primaryCta, site } from './site.ts'
 
 const terms = planTerms.join(' · ')
 
@@ -442,6 +442,11 @@ export const faq = {
       a: 'A done-for-you lead follow-up service. We follow up with your leads on your behalf — new inquiries and old ones that went quiet — until they reply or the follow-up ends, and every reply comes to you.',
     },
     {
+      id: 'reach-us',
+      q: 'How do I reach you?',
+      a: `Text us at ${site.text.display} — that’s the quickest way. Or email ${site.email}, or use the Contact to buy form.`,
+    },
+    {
       id: 'spam',
       q: 'Will my customers feel spammed?',
       a: 'They shouldn’t. We only follow up with people who contacted you or already know your business, with a few messages you approve, in your words. Follow-up stops the moment someone replies, and anyone can reply STOP to opt out.',
@@ -511,7 +516,7 @@ export const faq = {
   ] satisfies FaqItem[],
   closing: {
     title: 'Still have a question?',
-    body: 'Ask us anything — we’ll point you to the right plan.',
+    body: `Ask us anything — text ${site.text.display} or send the form, and we’ll point you to the right plan.`,
     cta: { label: 'Talk to us', href: '/contact' },
   },
 } as const

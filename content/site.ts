@@ -18,6 +18,17 @@ const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/
 export const site = {
   name: 'CloseAgain',
   email: 'Closeagainhq@gmail.com',
+  /**
+   * The owner's number, for texts only: they reply to texts, and can't
+   * reliably take calls on it, so the site links it as a text (sms:) and
+   * never as a call.
+   */
+  text: {
+    display: '(352) 318‑0993',
+    href: 'sms:+13523180993',
+    label: 'Text us',
+    note: 'Texts only — that’s the quickest way to reach us.',
+  },
   tagline: 'The conversation isn’t over.',
   /** What CloseAgain is, in four words. */
   category: 'Done-for-you lead follow-up and recovery',

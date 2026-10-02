@@ -66,6 +66,8 @@ export default async function ContactPage({
           )}
           <p className="contact-form__email">
             {contact.email.formAlternative} <a href={`mailto:${contact.email.address}`}>{contact.email.address}</a>
+            <br />
+            {contact.text.lead} <a href={contact.text.href}>{contact.text.label}</a> <span className="contact-form__aside">{contact.text.note}</span>
           </p>
         </div>
       }

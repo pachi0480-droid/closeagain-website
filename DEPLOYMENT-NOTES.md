@@ -10,9 +10,10 @@ The site is ready to publish. One step is required: telling it where to send inq
 4. **Search.** Nothing to configure. A production build on Vercel uses the project's production address, so pages are indexable, the sitemap lists them, and canonical URLs point there; previews stay hidden. Add the site in [Google Search Console](https://search.google.com/search-console) and submit `/sitemap.xml`.
 5. **See who visits (optional, free).** In Vercel → Analytics, click Enable, then add `VERCEL_WEB_ANALYTICS=on` and redeploy. Visits to `/thank-you` are your sent inquiries. The privacy policy switches its wording by itself.
 6. **Let buyers book a call (optional).** Add `NEXT_PUBLIC_BOOKING_URL` with your Calendly or Cal.com link and redeploy. Contact to buy then offers "Pick a time for a call".
-7. **Put a face on it.** Add your name, role, photo and a few words to `content/people.ts`, and the About page shows "Who's behind CloseAgain".
-8. **Add proof as it arrives.** When a customer gives you a real result and written permission, add it to `content/proof.ts`, and the homepage shows it. Never before.
-9. **Later, with your own domain:**
+7. **Your contact details.** Email `Closeagainhq@gmail.com` and the text-only number (352) 318-0993 are set in `content/site.ts` (`email`, `text`). The number is linked as a text (`sms:`), never as a call, on every page's footer, the contact page, the thank-you page, the FAQ, the confirmation email and the privacy policy. Change it there and it changes everywhere.
+8. **Put a face on it.** Add your name, role, photo and a few words to `content/people.ts`, and the About page shows "Who's behind CloseAgain".
+9. **Add proof as it arrives.** When a customer gives you a real result and written permission, add it to `content/proof.ts`, and the homepage shows it. Never before.
+10. **Later, with your own domain:**
    - Candidates that were unregistered when checked with the registries on 30 September 2026 (check again before buying): **closeagainhq.com** (matches the current Gmail handle), trycloseagain.com, usecloseagain.com, closeagain.io, closeagain.ai, closeagain.net. Already registered by someone: closeagain.com (since 2019), closeagain.co ("launching soon" page), getcloseagain.com, closeagain.online.
    - Add it in Vercel → Domains and redeploy; the origin follows automatically.
    - Verify it in Resend and set `FORMS_EMAIL_FROM` (for example `CloseAgain <inquiries@yourdomain.com>`). Every prospect then also gets a "we got your details" email that replies to you, and you can send inquiries to any address with `FORMS_NOTIFY_EMAIL`.

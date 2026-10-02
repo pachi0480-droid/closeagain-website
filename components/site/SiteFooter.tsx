@@ -19,6 +19,12 @@ export function SiteFooter() {
               <a className="site-footer__email" href={`mailto:${site.email}`}>
                 {site.email}
               </a>
+              <p className="site-footer__text">
+                <a className="site-footer__email" href={site.text.href}>
+                  {site.text.label} {site.text.display}
+                </a>
+                <span>{site.text.note}</span>
+              </p>
             </div>
           </div>
 

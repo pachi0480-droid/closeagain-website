@@ -68,6 +68,9 @@ describe('contact page copy', () => {
     assert.equal(contact.form.submit, 'Send my details')
     assert.match(contact.form.guidance, /No payment is taken here/)
     assert.equal(contact.email.address, site.email)
+    // The owner's number is for texts only: an sms: link, never tel:.
+    assert.equal(site.text.href, 'sms:+13523180993')
+    assert.equal(contact.text.href, site.text.href)
   })
 
   it('hands details to an email draft without claiming anything was sent', () => {

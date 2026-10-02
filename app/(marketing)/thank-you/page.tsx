@@ -74,6 +74,9 @@ function Received({ planLine }: { planLine: string | null }) {
       </div>
 
       <p className="arrival__note">{copy.payment}</p>
+      <p className="arrival__note">
+        {copy.question.lead} <a href={copy.question.href}>{copy.question.label}</a>
+      </p>
 
       <div className="arrival__actions">
         <ButtonLink href={copy.actions.primary.href} size="lg">

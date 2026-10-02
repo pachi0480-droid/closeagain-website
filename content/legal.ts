@@ -33,7 +33,7 @@ export type LegalDocument = {
   sections: LegalSection[]
 }
 
-const effectiveDate = 'September 27, 2026'
+const effectiveDate = 'October 2, 2026'
 
 export const privacy: LegalDocument = {
   status: 'approved',
@@ -46,7 +46,7 @@ export const privacy: LegalDocument = {
       id: 'who-we-are',
       heading: 'Who we are',
       body: [
-        'CloseAgain (“we”, “us”) makes software that captures new leads, follows up automatically and re-engages older opportunities for businesses.',
+        'CloseAgain (“we”, “us”) provides done-for-you lead follow-up for businesses: we follow up with their new leads and re-engage older opportunities on their behalf.',
         'This policy covers this website: what it collects, why, and what you can ask us to do. Information we handle inside a customer’s CloseAgain workspace — such as that business’s own leads and conversations — is covered by that customer’s agreement with us.',
       ],
     },
@@ -54,7 +54,7 @@ export const privacy: LegalDocument = {
       id: 'information-collected',
       heading: 'Information collected',
       body: [
-        'What you send us. When you use the Contact to buy form we receive what you enter: your name, business name, work email, phone number, industry, monthly lead volume, current CRM, preferred plan, main goal and any message. If you email us, we receive your message and address.',
+        'What you send us. When you use the Contact to buy form we receive what you enter: your name, business name, work email, phone number, industry, monthly lead volume, current CRM, preferred plan, main goal and any message. If you email or text us, we receive your message and your email address or phone number, and use them only to reply.',
         'What your browser sends. Like any website, our hosting provider receives standard request details — IP address, browser type, the page requested and the time — to deliver and protect the site. We also use your IP address briefly to limit repeated form submissions.',
         'What stays in your browser. The site remembers your light or dark theme choice on your device. For the current tab only, it remembers whether the homepage opening has played and any changes you make in the sample dashboard. After you send the form, a cookie lasting 30 minutes lets the confirmation page show that your request arrived.',
         analyticsEnabled
@@ -91,7 +91,7 @@ export const privacy: LegalDocument = {
       id: 'your-choices',
       heading: 'Your choices and rights',
       body: [
-        `You can ask us to show you, correct or delete the information you have given us, or to stop following up with you, by emailing ${site.email}. We answer within 30 days. Depending on where you live, you may have further rights under local law, and we will honour them.`,
+        `You can ask us to show you, correct or delete the information you have given us, or to stop following up with you, by emailing ${site.email} or texting ${site.text.display}. We answer within 30 days. Depending on where you live, you may have further rights under local law, and we will honour them.`,
         'You can clear the theme setting and the confirmation cookie at any time through your browser’s settings.',
       ],
     },
@@ -112,7 +112,7 @@ export const privacy: LegalDocument = {
       heading: 'Changes to this policy',
       body: ['If we change how this website handles information, we will update this page and its effective date.'],
     },
-    { id: 'contact', heading: 'Contact', body: [`For questions about this policy or your information, email ${site.email}.`] },
+    { id: 'contact', heading: 'Contact', body: [`For questions about this policy or your information, email ${site.email} or text ${site.text.display}.`] },
   ],
 }
 
@@ -174,6 +174,6 @@ export const terms: LegalDocument = {
       heading: 'Changes to these terms',
       body: ['We may update these terms. The effective date above shows when they last changed, and continuing to use the website means you accept the update.'],
     },
-    { id: 'contact', heading: 'Contact', body: [`For questions about these terms, email ${site.email}.`] },
+    { id: 'contact', heading: 'Contact', body: [`For questions about these terms, email ${site.email} or text ${site.text.display}.`] },
   ],
 }

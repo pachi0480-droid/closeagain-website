@@ -194,7 +194,7 @@ export function buildConfirmation(
     '2. We reply to this address to confirm the right plan and setup.',
     '3. You review everything before CloseAgain goes live.',
     '',
-    'No payment has been taken. If you have a question in the meantime, just reply to this email.',
+    `No payment has been taken. If you have a question in the meantime, just reply to this email or text us at ${site.text.display}.`,
     '',
     '— CloseAgain',
     replyTo,

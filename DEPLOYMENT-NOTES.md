@@ -1,8 +1,15 @@
 # CloseAgain delivery notes
 
+## Live site
+
+**https://closeagain.vercel.app**, the Vercel project `closeagain` (team "osian enterprise"), deployed 2 October 2026.
+
+- To redeploy after changes, run `npx vercel@latest deploy --prod` from this folder. `vercel.json` pins the framework to Next.js, and `.vercelignore` keeps local-only files out of the upload, including `prospect-research/`.
+- For a deploy on every merge to `main`, connect the repository in Vercel → Project → Settings → Git (or run `vercel git connect`).
+
 ## Launch checklist
 
-The site is ready to publish. One step is required: telling it where to send inquiries.
+The site is live. One step is still required: telling it where to send inquiries (step 1). Until then, the Contact to buy form opens the visitor's own email app, pre-filled to Closeagainhq@gmail.com.
 
 1. **Create the inbox connection (about 5 minutes, free).** Sign up at [resend.com](https://resend.com) using **Closeagainhq@gmail.com**. Until you verify a domain, Resend's default sender can only email the address the account was opened with, so use that one. Then go to API Keys → Create API key (sending access) and copy the key.
 2. **Deploy on Vercel.** Import the GitHub repository at [vercel.com/new](https://vercel.com/new), or run `npx vercel@latest deploy --prod` from this folder. In Project → Settings → Environment Variables, add `RESEND_API_KEY` with that key for Production, then redeploy.

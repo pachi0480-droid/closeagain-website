@@ -1,0 +1,8 @@
+# Never upload local-only material with a deployment: research files, editor
+# settings, build output and dependencies (Vercel installs and builds itself).
+prospect-research
+.claude
+.next
+node_modules
+*.tsbuildinfo
+.env*.local

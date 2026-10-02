@@ -241,7 +241,7 @@ export function ReengagePreview({
       </ol>
       <div className="pv-bubbles" data-scroll="rise" style={stagger(2)}>
         <p className="pv-bubble pv-bubble--out">“Hi Maya — are you still thinking about the project we quoted in June?”</p>
-        <p className="pv-bubble pv-bubble--in">“Yes! Still interested. Can we talk next week?”</p>
+        <p className="pv-bubble pv-bubble--in">“Yes, still interested. Can we talk next week?”</p>
       </div>
     </Frame>
   )

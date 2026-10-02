@@ -66,6 +66,11 @@ and delete the item from this list.
      marketing. `/privacy` already says this.
 
    Each customer business must also have consent from the leads it texts.
+
+   The homepage ("Follow-up, not spam") and the FAQ now state these rules as
+   how every campaign runs: only people who contacted the business or already
+   know it, a short sequence the business approves, stop on reply, and STOP to
+   opt out (removed for good). Confirm each one is how you operate.
    Confirm the exact requirements with your texting provider; this list is a
    starting point, not legal advice.
 

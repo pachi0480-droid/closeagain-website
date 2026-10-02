@@ -396,7 +396,7 @@ export const about = {
     status: { from: 'Cold', to: 'Reopened' },
     message: 'Hi — are you still thinking about the project we quoted?',
     meta: 'Re-engagement sent automatically',
-    reply: 'Yes! Still interested. Can we talk next week?',
+    reply: 'Yes, still interested. Can we talk next week?',
   },
   statement: {
     word: 'Again.',
@@ -432,7 +432,7 @@ export const faq = {
   moment: {
     label: 'Two questions, answered',
     title: 'Ask us anything',
-    ids: ['annual-contract', 'setup'],
+    ids: ['spam', 'annual-contract'],
     sentences: 2,
   },
   items: [
@@ -440,6 +440,11 @@ export const faq = {
       id: 'what',
       q: 'What is CloseAgain?',
       a: 'A done-for-you lead follow-up service. We follow up with your leads on your behalf — new inquiries and old ones that went quiet — until they reply or the follow-up ends, and every reply comes to you.',
+    },
+    {
+      id: 'spam',
+      q: 'Will my customers feel spammed?',
+      a: 'They shouldn’t. We only follow up with people who contacted you or already know your business, with a few messages you approve, in your words. Follow-up stops the moment someone replies, and anyone can reply STOP to opt out.',
     },
     {
       id: 'what-i-do',

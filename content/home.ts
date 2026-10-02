@@ -35,7 +35,7 @@ export const home = {
     /** Rendered as three spans so small screens can break after “The”. */
     headline: { lead: 'The', rest: 'conversation', close: 'isn’t over.' },
     /** What the business gets, in one line, before how it works. */
-    promise: 'We do the follow‑up. You get the customers.',
+    promise: 'We follow up with your leads for you.',
     /** Three lines on wide screens, as in the approved composition. */
     lede: [
       'You get the leads. We follow up with every one of them —',
@@ -56,20 +56,20 @@ export const home = {
       reply: {
         title: 'We reply for you',
         detail: 'On your behalf',
-        message: 'Thanks for reaching out! Can we set up a quick call?',
+        message: 'Thanks for reaching out. When’s a good time to talk?',
         meta: 'Sent for you',
       },
       again: {
         title: 'Quiet? We follow up',
         detail: 'On a schedule you approve',
         quiet: 'No reply yet',
-        message: 'Just checking in. Still interested?',
+        message: 'Any questions about your quote?',
         meta: 'Follow-up sent for you',
       },
       booked: {
         title: 'They reply. You book.',
         detail: 'You take it from here',
-        message: 'Yes! Thursday works.',
+        message: 'Thursday works for me.',
         booked: 'Booked · Thursday',
       },
     },
@@ -99,12 +99,39 @@ export const home = {
       label: 'What we do',
       items: [
         { title: 'Set everything up', body: 'We connect your lead sources and load your list of older leads.' },
-        { title: 'Answer every new lead', body: 'Each inquiry gets a reply, then follow-ups on schedule until they answer.' },
+        { title: 'Answer every new lead', body: 'Each inquiry gets a reply, then a few follow-ups on the schedule you approve.' },
         { title: 'Bring old leads back', body: 'We reach out to the people who went quiet, so some of them come back.' },
         { title: 'Keep it running', body: 'Follow-up stops the moment someone replies, and every lead, reply and booking is in view.' },
       ],
     },
     note: 'No software to learn. Nothing for you to manage.',
+  },
+
+  /**
+   * The worry every owner has: will this spam my customers? How the
+   * follow-up stays respectful — the rules every campaign runs by. The
+   * sample text is fictional wording.
+   */
+  respect: {
+    eyebrow: 'Follow-up, not spam',
+    title: 'Your customers hear from you. They don’t get spammed.',
+    body: 'Follow-up only works when it sounds like a real person who remembered them. So every campaign runs by the same rules.',
+    rules: [
+      { title: 'Only people who asked', body: 'We follow up with people who contacted you or already know your business. Never bought lists, never cold messages.' },
+      { title: 'A few messages, not a flood', body: 'A short sequence you approve, spaced out, in your own words.' },
+      { title: 'One reply and it stops', body: 'The moment someone answers, their follow-up ends and the conversation comes to you.' },
+      { title: 'Easy to opt out', body: 'Every text lets people reply STOP, and anyone who opts out is removed for good.' },
+    ],
+    sample: {
+      label: 'A sample follow-up text',
+      from: 'Your business',
+      channel: 'Text message',
+      time: 'Today · 6:42 PM',
+      message: 'Hi Dana, thanks for asking about the house on Linden Avenue. Would Saturday morning or Sunday afternoon work for a showing? Reply STOP to opt out.',
+      reply: 'Saturday morning works.',
+      stopped: 'Dana replied, so her follow-up stopped',
+      note: 'Sample wording with a fictional person.',
+    },
   },
 
   /** Where the money is, and whether it pays. */

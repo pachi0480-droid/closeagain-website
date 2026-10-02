@@ -7,6 +7,7 @@ import { LeadFlow } from '@/components/home/LeadFlow'
 import { Paths } from '@/components/home/Paths'
 import { Payoff } from '@/components/home/Payoff'
 import { Proof } from '@/components/home/Proof'
+import { Respect } from '@/components/home/Respect'
 import { Showcase } from '@/components/home/Showcase'
 import { Split } from '@/components/home/Split'
 import { Automation, SecondChance } from '@/components/home/Stories'
@@ -35,6 +36,7 @@ export default function HomePage() {
       <Hero />
       <IndustryTicker />
       <Split />
+      <Respect />
 
       <Payoff />
       <Proof />

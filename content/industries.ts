@@ -266,7 +266,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
       {
         moment: 'Missed consultation, the same day',
         message: 'Hi Nicole — we missed you at your consultation today. No problem at all. Would you like to pick a new time this week?',
-        reply: 'Sorry! Is Thursday open?',
+        reply: 'Sorry, is Thursday open?',
       },
       {
         moment: 'Past client, a few months on',
@@ -490,7 +490,7 @@ const copy: Record<IndustryId, IndustryCopy> = {
         moment: 'Last year’s holiday buyer',
         message:
           'Hi Irene — last year you ordered gift boxes for your team. Planning something again this season? We’d be glad to put options together.',
-        reply: 'Yes! Can you send last year’s options?',
+        reply: 'Yes, can you send last year’s options?',
       },
     ],
     preview: {
